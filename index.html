@@ -1,23 +1,39 @@
 <html>
 <head>
-<title>Верстка страницы</title>
+<title>Вложенная таблица</title>
 </head>
 <body>
 <center>
-<table border="1" width="640" height="480">
+<table width="600" height="400" border="1">
 <tr>
-<td colspan="5" height="30"><center>Заголовок</center></td>
-</tr>
-<tr>
-<td height="30" width="20%"><center>кнопка1</center></td>
-<td width="20%"><center>кнопка2</center></td>
-<td width="20%"><center>кнопка3</center></td>
-<td width="20%"><center>кнопка4</center></td>
-<td width="20%"><center>кнопка5</center></td>
+<td colspan="2"><center>Заголовок</center></td>
 </tr>
 <tr>
 <td valign="top">содержание:</td>
-<td colspan="4"><center>куча текста</center></td>
+<td valign="top">
+<center>
+<br><br>
+В одну ячейку вложена целая таблица!!
+<br><br><br>
+<table width="200" height="200" cellspacing="0" cellpadding="15">
+<tr>
+<td bgcolor="#c0e4ff" valign="top">1</td>
+<td bgcolor="#c5ffa0" valign="top"><center>2</center></td>
+<td bgcolor="#c0e4ff" align="right" valign="top">3</td>
+</tr>
+<tr>
+<td bgcolor="#c5ffa0">4</td>
+<td bgcolor="#ffa0c5"><center>5</center></td>
+<td bgcolor="#c5ffa0" align="right">6</td>
+</tr>
+<tr>
+<td bgcolor="#c0e4ff" valign="bottom">7</td>
+<td bgcolor="#c5ffa0" valign="bottom"><center>8</center></td>
+<td bgcolor="#c0e4ff" align="right" valign="bottom">9</td>
+</tr>
+</table>
+</center>
+</td>
 </tr>
 </table>
 </center>
