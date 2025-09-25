@@ -2,16 +2,23 @@
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<title>Название таблицы</title>
+<title>Группировка строк</title>
 </head>
 <body>
 <table border="1" width="400" cellpadding="3" cellspacing="0">
 <caption><b>Энергетическая ценность продуктов питания:</b></caption>
+
+<thead bgcolor ="#deb887" title="Шапка">
 <tr>
 <th>Продукт</th><th>Белки</th><th>Жиры</th><th>Углеводы</th><th>ккал</th>
 </tr>
+</thead>
+
+<tbody align="left" bgcolor ="#faebd7" title="Энергетическая ценность
+продуктов питания">
 <tr>
 <th>Хлеб ржаной</th><td>4,7</td><td>0,7</td><td>49,8</td><td>214</td>
+© Семикопенко Алексей Алексеевич | www.webremeslo.ru 79
 </tr>
 <tr>
 <th>Молоко</th><td>2,8</td><td>3,2</td><td>4,7</td><td>58</td>
@@ -22,9 +29,13 @@
 <tr>
 <th>Свинина</th><td>11,4</td><td>49,3</td><td>9</td><td>489</td>
 </tr>
+</tbody>
+
+<tfoot align="left" bgcolor ="#f5f5dc" title="Итого:">
 <tr>
 <th>Итого:</th><td>20,9</td><td>53,3</td><td>83,2</td><td>844</td>
 </tr>
+</tfoot>
 </table>
 </body>
 </html>
