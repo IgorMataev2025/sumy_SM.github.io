@@ -1,219 +1,36 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Презентация на HTML5 (слайдер + iframe)</title>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML5 Презентация</title>
+  <link rel="icon" type="image/png" href="favicon.png">
   <style>
-    :root{
-      --bg:#0f1724;
-      --fg:#e6eef8;
-      --accent:#00aaff;
-      --muted:#9fb7d1;
-    }
-    html,body { height:100%; margin:0; font-family: Inter, system-ui, Arial, sans-serif; background:var(--bg); color:var(--fg); }
-    .presentation { height:100vh; overflow:hidden; position:relative; }
-
-    /* Слайды */
-    .slides { height:100%; display:flex; transition:transform .6s cubic-bezier(.2,.9,.3,1); will-change:transform; }
-    section.slide {
-      min-width:100%; height:100%; padding:48px;
-      box-sizing:border-box; display:flex; flex-direction:column; justify-content:center;
-      align-items:flex-start;
-    }
-
-    /* Стили содержимого слайда */
-    .slide h1 { margin:0 0 8px 0; font-size: clamp(28px, 4vw, 48px); line-height:1.05; color:var(--fg); }
-    .slide p { margin:0 0 12px 0; color:var(--muted); font-size:clamp(14px,1.6vw,18px); max-width:90%; }
-    .slide .meta { margin-top:12px; color:var(--muted); font-size:13px; }
-
-    /* Навигация */
-    .nav {
-      position:absolute; right:20px; top:20px; display:flex; gap:8px;
-    }
-    .nav button {
-      background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.06);
-      color:var(--fg); padding:8px 12px; border-radius:8px; cursor:pointer; backdrop-filter: blur(4px);
-    }
-    .nav button:active{ transform:translateY(1px); }
-
-    /* Стрелки */
-    .controls { position:absolute; inset:0; pointer-events:none; display:flex; align-items:center; justify-content:space-between; }
-    .controls button {
-      pointer-events:auto;
-      background:rgba(0,0,0,0.35); border:0; color:var(--fg); width:56px; height:56px; border-radius:50%;
-      margin:0 12px; cursor:pointer; font-size:20px;
-    }
-
-    /* Индикатор слайдов */
-    .dots { position:absolute; left:50%; transform:translateX(-50%); bottom:18px; display:flex; gap:6px; }
-    .dot { width:10px; height:10px; border-radius:50%; background:rgba(255,255,255,0.12); cursor:pointer; }
-    .dot.active { background:var(--accent); box-shadow:0 0 8px rgba(0,170,255,0.25); }
-
-    /* iframe слайд: занимает почти весь слайд */
-    .iframe-wrap { width:100%; height:70vh; border:1px solid rgba(255,255,255,0.06); border-radius:8px; overflow:hidden; }
-    .iframe-wrap iframe { width:100%; height:100%; border:0; display:block; }
-
-    /* Простой responsive */
-    @media (max-width:720px){
-      .nav { right:10px; top:10px; }
-      .slide { padding:24px; align-items:center; text-align:center; }
-      .slide p { max-width:100%; }
-    }
-
+    body { margin:0; display:flex; flex-direction:column; height:100vh; background:#f4f4f4; font-family:Arial,sans-serif; }
+    header { background:#222; color:#fff; text-align:center; padding:10px; font-size:1.5rem; }
+    iframe { flex:1; border:none; width:100%; background:white; box-shadow: inset 0 0 10px rgba(0,0,0,0.1); }
+    nav { background:#ddd; display:flex; justify-content:center; gap:10px; padding:10px; }
+    nav button { padding:8px 12px; border:none; background:#333; color:white; cursor:pointer; border-radius:6px; transition:background 0.3s; }
+    nav button:hover { background:#555; }
   </style>
 </head>
 <body>
-  <div class="presentation" id="presentation">
-
-    <!-- Кнопки "действий" -->
-    <div class="nav" role="toolbar" aria-label="navigation">
-      <button id="btn-toc" title="Оглавление">TOC</button>
-      <button id="btn-start" title="На начало">Начало</button>
-    </div>
-
-    <!-- Слайды -->
-    <div class="slides" id="slides">
-      <section class="slide" data-title="Привет">
-        <h1>Презентация на HTML5</h1>
-        <p>Современный способ сделать презентацию: секции + CSS + JavaScript. Здесь также показан пример встраивания внешней страницы через <code>&lt;iframe&gt;</code>.</p>
-        <div class="meta">Используй стрелки ← →, пробел или клики для навигации.</div>
-      </section>
-
-      <section class="slide" data-title="Структура">
-        <h1>Структура слайда</h1>
-        <p>Каждый слайд — это тег <code>&lt;section class="slide"&gt;</code>. Это семантично и удобно для доступности и скриптов.</p>
-        <ul style="color:var(--muted); margin-top:12px;">
-          <li>Заголовок — &lt;h1&gt;</li>
-          <li>Текст — &lt;p&gt;</li>
-          <li>Встраиваемые элементы — &lt;iframe&gt;, &lt;img&gt;, код, таблицы</li>
-        </ul>
-      </section>
-
-      <section class="slide" data-title="Iframe пример">
-        <h1>Слайд с &lt;iframe&gt;</h1>
-        <p>Ниже — встроенная страница. Замени URL на нужный (или используй локальную страницу).</p>
-
-        <div class="iframe-wrap" aria-hidden="false">
-          <iframe id="sample-iframe" src="https://example.com" title="Встроенная страница"></iframe>
-        </div>
-
-        <div class="meta">Если внешняя страница запрещает embedding (X-Frame-Options), iframe может не показать содержимое.</div>
-      </section>
-
-      <section class="slide" data-title="Картинки и код">
-        <h1>Мультимедиа и пример кода</h1>
-        <p>Можно добавлять изображения, видео и блоки кода. Этот слайд — пример.</p>
-
-        <pre style="background:rgba(255,255,255,0.03); padding:12px; border-radius:6px; color:var(--muted); max-width:90%; overflow:auto;">
-&lt;section class="slide"&gt;
-  &lt;h1&gt;Заголовок&lt;/h1&gt;
-  &lt;p&gt;Текст...&lt;/p&gt;
-&lt;/section&gt;
-        </pre>
-      </section>
-
-      <section class="slide" data-title="Спасибо">
-        <h1>Спасибо!</h1>
-        <p>Это базовый шаблон. Можем добавить анимации, маркеры прогресса, автоплей или экспорт в PDF.</p>
-        <div class="meta">Хотите, добавлю темную/светлую тему переключатель?</div>
-      </section>
-    </div>
-
-    <!-- Кнопки влево/вправо -->
-    <div class="controls" aria-hidden="true">
-      <button id="prev" title="Назад" aria-label="Назад">◀</button>
-      <button id="next" title="Вперед" aria-label="Вперед">▶</button>
-    </div>
-
-    <!-- Индикаторы -->
-    <div class="dots" id="dots" role="tablist" aria-label="Слайды"></div>
-  </div>
-
+  <header>Моя HTML5 Презентация</header>
+  <iframe id="frame" src="slides/slide1.html"></iframe>
+  <nav>
+    <button onclick="prevSlide()">⟵ Назад</button>
+    <button onclick="nextSlide()">Вперёд ⟶</button>
+    <button onclick="downloadPDF()">⬇ Скачать PDF</button>
+  </nav>
   <script>
-    (function(){
-      const slidesEl = document.getElementById('slides');
-      const slides = Array.from(document.querySelectorAll('.slide'));
-      const dotsEl = document.getElementById('dots');
-      const prevBtn = document.getElementById('prev');
-      const nextBtn = document.getElementById('next');
-      const btnStart = document.getElementById('btn-start');
-      const btnToc = document.getElementById('btn-toc');
-
-      let index = 0;
-      const total = slides.length;
-
-      // Создать точки-индикаторы
-      slides.forEach((s, i) => {
-        const d = document.createElement('button');
-        d.className = 'dot' + (i===0 ? ' active' : '');
-        d.setAttribute('aria-label', `Слайд ${i+1}`);
-        d.addEventListener('click', () => goTo(i));
-        dotsEl.appendChild(d);
-      });
-
-      function update() {
-        slidesEl.style.transform = 'translateX(' + (-index * 100) + 'vw)';
-        // обновить активную точку
-        Array.from(dotsEl.children).forEach((dot, i) => dot.classList.toggle('active', i===index));
-        // обновить title документа на название слайда (для удобства)
-        const title = slides[index].getAttribute('data-title') || `Слайд ${index+1}`;
-        document.title = title + ' — Презентация';
-      }
-
-      function goTo(i) {
-        index = Math.max(0, Math.min(i, total-1));
-        update();
-      }
-
-      function next() { goTo(index + 1); }
-      function prev() { goTo(index - 1); }
-
-      // Кнопки
-      nextBtn.addEventListener('click', next);
-      prevBtn.addEventListener('click', prev);
-      btnStart.addEventListener('click', () => goTo(0));
-      btnToc.addEventListener('click', () => {
-        // простое оглавление: prompt для выбора номера слайда
-        const names = slides.map((s,i) => (i+1) + '. ' + (s.dataset.title || ('Slide ' + (i+1))));
-        const choice = prompt('Выберите номер слайда:\\n' + names.join('\\n'));
-        const num = parseInt(choice, 10);
-        if (!Number.isNaN(num) && num >= 1 && num <= total) goTo(num-1);
-      });
-
-      // Клавиши управления
-      window.addEventListener('keydown', (e) => {
-        if (['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return; // не мешать при вводе
-        if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); next(); }
-        if (e.key === 'ArrowLeft'  || e.key === 'PageUp') { e.preventDefault(); prev(); }
-        if (e.key === 'Home') { goTo(0); }
-        if (e.key === 'End') { goTo(total-1); }
-      });
-
-      // Тач-свайпы простые
-      let touchStartX = null;
-      slidesEl.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].clientX; }, {passive:true});
-      slidesEl.addEventListener('touchend', (e) => {
-        if (touchStartX === null) return;
-        const dx = e.changedTouches[0].clientX - touchStartX;
-        if (dx < -40) next();
-        if (dx > 40) prev();
-        touchStartX = null;
-      }, {passive:true});
-
-      // Инициализация
-      update();
-
-      // Пример: если iframe не загружается, показать сообщение
-      const iframe = document.getElementById('sample-iframe');
-      iframe.addEventListener('error', () => {
-        console.warn('Ошибка загрузки iframe (проверьте URL и заголовки X-Frame-Options).');
-      });
-
-      // Экспорт функции в window для отладки
-      window.presentation = { goTo, next, prev };
-    })();
+    const slides = ['slides/slide1.html','slides/slide2.html','slides/slide3.html'];
+    let current = 0;
+    const frame = document.getElementById('frame');
+    function showSlide(index){ current=(index+slides.length)%slides.length; frame.src=slides[current]; }
+    function nextSlide(){ showSlide(current+1); }
+    function prevSlide(){ showSlide(current-1); }
+    setInterval(nextSlide,5000);
+    function downloadPDF(){ frame.contentWindow.print(); }
   </script>
 </body>
 </html>
