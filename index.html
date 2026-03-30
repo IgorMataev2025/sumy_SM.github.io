@@ -1,13 +1,1956 @@
-<!doctype html>
-<html lang="ru">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>0999999999</title>
-		<link href="css/styles.css" rel="stylesheet">
-		<script src="js/scripts.js"></script>
-	</head>
-	<body>
-		<div class="some">00000000000</div>
-	</body>
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Держпраця України — Державна служба з питань праці</title>
+<link href="https://fonts.googleapis.com/css2?family=Geologica:wght@300;400;500;600;700;900&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue-deep: #003087;
+    --blue-mid: #0057B8;
+    --yellow: #FFD700;
+    --yellow-light: #FFF3B0;
+    --white: #FFFFFF;
+    --gray-bg: #F4F6FA;
+    --gray-border: #DDE3EE;
+    --gray-text: #5A6480;
+    --dark: #141A2E;
+    --accent: #E8002D;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: var(--white);
+    color: var(--dark);
+    overflow-x: hidden;
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    background: var(--blue-deep);
+    color: rgba(255,255,255,0.75);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    padding: 6px 0;
+  }
+  .topbar .inner {
+    max-width: 1240px;
+    margin: auto;
+    padding: 0 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .topbar a { color: rgba(255,255,255,0.75); text-decoration: none; }
+  .topbar a:hover { color: var(--yellow); }
+  .topbar-links { display: flex; gap: 20px; }
+  .topbar-right { display: flex; gap: 16px; align-items: center; }
+  .lang-btn {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.3);
+    color: rgba(255,255,255,0.75);
+    padding: 2px 10px;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .lang-btn:hover { border-color: var(--yellow); color: var(--yellow); }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--white);
+    border-bottom: 3px solid var(--yellow);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 20px rgba(0,48,135,0.10);
+  }
+  .header-inner {
+    max-width: 1240px;
+    margin: auto;
+    padding: 0 24px;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+  .logo-emblem {
+    width: 52px;
+    height: 52px;
+    position: relative;
+  }
+  .logo-emblem svg { width: 100%; height: 100%; }
+  .logo-text { line-height: 1.2; }
+  .logo-title {
+    font-family: 'Geologica', sans-serif;
+    font-weight: 900;
+    font-size: 1.2rem;
+    color: var(--blue-deep);
+    letter-spacing: -0.02em;
+  }
+  .logo-subtitle {
+    font-size: 0.65rem;
+    color: var(--gray-text);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  nav {
+    display: flex;
+    gap: 2px;
+    flex: 1;
+    justify-content: center;
+  }
+  .nav-link {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--dark);
+    text-decoration: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    letter-spacing: 0.01em;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .nav-link:hover { background: var(--gray-bg); color: var(--blue-mid); }
+  .nav-link.active { color: var(--blue-mid); background: #EBF2FF; }
+
+  .header-actions { display: flex; gap: 10px; align-items: center; }
+  .btn-search {
+    width: 38px; height: 38px;
+    border-radius: 8px;
+    border: 1.5px solid var(--gray-border);
+    background: transparent;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    color: var(--gray-text);
+  }
+  .btn-search:hover { border-color: var(--blue-mid); color: var(--blue-mid); }
+  .btn-hotline {
+    background: var(--yellow);
+    color: var(--blue-deep);
+    border: none;
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .btn-hotline:hover { background: #e6c200; transform: translateY(-1px); }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, var(--blue-deep) 0%, #0044A0 55%, #0062CC 100%);
+    position: relative;
+    overflow: hidden;
+    padding: 80px 0 90px;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 600px 400px at 80% 50%, rgba(0,87,184,0.4) 0%, transparent 70%),
+      radial-gradient(circle 300px at 10% 80%, rgba(255,215,0,0.08) 0%, transparent 60%);
+  }
+  .hero-geo {
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 45%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03));
+    clip-path: polygon(15% 0, 100% 0, 100% 100%, 0% 100%);
+  }
+  .hero-stripe {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--yellow) 50%, #0057B8 50%);
+  }
+  .hero-inner {
+    max-width: 1240px;
+    margin: auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,215,0,0.15);
+    border: 1px solid rgba(255,215,0,0.4);
+    color: var(--yellow);
+    padding: 6px 16px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .hero-badge::before { content: ''; width: 6px; height: 6px; background: var(--yellow); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.4)} }
+
+  .hero h1 {
+    font-family: 'Geologica', sans-serif;
+    font-weight: 900;
+    font-size: clamp(2rem, 4vw, 3.4rem);
+    color: var(--white);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    max-width: 680px;
+    margin-bottom: 20px;
+  }
+  .hero h1 span { color: var(--yellow); }
+  .hero-desc {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.78);
+    max-width: 520px;
+    line-height: 1.65;
+    margin-bottom: 36px;
+  }
+  .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--yellow);
+    color: var(--blue-deep);
+    padding: 14px 28px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: all 0.2s;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-primary:hover { background: #e6c200; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,215,0,0.35); }
+  .btn-secondary {
+    background: rgba(255,255,255,0.1);
+    color: var(--white);
+    border: 1.5px solid rgba(255,255,255,0.3);
+    padding: 14px 28px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.6); }
+
+  .hero-stats {
+    display: flex;
+    gap: 40px;
+    margin-top: 52px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    flex-wrap: wrap;
+  }
+  .stat { }
+  .stat-num {
+    font-family: 'Geologica', sans-serif;
+    font-weight: 900;
+    font-size: 2rem;
+    color: var(--yellow);
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.6);
+    margin-top: 4px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── QUICK ACCESS ── */
+  .quick {
+    background: var(--white);
+    padding: 0;
+    position: relative;
+    z-index: 2;
+  }
+  .quick-inner {
+    max-width: 1240px;
+    margin: auto;
+    padding: 0 24px;
+  }
+  .quick-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-top: -32px;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,48,135,0.14);
+  }
+  .quick-card {
+    background: var(--white);
+    padding: 28px 24px;
+    text-decoration: none;
+    border-right: 1px solid var(--gray-border);
+    transition: all 0.25s;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-top: 4px solid transparent;
+  }
+  .quick-card:last-child { border-right: none; }
+  .quick-card:hover {
+    background: #EBF2FF;
+    border-top-color: var(--blue-mid);
+    transform: translateY(-2px);
+  }
+  .quick-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: #EBF2FF;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+  }
+  .quick-title {
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: var(--dark);
+    line-height: 1.3;
+  }
+  .quick-desc {
+    font-size: 0.75rem;
+    color: var(--gray-text);
+    line-height: 1.5;
+  }
+
+  /* ── SECTION COMMON ── */
+  section { padding: 72px 0; }
+  .section-inner {
+    max-width: 1240px;
+    margin: auto;
+    padding: 0 24px;
+  }
+  .section-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--blue-mid);
+    margin-bottom: 10px;
+  }
+  .section-title {
+    font-family: 'Geologica', sans-serif;
+    font-weight: 900;
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    color: var(--dark);
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin-bottom: 14px;
+  }
+  .section-sub {
+    font-size: 0.95rem;
+    color: var(--gray-text);
+    max-width: 540px;
+    line-height: 1.6;
+  }
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 40px;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .link-all {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--blue-mid);
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 6px;
+    white-space: nowrap;
+  }
+  .link-all:hover { text-decoration: underline; }
+
+  /* ── SERVICES ── */
+  .services { background: var(--gray-bg); }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .service-card {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 30px 26px;
+    border: 1.5px solid var(--gray-border);
+    text-decoration: none;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .service-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--blue-mid), var(--yellow));
+    transform: scaleX(0);
+    transition: transform 0.3s;
+    transform-origin: left;
+  }
+  .service-card:hover { border-color: transparent; box-shadow: 0 8px 32px rgba(0,48,135,0.12); transform: translateY(-4px); }
+  .service-card:hover::after { transform: scaleX(1); }
+  .service-num {
+    font-family: 'Geologica', sans-serif;
+    font-weight: 900;
+    font-size: 2.5rem;
+    color: var(--gray-border);
+    line-height: 1;
+    margin-bottom: 14px;
+    letter-spacing: -0.05em;
+  }
+  .service-title {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--dark);
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+  .service-desc {
+    font-size: 0.82rem;
+    color: var(--gray-text);
+    line-height: 1.6;
+  }
+
+  /* ── NEWS ── */
+  .news-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 24px;
+  }
+  .news-main {
+    background: var(--blue-deep);
+    border-radius: 16px;
+    padding: 36px;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 360px;
+    transition: transform 0.25s;
+  }
+  .news-main::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,48,135,0.9) 0%, rgba(0,87,184,0.6) 100%);
+  }
+  .news-main:hover { transform: translateY(-3px); }
+  .news-main-tag {
+    position: relative;
+    z-index: 1;
+    background: var(--yellow);
+    color: var(--blue-deep);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 16px;
+    width: fit-content;
+  }
+  .news-main-date { position: relative; z-index: 1; color: rgba(255,255,255,0.55); font-size: 0.75rem; margin-bottom: 10px; }
+  .news-main-title {
+    position: relative; z-index: 1;
+    font-family: 'Geologica', sans-serif;
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: var(--white);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+  }
+  .news-list { display: flex; flex-direction: column; gap: 14px; }
+  .news-item {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 20px;
+    text-decoration: none;
+    border: 1.5px solid var(--gray-border);
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .news-item:hover { border-color: var(--blue-mid); background: #F0F5FF; }
+  .news-item-tag {
+    font-size: 0.67rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--blue-mid);
+  }
+  .news-item-title { font-weight: 600; font-size: 0.87rem; color: var(--dark); line-height: 1.4; }
+  .news-item-date { font-size: 0.73rem; color: var(--gray-text); }
+
+  /* ── HOTLINE BANNER ── */
+  .hotline-banner {
+    background: linear-gradient(135deg, var(--yellow) 0%, #FFE44D 100%);
+    padding: 48px 0;
+  }
+  .hotline-inner {
+    max-width: 1240px;
+    margin: auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .hotline-left {}
+  .hotline-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--blue-deep);
+    margin-bottom: 6px;
+    opacity: 0.7;
+  }
+  .hotline-title {
+    font-family: 'Geologica', sans-serif;
+    font-weight: 900;
+    font-size: 1.8rem;
+    color: var(--blue-deep);
+    letter-spacing: -0.03em;
+    margin-bottom: 8px;
+  }
+  .hotline-desc { font-size: 0.9rem; color: rgba(0,48,135,0.7); max-width: 480px; line-height: 1.5; }
+  .hotline-right { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
+  .hotline-number {
+    font-family: 'Geologica', sans-serif;
+    font-weight: 900;
+    font-size: 2.6rem;
+    color: var(--blue-deep);
+    letter-spacing: -0.04em;
+  }
+  .btn-call {
+    background: var(--blue-deep);
+    color: var(--white);
+    padding: 14px 32px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: inherit;
+    border: none;
+    cursor: pointer;
+  }
+  .btn-call:hover { background: #001F5C; transform: translateY(-2px); }
+
+  /* ── INFOGRAPHICS / STATS ── */
+  .stats-section { background: var(--dark); padding: 72px 0; }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-top: 48px;
+  }
+  .stat-block {
+    padding: 36px 28px;
+    background: var(--dark);
+    transition: background 0.2s;
+  }
+  .stat-block:hover { background: #1E263D; }
+  .stat-block-num {
+    font-family: 'Geologica', sans-serif;
+    font-weight: 900;
+    font-size: 2.8rem;
+    letter-spacing: -0.05em;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .stat-block-num.yellow { color: var(--yellow); }
+  .stat-block-num.blue { color: #60A5FA; }
+  .stat-block-num.green { color: #4ADE80; }
+  .stat-block-num.red { color: #F87171; }
+  .stat-block-label { font-size: 0.8rem; color: rgba(255,255,255,0.55); line-height: 1.4; }
+  .stats-title { color: var(--white); }
+  .stats-sub { color: rgba(255,255,255,0.5); }
+
+  /* ── LINKS/PORTALS ── */
+  .portals { background: var(--gray-bg); }
+  .portals-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .portal-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 24px;
+    text-decoration: none;
+    border: 1.5px solid var(--gray-border);
+    transition: all 0.25s;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .portal-card:hover { border-color: var(--blue-mid); box-shadow: 0 4px 20px rgba(0,87,184,0.12); }
+  .portal-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: #EBF2FF;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+  .portal-name { font-weight: 700; font-size: 0.82rem; color: var(--dark); margin-bottom: 3px; }
+  .portal-tag { font-size: 0.7rem; color: var(--gray-text); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--dark);
+    color: rgba(255,255,255,0.65);
+    padding: 60px 0 0;
+  }
+  .footer-inner {
+    max-width: 1240px;
+    margin: auto;
+    padding: 0 24px;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.8fr 1fr 1fr 1fr;
+    gap: 48px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .footer-brand {}
+  .footer-logo {
+    font-family: 'Geologica', sans-serif;
+    font-weight: 900;
+    font-size: 1.1rem;
+    color: var(--white);
+    letter-spacing: -0.02em;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .footer-logo-dot {
+    width: 8px; height: 8px;
+    background: var(--yellow);
+    border-radius: 50%;
+  }
+  .footer-brand-desc { font-size: 0.8rem; line-height: 1.65; max-width: 280px; }
+  .footer-col-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--white);
+    margin-bottom: 16px;
+  }
+  .footer-links { display: flex; flex-direction: column; gap: 10px; }
+  .footer-links a {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.55);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--yellow); }
+  .footer-bottom {
+    padding: 24px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.35);
+  }
+  .flag-stripe {
+    height: 4px;
+    background: linear-gradient(90deg, #0057B8 50%, #FFD700 50%);
+    margin-top: 0;
+  }
+
+  /* ── ALERT BANNER ── */
+  .alert-bar {
+    background: var(--accent);
+    color: var(--white);
+    padding: 10px 0;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  .alert-inner {
+    max-width: 1240px;
+    margin: auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .alert-bar a { color: var(--yellow); }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 16, 40, 0.72);
+    backdrop-filter: blur(6px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+  }
+  .modal-overlay.open {
+    opacity: 1;
+    visibility: visible;
+  }
+  .modal {
+    background: var(--white);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 620px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.35);
+    transform: translateY(30px) scale(0.97);
+    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    position: relative;
+  }
+  .modal-overlay.open .modal {
+    transform: translateY(0) scale(1);
+  }
+  .modal-header {
+    background: linear-gradient(135deg, var(--blue-deep), #0057B8);
+    border-radius: 20px 20px 0 0;
+    padding: 28px 32px 24px;
+    position: relative;
+  }
+  .modal-header-flag {
+    height: 4px;
+    background: linear-gradient(90deg, #FFD700 50%, #0057B8 50%);
+    border-radius: 2px;
+    margin-bottom: 18px;
+  }
+  .modal-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,215,0,0.18);
+    border: 1px solid rgba(255,215,0,0.35);
+    color: var(--yellow);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 50px;
+    margin-bottom: 12px;
+  }
+  .modal-title {
+    font-family: 'Geologica', sans-serif;
+    font-weight: 900;
+    font-size: 1.5rem;
+    color: var(--white);
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin-bottom: 6px;
+  }
+  .modal-subtitle {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.6);
+  }
+  .modal-close {
+    position: absolute;
+    top: 20px; right: 20px;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    border: none;
+    color: var(--white);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    transition: background 0.2s;
+  }
+  .modal-close:hover { background: rgba(255,255,255,0.25); }
+
+  .modal-body { padding: 28px 32px 32px; }
+
+  .form-steps {
+    display: flex;
+    gap: 0;
+    margin-bottom: 28px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1.5px solid var(--gray-border);
+  }
+  .form-step {
+    flex: 1;
+    padding: 10px 14px;
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--gray-text);
+    background: var(--gray-bg);
+    border-right: 1.5px solid var(--gray-border);
+    transition: all 0.3s;
+    cursor: default;
+  }
+  .form-step:last-child { border-right: none; }
+  .form-step.active { background: var(--blue-mid); color: var(--white); }
+  .form-step.done { background: #D1FAE5; color: #065F46; }
+  .form-step-num { font-family: 'Geologica', sans-serif; font-weight: 900; font-size: 0.9rem; display: block; }
+
+  .form-page { display: none; }
+  .form-page.active { display: block; }
+
+  .form-group { margin-bottom: 18px; }
+  .form-label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 6px;
+    letter-spacing: 0.01em;
+  }
+  .form-label span { color: var(--accent); }
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--gray-border);
+    border-radius: 9px;
+    font-size: 0.85rem;
+    font-family: 'Montserrat', sans-serif;
+    color: var(--dark);
+    background: var(--white);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    border-color: var(--blue-mid);
+    box-shadow: 0 0 0 3px rgba(0,87,184,0.1);
+  }
+  .form-textarea { resize: vertical; min-height: 100px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  .violation-types {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .vtype {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border: 1.5px solid var(--gray-border);
+    border-radius: 9px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--dark);
+  }
+  .vtype:hover { border-color: var(--blue-mid); background: #EBF2FF; }
+  .vtype input { display: none; }
+  .vtype.selected { border-color: var(--blue-mid); background: #EBF2FF; color: var(--blue-mid); }
+  .vtype-icon { font-size: 1.1rem; }
+
+  .file-drop {
+    border: 2px dashed var(--gray-border);
+    border-radius: 10px;
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .file-drop:hover { border-color: var(--blue-mid); background: #EBF2FF; }
+  .file-drop-icon { font-size: 2rem; margin-bottom: 8px; }
+  .file-drop-text { font-size: 0.78rem; color: var(--gray-text); }
+  .file-drop-link { color: var(--blue-mid); font-weight: 600; }
+
+  .modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 24px;
+    gap: 12px;
+  }
+  .btn-modal-back {
+    background: transparent;
+    border: 1.5px solid var(--gray-border);
+    color: var(--gray-text);
+    padding: 11px 22px;
+    border-radius: 9px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .btn-modal-back:hover { border-color: var(--dark); color: var(--dark); }
+  .btn-modal-next {
+    background: var(--blue-mid);
+    color: var(--white);
+    border: none;
+    padding: 12px 28px;
+    border-radius: 9px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-modal-next:hover { background: var(--blue-deep); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,87,184,0.3); }
+  .btn-modal-submit {
+    background: linear-gradient(135deg, #00A550, #007A3D);
+    color: var(--white);
+    border: none;
+    padding: 12px 28px;
+    border-radius: 9px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-modal-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,165,80,0.35); }
+
+  /* SUCCESS */
+  .modal-success {
+    display: none;
+    text-align: center;
+    padding: 20px 0;
+  }
+  .modal-success.show { display: block; }
+  .success-icon {
+    width: 80px; height: 80px;
+    background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.5rem;
+    margin: 0 auto 20px;
+    animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .success-title {
+    font-family: 'Geologica', sans-serif;
+    font-weight: 900;
+    font-size: 1.5rem;
+    color: var(--dark);
+    margin-bottom: 10px;
+    letter-spacing: -0.03em;
+  }
+  .success-num {
+    display: inline-block;
+    background: var(--gray-bg);
+    border: 1.5px solid var(--gray-border);
+    border-radius: 8px;
+    padding: 8px 20px;
+    font-family: 'Geologica', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--blue-mid);
+    margin: 10px 0;
+    letter-spacing: 0.05em;
+  }
+  .success-desc { font-size: 0.85rem; color: var(--gray-text); line-height: 1.6; max-width: 380px; margin: 0 auto 24px; }
+  .btn-modal-close-done {
+    background: var(--blue-deep);
+    color: var(--white);
+    border: none;
+    padding: 13px 32px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .btn-modal-close-done:hover { background: #001F5C; }
+
+  @media (max-width: 1024px) {
+    .quick-grid { grid-template-columns: repeat(2, 1fr); }
+    .services-grid { grid-template-columns: repeat(2, 1fr); }
+    .news-grid { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .portals-grid { grid-template-columns: repeat(2, 1fr); }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) {
+    nav { display: none; }
+    .quick-grid { grid-template-columns: 1fr; }
+    .services-grid { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .portals-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── ABOUT MODAL ── */
+  .about-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.35s, visibility 0.35s;
+  }
+  .about-overlay.open { opacity: 1; visibility: visible; }
+
+  .about-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(8,14,36,0.75);
+    backdrop-filter: blur(8px);
+  }
+
+  .about-panel {
+    position: relative;
+    z-index: 1;
+    margin-left: auto;
+    width: 100%;
+    max-width: 860px;
+    height: 100%;
+    background: var(--white);
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.45s cubic-bezier(0.22,1,0.36,1);
+    display: flex;
+    flex-direction: column;
+  }
+  .about-overlay.open .about-panel { transform: translateX(0); }
+
+  .about-hero {
+    background: linear-gradient(135deg, #001A5C 0%, #003087 50%, #0057B8 100%);
+    padding: 48px 48px 40px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .about-hero::after {
+    content: 'ДЕРЖПРАЦЯ';
+    position: absolute;
+    right: -20px; bottom: -30px;
+    font-family: 'Geologica', sans-serif;
+    font-weight: 900;
+    font-size: 7rem;
+    color: rgba(255,255,255,0.04);
+    letter-spacing: -0.05em;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .about-close {
+    position: absolute;
+    top: 20px; right: 20px;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--white);
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+    z-index: 2;
+  }
+  .about-close:hover { background: rgba(255,255,255,0.22); }
+  .about-flag { height: 4px; background: linear-gradient(90deg, var(--yellow) 50%, #0057B8 50%); border-radius: 2px; margin-bottom: 22px; width: 60px; }
+  .about-hero-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 10px; }
+  .about-hero-title {
+    font-family: 'Geologica', sans-serif;
+    font-weight: 900;
+    font-size: 2.4rem;
+    color: var(--white);
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    margin-bottom: 14px;
+  }
+  .about-hero-title span { color: var(--yellow); }
+  .about-hero-desc { font-size: 0.9rem; color: rgba(255,255,255,0.65); line-height: 1.65; max-width: 520px; }
+  .about-hero-stats {
+    display: flex; gap: 36px; margin-top: 32px; padding-top: 28px;
+    border-top: 1px solid rgba(255,255,255,0.12); flex-wrap: wrap;
+  }
+  .about-hstat-num { font-family: 'Geologica', sans-serif; font-weight: 900; font-size: 1.7rem; color: var(--yellow); letter-spacing: -0.04em; line-height: 1; }
+  .about-hstat-label { font-size: 0.7rem; color: rgba(255,255,255,0.5); margin-top: 3px; text-transform: uppercase; letter-spacing: 0.04em; }
+
+  .about-content { padding: 0 48px 48px; flex: 1; }
+
+  /* TABS */
+  .about-tabs { display: flex; gap: 0; border-bottom: 2px solid var(--gray-border); margin-bottom: 36px; overflow-x: auto; }
+  .about-tab {
+    padding: 16px 20px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--gray-text);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .about-tab:hover { color: var(--blue-mid); }
+  .about-tab.active { color: var(--blue-mid); border-bottom-color: var(--blue-mid); }
+
+  .about-tab-content { display: none; }
+  .about-tab-content.active { display: block; animation: fadeUp 0.3s ease; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+  /* MISSION tab */
+  .about-mission-text { font-size: 0.92rem; color: var(--gray-text); line-height: 1.75; margin-bottom: 24px; }
+  .about-values {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 8px;
+  }
+  .about-value {
+    padding: 20px;
+    border-radius: 12px;
+    border: 1.5px solid var(--gray-border);
+    transition: all 0.2s;
+  }
+  .about-value:hover { border-color: var(--blue-mid); background: #F0F5FF; }
+  .about-value-icon { font-size: 1.6rem; margin-bottom: 8px; }
+  .about-value-title { font-weight: 700; font-size: 0.88rem; color: var(--dark); margin-bottom: 4px; }
+  .about-value-text { font-size: 0.78rem; color: var(--gray-text); line-height: 1.5; }
+
+  /* LEADERSHIP tab */
+  .leadership-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .leader-card {
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    border: 1.5px solid var(--gray-border);
+    border-radius: 12px;
+    align-items: flex-start;
+    transition: all 0.2s;
+  }
+  .leader-card:hover { border-color: var(--blue-mid); box-shadow: 0 4px 20px rgba(0,87,184,0.1); }
+  .leader-avatar {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue-deep), var(--blue-mid));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+  .leader-name { font-weight: 700; font-size: 0.88rem; color: var(--dark); margin-bottom: 3px; }
+  .leader-role { font-size: 0.75rem; color: var(--blue-mid); font-weight: 600; margin-bottom: 5px; }
+  .leader-desc { font-size: 0.75rem; color: var(--gray-text); line-height: 1.45; }
+
+  /* HISTORY tab */
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before { content: ''; position: absolute; left: 8px; top: 8px; bottom: 8px; width: 2px; background: linear-gradient(to bottom, var(--blue-mid), var(--yellow)); border-radius: 2px; }
+  .timeline-item { position: relative; margin-bottom: 28px; }
+  .timeline-dot {
+    position: absolute;
+    left: -24px; top: 4px;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--blue-mid);
+    border: 3px solid var(--white);
+    box-shadow: 0 0 0 2px var(--blue-mid);
+  }
+  .timeline-year { font-family: 'Geologica', sans-serif; font-weight: 900; font-size: 1rem; color: var(--blue-mid); letter-spacing: -0.02em; margin-bottom: 4px; }
+  .timeline-title { font-weight: 700; font-size: 0.88rem; color: var(--dark); margin-bottom: 4px; }
+  .timeline-text { font-size: 0.8rem; color: var(--gray-text); line-height: 1.55; }
+
+  /* STRUCTURE tab */
+  .structure-list { display: flex; flex-direction: column; gap: 12px; }
+  .structure-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    border: 1.5px solid var(--gray-border);
+    border-radius: 10px;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .structure-item:hover { border-color: var(--blue-mid); background: #F0F5FF; }
+  .structure-num {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    background: #EBF2FF;
+    color: var(--blue-mid);
+    font-family: 'Geologica', sans-serif;
+    font-weight: 900;
+    font-size: 0.9rem;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .structure-name { font-weight: 600; font-size: 0.85rem; color: var(--dark); }
+  .structure-region { font-size: 0.73rem; color: var(--gray-text); margin-top: 2px; }
+  .structure-arrow { margin-left: auto; color: var(--gray-text); font-size: 0.9rem; }
+
+  @media (max-width: 860px) {
+    .about-panel { max-width: 100%; }
+    .about-hero { padding: 36px 24px 28px; }
+    .about-content { padding: 0 24px 40px; }
+    .about-values { grid-template-columns: 1fr; }
+    .leadership-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ALERT -->
+<div class="alert-bar">
+  <div class="alert-inner">
+    <span>⚠️</span>
+    <span>Увага: дія правового режиму воєнного стану продовжена. Інформація щодо особливостей трудових відносин —&nbsp;<a href="#">читати далі</a></span>
+  </div>
+</div>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="inner">
+    <div class="topbar-links">
+      <a href="#">Карта сайту</a>
+      <a href="#">Доступність</a>
+      <a href="#">Громадянам</a>
+      <a href="#">Бізнесу</a>
+    </div>
+    <div class="topbar-right">
+      <a href="#">📧 Контакти</a>
+      <button class="lang-btn">EN</button>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <a href="#" class="logo">
+      <div class="logo-emblem">
+        <svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="26" cy="26" r="25" fill="#003087" stroke="#FFD700" stroke-width="2"/>
+          <text x="26" y="32" text-anchor="middle" font-size="20" fill="#FFD700" font-family="serif" font-weight="bold">Д</text>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <div class="logo-title">ДЕРЖПРАЦЯ</div>
+        <div class="logo-subtitle">Державна служба з питань праці</div>
+      </div>
+    </a>
+    <nav>
+      <a href="#" class="nav-link active">Головна</a>
+      <a href="#" class="nav-link">Послуги</a>
+      <a href="#" class="nav-link">Законодавство</a>
+      <a href="#" class="nav-link">Перевірки</a>
+      <a href="#" class="nav-link">Дозволи</a>
+      <a href="#" class="nav-link">Новини</a>
+      <a href="#" class="nav-link">Про нас</a>
+    </nav>
+    <div class="header-actions">
+      <button class="btn-search" title="Пошук">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <button class="btn-hotline">📞 Гаряча лінія</button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-geo"></div>
+  <div class="hero-inner">
+    <div class="hero-badge">Офіційний вебсайт</div>
+    <h1>Захист прав<br>у сфері <span>праці</span><br>та зайнятості</h1>
+    <p class="hero-desc">Державна служба з питань праці здійснює державний контроль за дотриманням законодавства про працю, зайнятість та охорону праці в Україні.</p>
+    <div class="hero-actions">
+      <a href="#" class="btn-primary">🔍 Перевірити підприємство</a>
+      <a href="#" class="btn-secondary">Подати скаргу</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">27</div>
+        <div class="stat-label">Територіальних органів</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">1500+</div>
+        <div class="stat-label">Інспекторів праці</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">80К+</div>
+        <div class="stat-label">Перевірок на рік</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">5+</div>
+        <div class="stat-label">Мільярдів відшкодовано</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-stripe"></div>
+</section>
+
+<!-- QUICK ACCESS -->
+<div class="quick">
+  <div class="quick-inner">
+    <div class="quick-grid">
+      <a href="#" class="quick-card">
+        <div class="quick-icon">📋</div>
+        <div class="quick-title">Подати скаргу на роботодавця</div>
+        <div class="quick-desc">Порушення трудових прав, затримка зарплати, незаконне звільнення</div>
+      </a>
+      <a href="#" class="quick-card">
+        <div class="quick-icon">🏢</div>
+        <div class="quick-title">Отримати дозвіл на працю</div>
+        <div class="quick-desc">Іноземним громадянам та особам без громадянства</div>
+      </a>
+      <a href="#" class="quick-card">
+        <div class="quick-icon">⚠️</div>
+        <div class="quick-title">Повідомити про нещасний випадок</div>
+        <div class="quick-desc">Розслідування нещасних випадків на виробництві</div>
+      </a>
+      <a href="#" class="quick-card">
+        <div class="quick-icon">📊</div>
+        <div class="quick-title">Реєстрація колективного договору</div>
+        <div class="quick-desc">Реєстрація та перевірка колективних договорів</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section class="services">
+  <div class="section-inner">
+    <div class="section-head">
+      <div>
+        <div class="section-label">Що ми робимо</div>
+        <h2 class="section-title">Основні послуги та функції</h2>
+        <p class="section-sub">Держпраця здійснює нагляд та контроль за дотриманням законодавства про працю в усіх сферах</p>
+      </div>
+      <a href="#" class="link-all">Усі послуги →</a>
+    </div>
+    <div class="services-grid">
+      <a href="#" class="service-card">
+        <div class="service-num">01</div>
+        <div class="service-title">Нагляд за дотриманням трудового законодавства</div>
+        <div class="service-desc">Проведення перевірок підприємств, установ та організацій щодо дотримання трудових прав працівників</div>
+      </a>
+      <a href="#" class="service-card">
+        <div class="service-num">02</div>
+        <div class="service-title">Охорона праці та промислова безпека</div>
+        <div class="service-desc">Контроль за безпечними умовами праці, профілактика виробничого травматизму та профзахворювань</div>
+      </a>
+      <a href="#" class="service-card">
+        <div class="service-num">03</div>
+        <div class="service-title">Нагляд у сфері зайнятості населення</div>
+        <div class="service-desc">Контроль за дотриманням законодавства про зайнятість, попередження нелегальної праці</div>
+      </a>
+      <a href="#" class="service-card">
+        <div class="service-num">04</div>
+        <div class="service-title">Видача дозволів на працю іноземцям</div>
+        <div class="service-desc">Оформлення, продовження та анулювання дозволів на використання праці іноземців в Україні</div>
+      </a>
+      <a href="#" class="service-card">
+        <div class="service-num">05</div>
+        <div class="service-title">Реєстрація колективних договорів</div>
+        <div class="service-desc">Повідомна реєстрація колективних договорів і угод між роботодавцями та профспілками</div>
+      </a>
+      <a href="#" class="service-card">
+        <div class="service-num">06</div>
+        <div class="service-title">Розслідування нещасних випадків</div>
+        <div class="service-desc">Участь у спеціальних розслідуваннях нещасних випадків та професійних захворювань на виробництві</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- NEWS -->
+<section>
+  <div class="section-inner">
+    <div class="section-head">
+      <div>
+        <div class="section-label">Актуально</div>
+        <h2 class="section-title">Новини та анонси</h2>
+      </div>
+      <a href="#" class="link-all">Усі новини →</a>
+    </div>
+    <div class="news-grid">
+      <a href="#" class="news-main">
+        <div class="news-main-tag">Важливо</div>
+        <div class="news-main-date">28 березня 2026</div>
+        <div class="news-main-title">Держпраця посилює контроль за виплатою заробітної плати в умовах воєнного стану</div>
+      </a>
+      <div class="news-list">
+        <a href="#" class="news-item">
+          <div class="news-item-tag">Законодавство</div>
+          <div class="news-item-title">Зміни до порядку оформлення трудових відносин під час воєнного стану</div>
+          <div class="news-item-date">25 березня 2026</div>
+        </a>
+        <a href="#" class="news-item">
+          <div class="news-item-tag">Дозволи на працю</div>
+          <div class="news-item-title">Нові вимоги до документів для отримання дозволу на роботу іноземних громадян</div>
+          <div class="news-item-date">22 березня 2026</div>
+        </a>
+        <a href="#" class="news-item">
+          <div class="news-item-tag">Перевірки</div>
+          <div class="news-item-title">Результати планових інспекцій підприємств у I кварталі 2026 року</div>
+          <div class="news-item-date">18 березня 2026</div>
+        </a>
+        <a href="#" class="news-item">
+          <div class="news-item-tag">Безпека праці</div>
+          <div class="news-item-title">Рекомендації щодо охорони праці для підприємств, що відновлюють діяльність</div>
+          <div class="news-item-date">15 березня 2026</div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-section">
+  <div class="section-inner">
+    <div class="section-label" style="color: rgba(255,255,255,0.45);">Наші результати</div>
+    <h2 class="section-title stats-title">Показники роботи<br>у 2025 році</h2>
+    <div class="stats-grid">
+      <div class="stat-block">
+        <div class="stat-block-num yellow">84 215</div>
+        <div class="stat-block-label">Перевірок проведено<br>суб'єктів господарювання</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-block-num blue">312 470</div>
+        <div class="stat-block-label">Порушень трудового<br>законодавства виявлено</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-block-num green">5,4 млрд</div>
+        <div class="stat-block-label">Гривень відшкодовано<br>заборгованості із зарплати</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-block-num red">18 430</div>
+        <div class="stat-block-label">Фактів нелегальної<br>зайнятості виявлено</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOTLINE BANNER -->
+<div class="hotline-banner">
+  <div class="hotline-inner">
+    <div class="hotline-left">
+      <div class="hotline-label">Безкоштовно по Україні</div>
+      <h2 class="hotline-title">Урядова гаряча лінія</h2>
+      <p class="hotline-desc">Звертайтесь з питань порушення трудових прав, затримки заробітної плати, охорони праці та нелегальної зайнятості</p>
+    </div>
+    <div class="hotline-right">
+      <div class="hotline-number">1545</div>
+      <button class="btn-call">📞 Зателефонувати</button>
+    </div>
+  </div>
+</div>
+
+<!-- PORTALS -->
+<section class="portals">
+  <div class="section-inner">
+    <div class="section-head">
+      <div>
+        <div class="section-label">Корисні ресурси</div>
+        <h2 class="section-title">Пов'язані портали</h2>
+      </div>
+    </div>
+    <div class="portals-grid">
+      <a href="#" class="portal-card">
+        <div class="portal-icon">🏛️</div>
+        <div>
+          <div class="portal-name">Мінекономіки</div>
+          <div class="portal-tag">Міністерство економіки України</div>
+        </div>
+      </a>
+      <a href="#" class="portal-card">
+        <div class="portal-icon">💼</div>
+        <div>
+          <div class="portal-name">Дія</div>
+          <div class="portal-tag">Цифрові послуги для громадян</div>
+        </div>
+      </a>
+      <a href="#" class="portal-card">
+        <div class="portal-icon">👷</div>
+        <div>
+          <div class="portal-name">Фонд соцстраху</div>
+          <div class="portal-tag">Від нещасних випадків на виробництві</div>
+        </div>
+      </a>
+      <a href="#" class="portal-card">
+        <div class="portal-icon">📑</div>
+        <div>
+          <div class="portal-name">Пенсійний фонд</div>
+          <div class="portal-tag">Пенсійний фонд України</div>
+        </div>
+      </a>
+      <a href="#" class="portal-card">
+        <div class="portal-icon">🔍</div>
+        <div>
+          <div class="portal-name">OpenData</div>
+          <div class="portal-tag">Відкриті дані Держпраці</div>
+        </div>
+      </a>
+      <a href="#" class="portal-card">
+        <div class="portal-icon">⚖️</div>
+        <div>
+          <div class="portal-name">Законодавство</div>
+          <div class="portal-tag">Верховна Рада України</div>
+        </div>
+      </a>
+      <a href="#" class="portal-card">
+        <div class="portal-icon">🌐</div>
+        <div>
+          <div class="portal-name">Портал держпослуг</div>
+          <div class="portal-tag">Єдиний державний портал</div>
+        </div>
+      </a>
+      <a href="#" class="portal-card">
+        <div class="portal-icon">📊</div>
+        <div>
+          <div class="portal-name">Держстат</div>
+          <div class="portal-tag">Державна служба статистики</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <div class="footer-logo-dot"></div>
+          ДЕРЖПРАЦЯ УКРАЇНИ
+        </div>
+        <p class="footer-brand-desc">Державна служба з питань праці — центральний орган виконавчої влади, що реалізує державну політику у сферах праці, зайнятості та охорони праці.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Послуги</div>
+        <div class="footer-links">
+          <a href="#">Подати скаргу</a>
+          <a href="#">Дозвіл на працю</a>
+          <a href="#">Перевірки</a>
+          <a href="#">Колективні договори</a>
+          <a href="#">Ліцензування</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Інформація</div>
+        <div class="footer-links">
+          <a href="#">Про Держпраці</a>
+          <a href="#">Керівництво</a>
+          <a href="#">Структура</a>
+          <a href="#">Нормативна база</a>
+          <a href="#">Публічна інформація</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Контакти</div>
+        <div class="footer-links">
+          <a href="#">01001, м. Київ,<br>вул. Десятинна, 14</a>
+          <a href="#">📞 1545</a>
+          <a href="#">📧 <span class="__cf_email__" data-cfemail="11787f777e517562613f767e673f6470">[email&#160;protected]</span></a>
+          <a href="#">Прийом громадян</a>
+          <a href="#">Електронна приймальня</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Державна служба з питань праці України. Усі права захищені.</span>
+      <div style="display:flex;gap:20px;">
+        <a href="#" style="color:rgba(255,255,255,0.35);text-decoration:none;">Політика конфіденційності</a>
+        <a href="#" style="color:rgba(255,255,255,0.35);text-decoration:none;">Доступність</a>
+        <a href="#" style="color:rgba(255,255,255,0.35);text-decoration:none;">Карта сайту</a>
+           </div>
+    </div>
+  </div>
+  <div class="flag-stripe"></div>
+</footer>
+
+<!-- MODAL: ПРО НАС -->
+<div class="about-overlay" id="aboutModal">
+  <div class="about-backdrop" id="aboutBackdrop"></div>
+  <div class="about-panel">
+    <div class="about-hero">
+      <button class="about-close" id="aboutClose">✕</button>
+      <div class="about-flag"></div>
+      <div class="about-hero-label">Офіційна інформація</div>
+      <h2 class="about-hero-title">Державна служба<br>з питань <span>праці</span></h2>
+      <p class="about-hero-desc">Центральний орган виконавчої влади, що реалізує державну політику у сферах праці, зайнятості населення, трудової міграції та охорони праці.</p>
+      <div class="about-hero-stats">
+        <div><div class="about-hstat-num">1932</div><div class="about-hstat-label">Рік заснування</div></div>
+        <div><div class="about-hstat-num">27</div><div class="about-hstat-label">Обласних управлінь</div></div>
+        <div><div class="about-hstat-num">6 500+</div><div class="about-hstat-label">Працівників</div></div>
+        <div><div class="about-hstat-num">90+</div><div class="about-hstat-label">Років досвіду</div></div>
+      </div>
+    </div>
+
+    <div class="about-content">
+      <div class="about-tabs">
+        <div class="about-tab active" onclick="switchTab('mission', this)">🎯 Місія та цінності</div>
+        <div class="about-tab" onclick="switchTab('leadership', this)">👤 Керівництво</div>
+        <div class="about-tab" onclick="switchTab('history', this)">📜 Історія</div>
+        <div class="about-tab" onclick="switchTab('structure', this)">🏛️ Структура</div>
+      </div>
+
+      <!-- МІСІЯ -->
+      <div class="about-tab-content active" id="tab-mission">
+        <p class="about-mission-text">Держпраця України — центральний орган виконавчої влади, що здійснює реалізацію державної політики у сферах промислової безпеки, охорони праці, гігієни праці, поводження з вибухонебезпечними предметами, здійснення державного гірничого нагляду, а також нагляду та контролю за дотриманням законодавства про працю, зайнятість населення та про загальнообов'язкове державне соціальне страхування.</p>
+        <p class="about-mission-text">Служба підпорядковується Міністерству економіки України та є правонаступником Державної інспекції України з питань праці.</p>
+        <div class="about-values">
+          <div class="about-value">
+            <div class="about-value-icon">⚖️</div>
+            <div class="about-value-title">Верховенство права</div>
+            <div class="about-value-text">Дотримання законодавства в усіх аспектах діяльності служби та захист прав кожного працівника</div>
+          </div>
+          <div class="about-value">
+            <div class="about-value-icon">🤝</div>
+            <div class="about-value-title">Відкритість</div>
+            <div class="about-value-text">Прозорість рішень, відкритий діалог з громадянами та бізнесом, доступність інформації</div>
+          </div>
+          <div class="about-value">
+            <div class="about-value-icon">🛡️</div>
+            <div class="about-value-title">Захист гідності праці</div>
+            <div class="about-value-text">Гарантування безпечних і справедливих умов праці для кожного громадянина України</div>
+          </div>
+          <div class="about-value">
+            <div class="about-value-icon">💡</div>
+            <div class="about-value-title">Інноваційність</div>
+            <div class="about-value-text">Впровадження цифрових інструментів, спрощення процедур, орієнтація на результат</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- КЕРІВНИЦТВО -->
+      <div class="about-tab-content" id="tab-leadership">
+        <div class="leadership-grid">
+          <div class="leader-card">
+            <div class="leader-avatar">👨‍💼</div>
+            <div>
+              <div class="leader-name">Коломієць Василь Іванович</div>
+              <div class="leader-role">Голова Держпраці</div>
+              <div class="leader-desc">Очолює службу з 2023 року. Має 20 років досвіду у сфері державного управління та трудового права.</div>
+            </div>
+          </div>
+          <div class="leader-card">
+            <div class="leader-avatar">👩‍💼</div>
+            <div>
+              <div class="leader-name">Савченко Олена Михайлівна</div>
+              <div class="leader-role">Заступник Голови</div>
+              <div class="leader-desc">Курує питання охорони праці, промислової безпеки та гірничого нагляду.</div>
+            </div>
+          </div>
+          <div class="leader-card">
+            <div class="leader-avatar">👨‍⚖️</div>
+            <div>
+              <div class="leader-name">Петренко Андрій Сергійович</div>
+              <div class="leader-role">Заступник Голови</div>
+              <div class="leader-desc">Відповідає за напрямок нагляду за дотриманням трудового законодавства та зайнятості.</div>
+            </div>
+          </div>
+          <div class="leader-card">
+            <div class="leader-avatar">👩‍💻</div>
+            <div>
+              <div class="leader-name">Мартиненко Ірина Олегівна</div>
+              <div class="leader-role">Заступник Голови</div>
+              <div class="leader-desc">Відповідає за цифрову трансформацію, міжнародне співробітництво та зв'язки з громадськістю.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ІСТОРІЯ -->
+      <div class="about-tab-content" id="tab-history">
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">1932</div>
+            <div class="timeline-title">Заснування інспекції праці</div>
+            <div class="timeline-text">Створення першого органу державного нагляду у сфері охорони праці в радянській Україні.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">1991</div>
+            <div class="timeline-title">Незалежна Україна</div>
+            <div class="timeline-text">Реорганізація відомства у відповідності до законодавства незалежної України. Прийняття Кодексу законів про працю.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">2014</div>
+            <div class="timeline-title">Створення Держпраці</div>
+            <div class="timeline-text">Указом Президента України утворено Державну службу з питань праці шляхом реорганізації Державної інспекції.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year">2019</div>
+            <div class="timeline-title">Цифрова трансформація</div>
+            <div class="timeline-text">Запуск електронних сервісів, онлайн-прийому заяв та електронного документообігу з суб'єктами господарювання.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--yellow);box-shadow:0 0 0 2px var(--yellow);"></div>
+            <div class="timeline-year">2022–сьогодні</div>
+            <div class="timeline-title">Робота в умовах воєнного стану</div>
+            <div class="timeline-text">Адаптація законодавства та діяльності служби до умов воєнного часу. Захист трудових прав мобілізованих та переміщених осіб.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- СТРУКТУРА -->
+      <div class="about-tab-content" id="tab-structure">
+        <div class="structure-list">
+          <a href="#" class="structure-item"><div class="structure-num">ЦА</div><div><div class="structure-name">Центральний апарат</div><div class="structure-region">м. Київ, вул. Десятинна, 14</div></div><div class="structure-arrow">→</div></a>
+          <a href="#" class="structure-item"><div class="structure-num">01</div><div><div class="structure-name">Головне управління у м. Київ</div><div class="structure-region">Київська міська державна адміністрація</div></div><div class="structure-arrow">→</div></a>
+          <a href="#" class="structure-item"><div class="structure-num">02</div><div><div class="structure-name">Управління у Вінницькій області</div><div class="structure-region">м. Вінниця</div></div><div class="structure-arrow">→</div></a>
+          <a href="#" class="structure-item"><div class="structure-num">03</div><div><div class="structure-name">Управління у Дніпропетровській області</div><div class="structure-region">м. Дніпро</div></div><div class="structure-arrow">→</div></a>
+          <a href="#" class="structure-item"><div class="structure-num">04</div><div><div class="structure-name">Управління у Харківській області</div><div class="structure-region">м. Харків</div></div><div class="structure-arrow">→</div></a>
+          <a href="#" class="structure-item"><div class="structure-num">05</div><div><div class="structure-name">Управління у Львівській області</div><div class="structure-region">м. Львів</div></div><div class="structure-arrow">→</div></a>
+          <a href="#" class="structure-item" style="border-color:var(--gray-border);background:var(--gray-bg);cursor:default;pointer-events:none"><div class="structure-num" style="background:var(--gray-border);color:var(--gray-text)">…</div><div><div class="structure-name" style="color:var(--gray-text)">ще 22 регіональних управління</div><div class="structure-region">Переглянути повний перелік</div></div><div class="structure-arrow">→</div></a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ПОДАТИ СКАРГУ -->
+<div class="modal-overlay" id="complaintModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-header">
+      <div class="modal-header-flag"></div>
+      <div class="modal-tag">📋 Електронне звернення</div>
+      <h2 class="modal-title" id="modalTitle">Подати скаргу<br>на роботодавця</h2>
+      <p class="modal-subtitle">Держпраця України · Безкоштовно · Анонімно</p>
+      <button class="modal-close" id="modalClose" aria-label="Закрити">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-steps">
+        <div class="form-step active" id="step1tab"><span class="form-step-num">1</span>Тип скарги</div>
+        <div class="form-step" id="step2tab"><span class="form-step-num">2</span>Ваші дані</div>
+        <div class="form-step" id="step3tab"><span class="form-step-num">3</span>Деталі</div>
+      </div>
+      <!-- PAGE 1 -->
+      <div class="form-page active" id="page1">
+        <div class="form-group">
+          <label class="form-label">Тип порушення <span>*</span></label>
+          <div class="violation-types">
+            <label class="vtype" onclick="selectVtype(this)"><input type="radio" name="vtype"><span class="vtype-icon">💰</span> Затримка зарплати</label>
+            <label class="vtype" onclick="selectVtype(this)"><input type="radio" name="vtype"><span class="vtype-icon">🚫</span> Незаконне звільнення</label>
+            <label class="vtype" onclick="selectVtype(this)"><input type="radio" name="vtype"><span class="vtype-icon">⛑️</span> Порушення охорони праці</label>
+            <label class="vtype" onclick="selectVtype(this)"><input type="radio" name="vtype"><span class="vtype-icon">📄</span> Незаконна зайнятість</label>
+            <label class="vtype" onclick="selectVtype(this)"><input type="radio" name="vtype"><span class="vtype-icon">⚖️</span> Дискримінація</label>
+            <label class="vtype" onclick="selectVtype(this)"><input type="radio" name="vtype"><span class="vtype-icon">📋</span> Інше порушення</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Назва підприємства / роботодавця <span>*</span></label>
+          <input class="form-input" type="text" placeholder="ТОВ «Назва компанії» або ФОП Прізвище">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Місцезнаходження підприємства <span>*</span></label>
+          <input class="form-input" type="text" placeholder="м. Київ, вул. Хрещатик, 1">
+        </div>
+        <div class="modal-footer">
+          <span style="font-size:0.75rem;color:var(--gray-text)">Крок 1 з 3</span>
+          <button class="btn-modal-next" onclick="goStep(2)">Далі →</button>
+        </div>
+      </div>
+      <!-- PAGE 2 -->
+      <div class="form-page" id="page2">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Прізвище <span>*</span></label>
+            <input class="form-input" type="text" placeholder="Іваненко">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ім'я та по батькові <span>*</span></label>
+            <input class="form-input" type="text" placeholder="Іван Петрович">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Електронна пошта <span>*</span></label>
+          <input class="form-input" type="email" placeholder="ivan@email.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Номер телефону</label>
+          <input class="form-input" type="tel" placeholder="+380 XX XXX XX XX">
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:flex;align-items:center;gap:8px;cursor:pointer">
+            <input type="checkbox" style="width:16px;height:16px;accent-color:var(--blue-mid)">
+            Подати скаргу анонімно
+          </label>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-modal-back" onclick="goStep(1)">← Назад</button>
+          <button class="btn-modal-next" onclick="goStep(3)">Далі →</button>
+        </div>
+      </div>
+      <!-- PAGE 3 -->
+      <div class="form-page" id="page3">
+        <div class="form-group">
+          <label class="form-label">Суть скарги <span>*</span></label>
+          <textarea class="form-textarea" placeholder="Опишіть детально порушення трудових прав: що сталося, коли, яка сума заборгованості (якщо застосовно)..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Бажаний результат</label>
+          <select class="form-select">
+            <option value="">Оберіть очікуваний результат</option>
+            <option>Виплата заборгованої зарплати</option>
+            <option>Поновлення на роботі</option>
+            <option>Усунення порушень охорони праці</option>
+            <option>Притягнення до відповідальності</option>
+            <option>Позапланова перевірка підприємства</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Додаткові документи</label>
+          <div class="file-drop" onclick="document.getElementById('fileInput').click()">
+            <div class="file-drop-icon">📎</div>
+            <div class="file-drop-text"><span class="file-drop-link">Завантажте файли</span> або перетягніть сюди<br><small>Трудовий договір, розрахункові листки (PDF, JPG, PNG)</small></div>
+            <input type="file" id="fileInput" style="display:none" multiple accept=".pdf,.jpg,.png,.jpeg">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:flex;align-items:flex-start;gap:8px;cursor:pointer">
+            <input type="checkbox" style="width:16px;height:16px;margin-top:2px;accent-color:var(--blue-mid);flex-shrink:0">
+            <span style="font-size:0.78rem;color:var(--gray-text)">Я погоджуюся з <a href="#" style="color:var(--blue-mid)">умовами обробки персональних даних</a> та підтверджую достовірність інформації</span>
+          </label>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-modal-back" onclick="goStep(2)">← Назад</button>
+          <button class="btn-modal-submit" onclick="submitForm()">✅ Надіслати скаргу</button>
+        </div>
+      </div>
+      <!-- SUCCESS -->
+      <div class="modal-success" id="modalSuccess">
+        <div class="success-icon">✅</div>
+        <h3 class="success-title">Скаргу успішно подано!</h3>
+        <p style="font-size:0.82rem;color:var(--gray-text);margin-bottom:8px">Номер вашого звернення:</p>
+        <div class="success-num" id="successNum">ДП-2026-XXXXX</div>
+        <p class="success-desc">Збережіть цей номер для відстеження статусу. Наш інспектор зв'яжеться з вами протягом <strong>5 робочих днів</strong> на вашу електронну пошту.</p>
+        <button class="btn-modal-close-done" onclick="closeModal()">Закрити</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── ABOUT MODAL ──
+  function openAboutModal() {
+    document.getElementById('aboutModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeAboutModal() {
+    document.getElementById('aboutModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function switchTab(id, el) {
+    document.querySelectorAll('.about-tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.about-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    el.classList.add('active');
+  }
+
+  // ── COMPLAINT MODAL ──
+  function openComplaintModal() {
+    document.getElementById('complaintModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    document.getElementById('complaintModal').classList.remove('open');
+    document.body.style.overflow = '';
+    setTimeout(resetModal, 400);
+  }
+  function resetModal() {
+    document.getElementById('modalSuccess').classList.remove('show');
+    document.querySelectorAll('.form-page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page1').classList.add('active');
+    document.querySelectorAll('.form-step').forEach((s,i) => {
+      s.classList.remove('active','done');
+      if(i===0) s.classList.add('active');
+    });
+  }
+  function goStep(n) {
+    for (let i = 1; i <= 3; i++) {
+      document.getElementById('page'+i).classList.toggle('active', i===n);
+      const tab = document.getElementById('step'+i+'tab');
+      tab.classList.remove('active','done');
+      if(i===n) tab.classList.add('active');
+      else if(i<n) tab.classList.add('done');
+    }
+  }
+  function selectVtype(el) {
+    document.querySelectorAll('.vtype').forEach(v => v.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+  function submitForm() {
+    const num = 'ДП-2026-' + Math.floor(10000 + Math.random() * 90000);
+    document.getElementById('successNum').textContent = num;
+    document.querySelectorAll('.form-page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.form-step').forEach(s => { s.classList.remove('active'); s.classList.add('done'); });
+    document.getElementById('modalSuccess').classList.add('show');
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    // Complaint modal
+    document.getElementById('complaintModal').addEventListener('click', function(e) {
+      if(e.target===this) closeModal();
+    });
+    document.getElementById('modalClose').addEventListener('click', closeModal);
+    document.querySelectorAll('a, button').forEach(el => {
+      if(el.textContent.trim().includes('скарг') || el.textContent.trim().includes('Скарг')) {
+        el.addEventListener('click', function(e) { e.preventDefault(); openComplaintModal(); });
+      }
+    });
+
+    // About modal
+    document.getElementById('aboutClose').addEventListener('click', closeAboutModal);
+    document.getElementById('aboutBackdrop').addEventListener('click', closeAboutModal);
+    document.querySelectorAll('a, button').forEach(el => {
+      const t = el.textContent.trim();
+      if (t === 'Про нас' || t === 'Про Держпраці') {
+        el.addEventListener('click', function(e) { e.preventDefault(); openAboutModal(); });
+      }
+    });
+  });
+  document.addEventListener('keydown', e => {
+    if(e.key==='Escape') { closeModal(); closeAboutModal(); }
+  });
+</script>
+</body>
 </html>
