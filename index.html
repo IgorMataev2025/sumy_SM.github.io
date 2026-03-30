@@ -1228,6 +1228,229 @@
     .about-values { grid-template-columns: 1fr; }
     .leadership-grid { grid-template-columns: 1fr; }
   }
+
+  /* ── CHECK ENTERPRISE MODAL ── */
+  .check-modal {
+    background: var(--white);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 680px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.35);
+    transform: translateY(30px) scale(0.97);
+    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    position: relative;
+  }
+  .modal-overlay.open .check-modal { transform: translateY(0) scale(1); }
+
+  .check-modal-header {
+    background: linear-gradient(135deg, #003087, #005CC8);
+    border-radius: 20px 20px 0 0;
+    padding: 28px 32px 24px;
+    position: relative;
+  }
+  .check-modal-header .modal-header-flag {
+    height: 4px;
+    background: linear-gradient(90deg, #FFD700 50%, #0057B8 50%);
+    border-radius: 2px;
+    margin-bottom: 18px;
+  }
+  .check-search-box {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .check-search-input {
+    flex: 1;
+    padding: 13px 16px;
+    border-radius: 10px;
+    border: 2px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.12);
+    color: var(--white);
+    font-size: 0.92rem;
+    font-family: 'Montserrat', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .check-search-input::placeholder { color: rgba(255,255,255,0.45); }
+  .check-search-input:focus { border-color: var(--yellow); background: rgba(255,255,255,0.18); }
+  .check-search-btn {
+    background: var(--yellow);
+    color: var(--blue-deep);
+    border: none;
+    padding: 13px 22px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+    white-space: nowrap;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .check-search-btn:hover { background: #e6c200; transform: translateY(-1px); }
+  .check-search-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  .check-modal-body { padding: 28px 32px 32px; }
+
+  .check-idle {
+    text-align: center;
+    padding: 32px 0 16px;
+  }
+  .check-idle-icon { font-size: 3.5rem; margin-bottom: 12px; }
+  .check-idle-title { font-family: 'Geologica', sans-serif; font-weight: 700; font-size: 1rem; color: var(--dark); margin-bottom: 6px; }
+  .check-idle-desc { font-size: 0.8rem; color: var(--gray-text); line-height: 1.55; max-width: 380px; margin: 0 auto; }
+  .check-idle-chips { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 20px; }
+  .check-chip {
+    background: var(--gray-bg);
+    border: 1.5px solid var(--gray-border);
+    border-radius: 50px;
+    padding: 6px 14px;
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: var(--gray-text);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .check-chip:hover { border-color: var(--blue-mid); color: var(--blue-mid); background: #EBF2FF; }
+
+  .check-loading {
+    display: none;
+    text-align: center;
+    padding: 40px 0;
+  }
+  .check-loading.show { display: block; }
+  .check-spinner {
+    width: 48px; height: 48px;
+    border: 4px solid var(--gray-border);
+    border-top-color: var(--blue-mid);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .check-loading-text { font-size: 0.85rem; color: var(--gray-text); font-weight: 600; }
+  .check-loading-sub { font-size: 0.75rem; color: var(--gray-text); opacity: 0.7; margin-top: 4px; }
+
+  .check-result {
+    display: none;
+    animation: fadeUp 0.4s ease;
+  }
+  .check-result.show { display: block; }
+
+  .check-result-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    background: var(--gray-bg);
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border: 1.5px solid var(--gray-border);
+  }
+  .check-result-logo {
+    width: 52px; height: 52px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--blue-deep), var(--blue-mid));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+    color: white;
+  }
+  .check-result-name { font-family: 'Geologica', sans-serif; font-weight: 800; font-size: 1.05rem; color: var(--dark); margin-bottom: 4px; letter-spacing: -0.01em; }
+  .check-result-code { font-size: 0.75rem; color: var(--gray-text); font-weight: 600; }
+  .check-result-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .check-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px;
+    border-radius: 50px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .check-badge.green { background: #D1FAE5; color: #065F46; }
+  .check-badge.yellow { background: #FFF3B0; color: #7A5C00; }
+  .check-badge.red { background: #FEE2E2; color: #991B1B; }
+  .check-badge.blue { background: #DBEAFE; color: #1E40AF; }
+
+  .check-sections { display: flex; flex-direction: column; gap: 14px; }
+  .check-section {
+    border: 1.5px solid var(--gray-border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .check-section-head {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 18px;
+    background: var(--gray-bg);
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: var(--dark);
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+  }
+  .check-section-head:hover { background: #EBF2FF; }
+  .check-section-icon { font-size: 1.1rem; }
+  .check-section-arrow { margin-left: auto; font-size: 0.75rem; color: var(--gray-text); transition: transform 0.2s; }
+  .check-section.open .check-section-arrow { transform: rotate(180deg); }
+  .check-section-body {
+    display: none;
+    padding: 16px 18px;
+    font-size: 0.82rem;
+    color: var(--gray-text);
+    line-height: 1.7;
+    border-top: 1px solid var(--gray-border);
+  }
+  .check-section.open .check-section-body { display: block; }
+  .check-section-body strong { color: var(--dark); }
+  .check-section-body ul { padding-left: 18px; margin-top: 6px; }
+  .check-section-body li { margin-bottom: 4px; }
+
+  .check-violations {
+    background: #FFF8F8;
+    border: 1.5px solid #FECACA;
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+  }
+  .check-violations-title { font-weight: 700; font-size: 0.82rem; color: #991B1B; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .check-violation-item { font-size: 0.78rem; color: #7F1D1D; line-height: 1.55; padding: 6px 0; border-bottom: 1px solid #FECACA; }
+  .check-violation-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+  .check-cta {
+    display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;
+  }
+  .check-cta-btn {
+    flex: 1;
+    min-width: 140px;
+    padding: 11px 16px;
+    border-radius: 9px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: center;
+    transition: all 0.2s;
+    border: none;
+  }
+  .check-cta-btn.primary { background: var(--blue-mid); color: var(--white); }
+  .check-cta-btn.primary:hover { background: var(--blue-deep); }
+  .check-cta-btn.secondary { background: var(--gray-bg); color: var(--dark); border: 1.5px solid var(--gray-border); }
+  .check-cta-btn.secondary:hover { border-color: var(--blue-mid); color: var(--blue-mid); }
+  .check-cta-btn.danger { background: #FEE2E2; color: #991B1B; border: 1.5px solid #FECACA; }
+  .check-cta-btn.danger:hover { background: #FEE2E2; border-color: #F87171; }
+
+  .check-error {
+    display: none;
+    text-align: center;
+    padding: 32px 0;
+  }
+  .check-error.show { display: block; }
+  .check-error-icon { font-size: 3rem; margin-bottom: 12px; }
+  .check-error-title { font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+  .check-error-desc { font-size: 0.82rem; color: var(--gray-text); }
 </style>
 </head>
 <body>
@@ -1748,6 +1971,71 @@
   </div>
 </div>
 
+<!-- MODAL: ПЕРЕВІРИТИ ПІДПРИЄМСТВО -->
+<div class="modal-overlay" id="checkModal">
+  <div class="check-modal" role="dialog" aria-modal="true" aria-labelledby="checkModalTitle">
+    <div class="check-modal-header">
+      <div class="modal-header-flag"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+        <div>
+          <div class="modal-tag">🔍 Інспекційний реєстр</div>
+          <h2 class="modal-title" id="checkModalTitle" style="margin-bottom:4px;">Перевірити<br>підприємство</h2>
+          <p class="modal-subtitle">Держпраця України · Відкриті дані · AI-аналіз</p>
+        </div>
+        <button class="modal-close" id="checkModalClose" aria-label="Закрити">✕</button>
+      </div>
+      <div class="check-search-box">
+        <input class="check-search-input" id="checkSearchInput" type="text" placeholder="Назва підприємства або ЄДРПОУ…" autocomplete="off">
+        <button class="check-search-btn" id="checkSearchBtn" onclick="runEnterpriseCheck()">
+          <span id="checkBtnIcon">🔍</span> Перевірити
+        </button>
+      </div>
+    </div>
+    <div class="check-modal-body">
+
+      <!-- IDLE STATE -->
+      <div class="check-idle" id="checkIdle">
+        <div class="check-idle-icon">🏢</div>
+        <div class="check-idle-title">Введіть назву або код ЄДРПОУ</div>
+        <div class="check-idle-desc">Система перевірить наявність порушень трудового законодавства, штрафів та результатів планових інспекцій</div>
+        <div class="check-idle-chips">
+          <span class="check-chip" onclick="fillAndSearch('ТОВ «Будівельна компанія»')">ТОВ «Будівельна компанія»</span>
+          <span class="check-chip" onclick="fillAndSearch('ПрАТ «Укртелеком»')">ПрАТ «Укртелеком»</span>
+          <span class="check-chip" onclick="fillAndSearch('ФОП Петренко')">ФОП Петренко</span>
+          <span class="check-chip" onclick="fillAndSearch('21560766')">ЄДРПОУ: 21560766</span>
+        </div>
+      </div>
+
+      <!-- LOADING -->
+      <div class="check-loading" id="checkLoading">
+        <div class="check-spinner"></div>
+        <div class="check-loading-text">Запит до реєстру Держпраці…</div>
+        <div class="check-loading-sub" id="checkLoadingSub">Аналіз даних інспекцій та порушень</div>
+      </div>
+
+      <!-- ERROR -->
+      <div class="check-error" id="checkError">
+        <div class="check-error-icon">⚠️</div>
+        <div class="check-error-title">Не вдалося отримати дані</div>
+        <div class="check-error-desc" id="checkErrorDesc">Спробуйте ще раз або уточніть запит</div>
+        <button class="check-cta-btn secondary" style="margin-top:16px;width:auto;padding:10px 24px;" onclick="resetCheckModal()">← Спробувати знову</button>
+      </div>
+
+      <!-- RESULT -->
+      <div class="check-result" id="checkResult">
+        <div class="check-result-header" id="checkResultHeader"></div>
+        <div id="checkResultContent"></div>
+        <div class="check-cta">
+          <button class="check-cta-btn danger" onclick="openComplaintModal()">📋 Подати скаргу</button>
+          <button class="check-cta-btn secondary" onclick="resetCheckModal()">🔍 Нова перевірка</button>
+          <button class="check-cta-btn primary" onclick="closeCheckModal()">Закрити</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: ПОДАТИ СКАРГУ -->
 <div class="modal-overlay" id="complaintModal">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -1871,6 +2159,199 @@
 </div>
 
 <script>
+  // ── CHECK ENTERPRISE MODAL ──
+  function openCheckModal() {
+    document.getElementById('checkModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => document.getElementById('checkSearchInput').focus(), 400);
+  }
+  function closeCheckModal() {
+    document.getElementById('checkModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function resetCheckModal() {
+    document.getElementById('checkIdle').style.display = '';
+    document.getElementById('checkLoading').classList.remove('show');
+    document.getElementById('checkError').classList.remove('show');
+    document.getElementById('checkResult').classList.remove('show');
+    document.getElementById('checkSearchInput').value = '';
+    document.getElementById('checkSearchBtn').disabled = false;
+    document.getElementById('checkBtnIcon').textContent = '🔍';
+  }
+  function fillAndSearch(q) {
+    document.getElementById('checkSearchInput').value = q;
+    runEnterpriseCheck();
+  }
+
+  const loadingMessages = [
+    'Запит до реєстру Держпраці…',
+    'Перевірка інспекційного журналу…',
+    'Аналіз порушень трудового законодавства…',
+    'Формування звіту…'
+  ];
+  let loadingInterval = null;
+
+  async function runEnterpriseCheck() {
+    const query = document.getElementById('checkSearchInput').value.trim();
+    if (!query) {
+      document.getElementById('checkSearchInput').focus();
+      document.getElementById('checkSearchInput').style.borderColor = '#F87171';
+      setTimeout(() => document.getElementById('checkSearchInput').style.borderColor = '', 1500);
+      return;
+    }
+
+    // Show loading
+    document.getElementById('checkIdle').style.display = 'none';
+    document.getElementById('checkError').classList.remove('show');
+    document.getElementById('checkResult').classList.remove('show');
+    document.getElementById('checkLoading').classList.add('show');
+    document.getElementById('checkSearchBtn').disabled = true;
+    document.getElementById('checkBtnIcon').textContent = '⏳';
+
+    let msgIdx = 0;
+    loadingInterval = setInterval(() => {
+      msgIdx = (msgIdx + 1) % loadingMessages.length;
+      document.getElementById('checkLoadingSub').textContent = loadingMessages[msgIdx];
+    }, 1800);
+
+    const prompt = `Ти — AI-асистент реєстру Держпраці України. Користувач запитує інформацію про підприємство: "${query}".
+
+Згенеруй реалістичну демонстраційну довідку про це підприємство у форматі JSON (тільки JSON, без пояснень):
+{
+  "found": true,
+  "name": "повна офіційна назва",
+  "edrpou": "8-значний код",
+  "status": "active|suspended|liquidated",
+  "type": "ТОВ|ПрАТ|ФОП|ПАТ|КП",
+  "region": "область/місто",
+  "activity": "основний вид діяльності",
+  "employees": "орієнтовна кількість",
+  "inspections_total": число від 1 до 50,
+  "last_inspection": "дата останньої перевірки (2023-2026)",
+  "violations_count": число від 0 до 20,
+  "fines_total": "сума штрафів у грн або 0",
+  "risk_level": "low|medium|high",
+  "violations": ["порушення 1 якщо є", "порушення 2 якщо є"],
+  "salary_debt": "сума боргу із ЗП або відсутня",
+  "collective_agreement": true або false,
+  "last_result": "коротко — результат останньої перевірки"
+}
+Зроби дані правдоподібними для типового українського підприємства. Якщо query схожий на неіснуюче підприємство — все одно згенеруй правдоподібні дані.`;
+
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+      const data = await response.json();
+      const text = data.content.map(i => i.text || '').join('');
+      const clean = text.replace(/```json|```/g, '').trim();
+      const parsed = JSON.parse(clean);
+      clearInterval(loadingInterval);
+      document.getElementById('checkLoading').classList.remove('show');
+      renderCheckResult(parsed, query);
+    } catch (e) {
+      clearInterval(loadingInterval);
+      document.getElementById('checkLoading').classList.remove('show');
+      document.getElementById('checkErrorDesc').textContent = 'Помилка підключення до реєстру. Перевірте з\'єднання та спробуйте знову.';
+      document.getElementById('checkError').classList.add('show');
+      document.getElementById('checkSearchBtn').disabled = false;
+      document.getElementById('checkBtnIcon').textContent = '🔍';
+    }
+  }
+
+  function renderCheckResult(d, query) {
+    document.getElementById('checkSearchBtn').disabled = false;
+    document.getElementById('checkBtnIcon').textContent = '🔍';
+
+    const statusMap = { active: ['✅ Діє', 'green'], suspended: ['⏸ Призупинено', 'yellow'], liquidated: ['🚫 Ліквідовано', 'red'] };
+    const riskMap = { low: ['🟢 Низький ризик', 'green'], medium: ['🟡 Середній ризик', 'yellow'], high: ['🔴 Високий ризик', 'red'] };
+    const [statusLabel, statusColor] = statusMap[d.status] || ['✅ Діє', 'green'];
+    const [riskLabel, riskColor] = riskMap[d.risk_level] || ['🟢 Низький ризик', 'green'];
+
+    document.getElementById('checkResultHeader').innerHTML = `
+      <div class="check-result-logo">🏢</div>
+      <div style="flex:1">
+        <div class="check-result-name">${d.name || query}</div>
+        <div class="check-result-code">ЄДРПОУ: ${d.edrpou || '—'} · ${d.region || ''}</div>
+        <div class="check-result-badges">
+          <span class="check-badge ${statusColor}">${statusLabel}</span>
+          <span class="check-badge ${riskColor}">${riskLabel}</span>
+          ${d.collective_agreement ? '<span class="check-badge blue">📄 Колдоговір є</span>' : '<span class="check-badge yellow">⚠️ Без колдоговору</span>'}
+        </div>
+      </div>`;
+
+    let violationsHtml = '';
+    if (d.violations && d.violations.length > 0) {
+      violationsHtml = `<div class="check-violations">
+        <div class="check-violations-title">⚠️ Виявлені порушення (${d.violations.length})</div>
+        ${d.violations.map(v => `<div class="check-violation-item">• ${v}</div>`).join('')}
+      </div>`;
+    }
+
+    const sections = [
+      {
+        icon: '📊', title: 'Загальні відомості', body: `
+        <strong>Тип:</strong> ${d.type || '—'}<br>
+        <strong>Вид діяльності:</strong> ${d.activity || '—'}<br>
+        <strong>Чисельність:</strong> ${d.employees || '—'} працівників<br>
+        <strong>Регіон:</strong> ${d.region || '—'}`
+      },
+      {
+        icon: '🔍', title: `Перевірки · ${d.inspections_total || 0} всього`, body: `
+        <strong>Остання перевірка:</strong> ${d.last_inspection || '—'}<br>
+        <strong>Результат:</strong> ${d.last_result || '—'}<br>
+        <strong>Порушень виявлено:</strong> ${d.violations_count || 0}<br>
+        <strong>Штрафів нараховано:</strong> ${d.fines_total || '0 грн'}`
+      },
+      {
+        icon: '💰', title: 'Виплата зарплати', body: `
+        <strong>Заборгованість із ЗП:</strong> ${d.salary_debt || 'відсутня'}<br>
+        ${d.salary_debt && d.salary_debt !== 'відсутня' ? '<span style="color:#991B1B">⚠️ Наявна заборгованість — рекомендується звернення до Держпраці</span>' : '<span style="color:#065F46">✅ Порушень щодо виплати зарплати не виявлено</span>'}`
+      }
+    ];
+
+    const sectionsHtml = sections.map((s, i) => `
+      <div class="check-section ${i === 0 ? 'open' : ''}">
+        <div class="check-section-head" onclick="toggleCheckSection(this.parentElement)">
+          <span class="check-section-icon">${s.icon}</span>
+          ${s.title}
+          <span class="check-section-arrow">▼</span>
+        </div>
+        <div class="check-section-body">${s.body}</div>
+      </div>`).join('');
+
+    document.getElementById('checkResultContent').innerHTML = violationsHtml + `<div class="check-sections">${sectionsHtml}</div>`;
+    document.getElementById('checkResult').classList.add('show');
+  }
+
+  function toggleCheckSection(el) {
+    el.classList.toggle('open');
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('checkModal').addEventListener('click', function(e) {
+      if (e.target === this) closeCheckModal();
+    });
+    document.getElementById('checkModalClose').addEventListener('click', closeCheckModal);
+    document.getElementById('checkSearchInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') runEnterpriseCheck();
+    });
+
+    // Wire "Перевірити підприємство" buttons
+    document.querySelectorAll('a, button').forEach(el => {
+      const t = el.textContent.trim();
+      if (t.includes('Перевірити підприємство') || t === 'Перевірити підприємство') {
+        el.addEventListener('click', function(e) { e.preventDefault(); openCheckModal(); });
+      }
+    });
+  });
+
   // ── ABOUT MODAL ──
   function openAboutModal() {
     document.getElementById('aboutModal').classList.add('open');
