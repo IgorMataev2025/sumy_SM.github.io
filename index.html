@@ -196,7 +196,7 @@ footer{background:#0a1a35;padding:2rem;text-align:center;color:rgba(255,255,255,
       <div>
         <p class="contact-desc">Open to new opportunities and interesting projects. I'll reply within 24 hours.</p>
         <div class="contact-items">
-          <div class="contact-item"><div class="contact-icon">✉</div><div class="contact-text"><div class="contact-label">Email</div><a href="mailto:imataev_job@ukr.net">imataev_job@ukr.net</a></div></div>
+          <div class="contact-item"><div class="contact-icon">✉</div><div class="contact-text"><div class="contact-label">Email</div><a href="/cdn-cgi/l/email-protection#284145495c494d5e7742474a685d435a06464d5c"><span class="__cf_email__" data-cfemail="b2dbdfd3c6d3d7c4edd8ddd0f2c7d9c09cdcd7c6">[email&#160;protected]</span></a></div></div>
           <div class="contact-item"><div class="contact-icon">📍</div><div class="contact-text"><div class="contact-label">Location</div><span>Ukraine</span></div></div>
           <div class="contact-item"><div class="contact-icon">💼</div><div class="contact-text"><div class="contact-label">LinkedIn</div><a href="#">linkedin.com/in/igormataev</a></div></div>
           <div class="contact-item"><div class="contact-icon">🐙</div><div class="contact-text"><div class="contact-label">GitHub</div><a href="#">github.com/igormataev</a></div></div>
@@ -230,23 +230,19 @@ footer{background:#0a1a35;padding:2rem;text-align:center;color:rgba(255,255,255,
 
 <script>
   // ─── EmailJS Configuration ───────────────────────────────────────────────────
-  // To activate real email delivery:
   // 1. Sign up free at https://www.emailjs.com
-  // 2. Create an Email Service (Gmail, Outlook, etc.)
-  // 3. Create an Email Template with variables: {{from_name}}, {{from_email}}, {{message}}
-  // 4. Replace the three values below with your own IDs
-  // 5. Remove the DEMO_MODE flag
+  // 2. Email Services → Add New Service → connect Gmail/Outlook → copy Service ID
+  // 3. Email Templates → Create Template with: {{from_name}}, {{from_email}}, {{message}}, {{reply_to}}
+  // 4. Account → API Keys → copy Public Key
+  // ─────────────────────────────────────────────────────────────────────────────
 
-  const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';   // From Account → API Keys
-  const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';   // From Email Services tab
-  const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';  // From Email Templates tab
-  const DEMO_MODE = true; // Set to false after configuring EmailJS above
+  const EMAILJS_PUBLIC_KEY  = 'JmW5AHmnrDP_4euW4';
+  const EMAILJS_SERVICE_ID  = 'service_6x52wig';
+  const EMAILJS_TEMPLATE_ID = 'template_74acfdg';
 
   // ─────────────────────────────────────────────────────────────────────────────
 
-  if (!DEMO_MODE) {
-    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
-  }
+  emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
 
   function validateField(id, errorId, validator) {
     const el = document.getElementById(id);
@@ -300,29 +296,20 @@ footer{background:#0a1a35;padding:2rem;text-align:center;color:rgba(255,255,255,
     setLoading(true);
 
     try {
-      if (DEMO_MODE) {
-        // Simulate network delay for demo
-        await new Promise(r => setTimeout(r, 1500));
-        showStatus('success', '✓ Message sent! (Demo mode — configure EmailJS to send real emails.)');
-        document.getElementById('senderName').value = '';
-        document.getElementById('senderEmail').value = '';
-        document.getElementById('msgBody').value = '';
-      } else {
-        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-          from_name:  name,
-          from_email: email,
-          message:    message,
-          to_name:    'Igor Mataev',
-          reply_to:   email,
-        });
-        showStatus('success', '✓ Message sent! I\'ll get back to you within 24 hours.');
-        document.getElementById('senderName').value = '';
-        document.getElementById('senderEmail').value = '';
-        document.getElementById('msgBody').value = '';
-      }
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        from_name:  name,
+        from_email: email,
+        message:    message,
+        to_name:    'Igor Mataev',
+        reply_to:   email,
+      });
+      showStatus('success', '✓ Message sent! I\'ll get back to you within 24 hours.');
+      document.getElementById('senderName').value = '';
+      document.getElementById('senderEmail').value = '';
+      document.getElementById('msgBody').value = '';
     } catch (err) {
       console.error('EmailJS error:', err);
-      showStatus('error', '✗ Failed to send message. Please try emailing directly.');
+      showStatus('error', '✗ Failed to send. Please try again or email directly.');
     } finally {
       setLoading(false);
     }
