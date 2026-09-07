@@ -14,6 +14,7 @@
             <a class="site-logo" href="~/Default.aspx" runat="server">Портал послуг</a>
             <nav class="site-nav">
                 <a href="~/Default.aspx" runat="server">Головна</a>
+                <a href="~/Donate.aspx" runat="server">Підтримати проєкт</a>
                 <asp:PlaceHolder ID="anonNav" runat="server">
                     <a href="~/Login.aspx" runat="server">Вхід</a>
                     <a href="~/Register.aspx" runat="server">Реєстрація</a>

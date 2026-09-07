@@ -1,5 +1,6 @@
 # Локальні секрети / налаштування (не комітити)
 portal/ConnectionStrings.config
+portal/LiqPay.config
 portal/Web.Debug.config
 portal/Web.Release.config
 

@@ -72,6 +72,21 @@ CREATE TABLE IF NOT EXISTS ModerationLog (
     CONSTRAINT FK_ModerationLog_Admin FOREIGN KEY (AdminId) REFERENCES Users(UserId)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+CREATE TABLE IF NOT EXISTS Donations (
+    DonationId      INT AUTO_INCREMENT PRIMARY KEY,
+    OrderId         VARCHAR(64) NOT NULL UNIQUE,
+    Amount          DECIMAL(10,2) NOT NULL,
+    Currency        VARCHAR(3) NOT NULL DEFAULT 'UAH',
+    Status          ENUM('Pending','Success','Failure') NOT NULL DEFAULT 'Pending',
+    LiqPayStatus    VARCHAR(50) NULL, -- сирий статус з callback LiqPay (success/failure/reversed/... ) для діагностики
+    PaymentId       VARCHAR(64) NULL, -- payment_id від LiqPay після обробки
+    DonorName       VARCHAR(255) NULL,
+    DonorEmail      VARCHAR(255) NULL,
+    CreatedAt       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt       DATETIME NULL,
+    INDEX IX_Donations_OrderId (OrderId)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 -- Категорії MVP (ТЗ, розділ 3) — початкове наповнення довідника.
 INSERT INTO Categories (Name, Description, ParentId, IsActive)
 SELECT * FROM (SELECT

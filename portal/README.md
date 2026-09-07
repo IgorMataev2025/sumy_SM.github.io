@@ -12,7 +12,8 @@
 
 - `Web.config` — цільовий фреймворк 4.8, Forms-автентифікація, портал
   закритий (`deny users="?"`) окрім `Login.aspx`, `Register.aspx`,
-  `RegisterConsumer.aspx`, `RegisterProvider.aspx`, `css/`, `js/`. Рядок
+  `RegisterConsumer.aspx`, `RegisterProvider.aspx`, `Donate.aspx`,
+  `DonationCallback.aspx`, `DonationResult.aspx`, `css/`, `js/`. Рядок
   підключення винесено через `configSource` у `ConnectionStrings.config`
   (поза git — див. розділ «Секрети» нижче).
 - `Site.master` — спільний layout (шапка, навігація, підвал).
@@ -160,6 +161,65 @@
     ціна) → та сама сторінка з боку власника (показує пояснення,
     не документ) → неіснуюче/невалідне `id` (коректне «не знайдено»).
 
+- **Донат-модуль — підтримка проєкту через LiqPay (уточнена постановка
+  від 2026-09-07, п.1):**
+  - `Donate.aspx` — публічна сторінка (доступна без входу — підтримати
+    проєкт може будь-хто): сума (пресети 50/100/300/500 грн або своя),
+    необов'язкові ім'я/email. По кліку створює запис `Donations` зі
+    статусом `Pending` і POST-ить напряму на
+    `https://www.liqpay.ua/api/3/checkout` — в обхід серверної
+    `<form runat="server">` зі `Site.master` (HTML не дозволяє вкладені
+    форми, а ця веде на зовнішній домен): код-бехайнд пише власну
+    мінімальну HTML-відповідь через `Response.Write`/`Response.End()`.
+  - `App_Code/LiqPayHelper.vb` — підпис/перевірка за офіційним
+    алгоритмом LiqPay checkout API v3: `signature =
+    base64(sha1(private_key + base64(json) + private_key))`. JSON
+    запиту/відповіді збирається/розбирається вручну (`String`/`Regex`)
+    — без зовнішньої бібліотеки (Website Project без NuGet-restore).
+  - `DonationCallback.aspx` — `server_url`, сюди LiqPay шле
+    server-to-server POST одразу після обробки платежу; підпис
+    **обов'язково** перевіряється тут (`LiqPayHelper.VerifySignature`,
+    порівняння за постійний час) — саме цей файл робить статус донату
+    остаточним у БД. Публічний, без входу.
+  - `DonationResult.aspx` — `result_url`, сюди повертається браузер
+    користувача (`?order_id=...`). Лише інформаційне повідомлення
+    (Success/Pending/Failure/не знайдено) за вже записаним у БД
+    статусом — цій сторінці, на відміну від callback, не довіряємо
+    (її може відкрити хто завгодно з довільним `order_id`).
+  - `App_Code/Donation.vb` — модель + `Create`/`GetByOrderId`/
+    `UpdateStatus`, лише параметризовані запити.
+    `App_Data/migration_004_donations.sql` — таблиця `Donations`
+    (застосована до dev-БД; включена і в `schema.sql`).
+  - Ключі LiqPay — `Web.config`, `<appSettings file="LiqPay.config">`
+    (той самий домердж-прийом, що `configSource` для
+    `connectionStrings`, тільки в appSettings це робить атрибут `file`,
+    а не повна заміна). `LiqPay.config` — поза git (`.gitignore`),
+    `LiqPay.config.example` — шаблон, комітиться.
+  - Пункт навігації «Підтримати проєкт» у `Site.master` — видимий
+    завжди, і анонімним відвідувачам, і залогіненим (поза
+    `anonNav`/`userNav`).
+  - **Грабля (та сама природа, що вже описана вище):** `SHA1.Create()`
+    у `Using` без явного типу — `BC30980: Type of 'sha1' cannot be
+    inferred` (перевантаження `SHA1.Create`/`HashAlgorithm.Create`
+    плутають висновування типу VB). Виправлено `Using sha1 As SHA1 =
+    SHA1.Create()`. І ще раз регістронезалежність VB.NET: `Dim
+    donation = Donation.GetByOrderId(...)` конфліктувало з класом
+    `Donation` — перейменовано на `record`.
+  - Перевірено живим end-to-end тестуванням (з placeholder-ключами
+    `sandbox_XXXXXXXXXXXX` — реальний LiqPay кабінет користувач
+    підключить сам): анонімний GET `Donate.aspx` → сабміт форми →
+    коректний base64 JSON і підпис у формі редиректу → запис `Pending`
+    у БД → підписаний callback (сформований тим самим алгоритмом і тим
+    самим ключем — імітує LiqPay) переводить у `Success` з
+    `PaymentId`/`LiqPayStatus` → callback з невірним підписом
+    відхиляється (400), запис не змінюється → `DonationResult.aspx`
+    коректно показує Success/Pending/Failure/не знайдено.
+  - **Не перевірено і не могло бути перевірено локально:** сам факт
+    реального переказу грошей через LiqPay — для цього потрібен
+    публічно доступний сервер (LiqPay не достукається до localhost) і
+    реальна картка. Коли будете готові — можна протестувати на
+    бойовому хостингу SmarterASP.NET мінімальною сумою.
+
 ## Що ще НЕ зроблено (за межами ТЗ MVP)
 
 - Реальна відправка листів (SMTP) для підтвердження email/скидання
@@ -233,6 +293,14 @@ Web.config, які на Website Project без VS все одно не прац�
   машині (dev/хостинг) створюється окремо** копіюванням прикладу з
   правильними логіном/паролем.
 
+Той самий прийом — для ключів LiqPay (донат-модуль, п.1), тільки через
+`<appSettings file="LiqPay.config">` (домердж, а не повна заміна):
+`LiqPay.config.example` — шаблон у git, `LiqPay.config` — реальні
+`LiqPayPublicKey`/`LiqPayPrivateKey`, у `.gitignore`. **Файл
+обов'язково має існувати** (хай навіть з плейсхолдер-значеннями) —
+інакше `Web.config` не завантажиться (помилка конфігурації при
+першому запиті).
+
 ## Локальне dev-середовище (ця машина)
 
 - **IIS**: увімкнено (роль Web-Server + `IIS-ASPNET45`), сайт
@@ -265,6 +333,11 @@ Web.config, які на Website Project без VS все одно не прац�
 
 - створити `ConnectionStrings.config` за зразком `.example` з реальними
   даними MySQL хостингу;
-- застосувати `App_Data/schema.sql` до бойової БД;
+- створити `LiqPay.config` за зразком `.example` з реальними ключами з
+  кабінету LiqPay (без нього сайт не запуститься — файл обов'язковий,
+  навіть якщо донат-модуль поки не використовується);
+- застосувати `App_Data/schema.sql` до бойової БД (або
+  `migration_004_donations.sql` окремо, якщо схема вже розгорнута
+  раніше без цієї таблиці);
 - перевірити, що версія .NET Framework на хостингу ≥ 4.6.2 (потрібно
   для `MySql.Data.dll`) — 4.8 задекларовано в `Web.config`.

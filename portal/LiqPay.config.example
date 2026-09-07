@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Ключі LiqPay (https://www.liqpay.ua/) — донат-модуль (п.1 уточненої постановки).
+  Скопіюйте цей файл у LiqPay.config (без .example) і впишіть реальні ключі
+  зі свого кабінету LiqPay (Мої магазини → відповідний магазин → API).
+  LiqPay.config додано в .gitignore — реальні ключі НЕ комітяться.
+-->
+<appSettings>
+  <add key="LiqPayPublicKey" value="sandbox_XXXXXXXXXXXX" />
+  <add key="LiqPayPrivateKey" value="sandbox_XXXXXXXXXXXX" />
+</appSettings>
