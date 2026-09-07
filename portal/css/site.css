@@ -1,0 +1,498 @@
+/* Портал послуг Safina — базові стилі каркасу (етап 1). */
+
+:root {
+    --color-bg: #f7f7f5;
+    --color-surface: #ffffff;
+    --color-text: #1f2320;
+    --color-muted: #5c6460;
+    --color-primary: #1f7a4d;
+    --color-primary-dark: #175c3a;
+    --color-border: #e2e4e1;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--color-bg);
+    color: var(--color-text);
+}
+
+.site-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.site-logo {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--color-primary-dark);
+    text-decoration: none;
+}
+
+.site-nav a {
+    margin-left: 1.25rem;
+    color: var(--color-text);
+    text-decoration: none;
+}
+
+.site-nav a:hover {
+    color: var(--color-primary);
+}
+
+.site-content {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+}
+
+.hero h1 {
+    margin-top: 0;
+}
+
+.hero p {
+    color: var(--color-muted);
+    max-width: 640px;
+}
+
+.categories {
+    margin-top: 2rem;
+}
+
+.category-card {
+    display: block;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+    text-decoration: none;
+}
+
+.category-card:hover {
+    border-color: var(--color-primary);
+}
+
+.category-card h3 {
+    margin: 0 0 0.35rem;
+    color: var(--color-primary-dark);
+}
+
+.category-card p {
+    margin: 0;
+    color: var(--color-muted);
+}
+
+.stub-note {
+    color: var(--color-muted);
+    background: var(--color-surface);
+    border: 1px dashed var(--color-border);
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+}
+
+.site-footer {
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--color-muted);
+    font-size: 0.85rem;
+}
+
+.site-user {
+    margin-left: 1.25rem;
+    color: var(--color-muted);
+    font-size: 0.9rem;
+}
+
+/* Форми реєстрації/входу (етап 2) */
+.auth-form {
+    max-width: 420px;
+}
+
+/* Вибір типу акаунта (Register.aspx — розвилка на RegisterConsumer/RegisterProvider) */
+.account-type-choice {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    max-width: 560px;
+}
+
+.account-type-card {
+    display: block;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    text-align: center;
+}
+
+.account-type-card h2 {
+    margin: 0 0 0.35rem;
+    color: var(--color-primary-dark);
+}
+
+.account-type-card p {
+    margin: 0 0 1rem;
+    color: var(--color-muted);
+}
+
+.form-row {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.form-row label {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.form-row input[type="text"],
+.form-row input[type="email"],
+.form-row input[type="password"],
+.form-row input[type="tel"] {
+    padding: 0.5rem 0.6rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+fieldset.form-row {
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+}
+
+.provider-fields {
+    display: block;
+    margin-bottom: 1rem;
+    padding-left: 0.25rem;
+}
+
+.btn-primary {
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.6rem 1.4rem;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background: var(--color-primary-dark);
+}
+
+.field-error {
+    color: #b3261e;
+    font-size: 0.85rem;
+}
+
+.form-error {
+    color: #b3261e;
+    background: #fdecea;
+    border: 1px solid #f5c6c2;
+    border-radius: 6px;
+    padding: 0.6rem 0.9rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.btn-secondary {
+    background: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 0.6rem 1.4rem;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.btn-link {
+    display: inline-block;
+    text-decoration: none;
+}
+
+.form-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+/* Оголошення постачальника (етап 3) */
+.service-form {
+    max-width: 560px;
+}
+
+.service-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+}
+
+.service-card.status-draft { border-left-color: var(--color-muted); }
+.service-card.status-pending { border-left-color: #b8860b; }
+.service-card.status-approved { border-left-color: var(--color-primary); }
+.service-card.status-rejected { border-left-color: #b3261e; }
+
+.service-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+}
+
+.service-card-header h3 {
+    margin: 0;
+}
+
+.status-badge {
+    font-size: 0.8rem;
+    color: var(--color-muted);
+    white-space: nowrap;
+}
+
+.service-category {
+    color: var(--color-muted);
+    font-size: 0.9rem;
+    margin: 0.2rem 0 0.6rem;
+}
+
+.service-card-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.photo-thumb {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    margin: 0 0.75rem 0.75rem 0;
+    font-size: 0.8rem;
+}
+
+.photo-thumb img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid var(--color-border);
+}
+
+@media (max-width: 600px) {
+    .site-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .site-nav a {
+        margin-left: 0;
+        margin-right: 1rem;
+    }
+}
+
+/* Адмін-панель (етап 4) */
+.table-scroll {
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--color-surface);
+}
+
+.admin-table th,
+.admin-table td {
+    text-align: left;
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid var(--color-border);
+    white-space: nowrap;
+}
+
+.admin-table th {
+    color: var(--color-muted);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* Каталог і картка оголошення (етап 5) */
+.filter-panel {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.filter-row .form-row {
+    min-width: 160px;
+    flex: 1;
+    margin-bottom: 0.75rem;
+}
+
+.filter-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+}
+
+.page-info {
+    display: block;
+    color: var(--color-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+}
+
+.catalog-card {
+    display: block;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    overflow: hidden;
+    text-decoration: none;
+    color: var(--color-text);
+}
+
+.catalog-card:hover {
+    border-color: var(--color-primary);
+}
+
+.catalog-thumb {
+    aspect-ratio: 4 / 3;
+    background: var(--color-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.catalog-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.catalog-thumb-placeholder {
+    color: var(--color-muted);
+    font-size: 0.85rem;
+}
+
+.catalog-card-body {
+    padding: 0.75rem 1rem;
+}
+
+.catalog-card-body h3 {
+    margin: 0 0 0.25rem;
+    font-size: 1rem;
+}
+
+.catalog-price {
+    font-weight: 600;
+    color: var(--color-primary-dark);
+}
+
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1.5rem;
+}
+
+.service-details {
+    max-width: 720px;
+}
+
+.photo-gallery .catalog-thumb,
+.gallery-photo {
+    width: 100%;
+    max-width: 260px;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+}
+
+.contact-box {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-top: 1.5rem;
+}
+
+.contact-box h2 {
+    margin-top: 0;
+    font-size: 1.1rem;
+}
+
+/* Договір про надання послуг (ServiceContract.aspx, п.3 уточненої постановки) */
+.contract-doc {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    max-width: 800px;
+    line-height: 1.5;
+}
+
+.contract-meta {
+    color: var(--color-muted);
+    text-align: right;
+}
+
+.contract-signatures {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.contract-signatures th,
+.contract-signatures td {
+    border: 1px solid var(--color-border);
+    padding: 0.75rem;
+    text-align: left;
+    vertical-align: top;
+    width: 50%;
+}
+
+@media print {
+    .site-header,
+    .site-footer,
+    .no-print {
+        display: none !important;
+    }
+
+    .contract-doc {
+        border: none;
+        padding: 0;
+        max-width: none;
+    }
+}

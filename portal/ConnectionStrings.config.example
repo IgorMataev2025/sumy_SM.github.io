@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Шаблон. Скопіювати в ConnectionStrings.config (той файл — у .gitignore,
+  в git не потрапляє) і вписати реальні дані підключення до MySQL.
+-->
+<connectionStrings>
+  <add name="SumyPortalDb"
+       connectionString="Server=localhost;Database=sumy_portal;Uid=sumy_portal_app;Pwd=CHANGE_ME;"
+       providerName="MySql.Data.MySqlClient" />
+</connectionStrings>

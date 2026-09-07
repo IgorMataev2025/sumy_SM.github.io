@@ -1,0 +1,17 @@
+# Локальні секрети / налаштування (не комітити)
+portal/ConnectionStrings.config
+portal/Web.Debug.config
+portal/Web.Release.config
+
+# bin/ містить сторонні DLL (MySql.Data.dll) — Website Project без NuGet-
+# restore, тому вони комітяться свідомо (див. portal/README.md).
+portal/obj/
+
+# Завантажені користувачами фото оголошень (етап 3) — не код, не комітимо.
+# (папку Services/{ServiceId}/ застосунок створює сам при першому фото)
+portal/Uploads/Services/*
+
+# Тимчасові файли IIS Express / Visual Studio
+*.suo
+*.user
+.vs/
