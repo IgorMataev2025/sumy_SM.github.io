@@ -496,3 +496,41 @@ fieldset.form-row {
         max-width: none;
     }
 }
+
+/* Видалення акаунта (Profile.aspx, п.6 уточненої постановки) */
+.danger-zone {
+    max-width: 420px;
+    margin-top: 2rem;
+    border-color: #f5c6c2;
+}
+
+.danger-zone h2 {
+    margin-top: 0;
+    font-size: 1.1rem;
+    color: #b3261e;
+}
+
+/* Рейтинги/відгуки (ServiceDetails.aspx, п.9 уточненої постановки) */
+.reviews-section {
+    margin-top: 2rem;
+    max-width: 600px;
+}
+
+.rating-summary {
+    font-weight: 600;
+    color: var(--color-primary-dark);
+}
+
+.review-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.review-meta {
+    color: var(--color-muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}

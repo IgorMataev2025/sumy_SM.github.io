@@ -22,6 +22,8 @@
                 <asp:PlaceHolder ID="userNav" runat="server" Visible="false">
                     <a href="~/Catalog.aspx" runat="server">Каталог</a>
                     <asp:HyperLink ID="myServicesLink" runat="server" NavigateUrl="~/MyServices.aspx" Visible="false">Мої оголошення</asp:HyperLink>
+                    <a href="~/Favorites.aspx" runat="server">Обране</a>
+                    <a href="~/Profile.aspx" runat="server">Профіль</a>
                     <asp:PlaceHolder ID="adminNav" runat="server" Visible="false">
                         <a href="~/AdminModeration.aspx" runat="server">Модерація</a>
                         <a href="~/AdminCategories.aspx" runat="server">Категорії</a>

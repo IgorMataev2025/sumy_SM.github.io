@@ -43,7 +43,8 @@ Namespace SumyPortal
             End Get
         End Property
 
-        Private Shared Function Map(reader As MySqlDataReader) As Service
+        ''' <summary>Friend (не Private) — потрібна й з Favorite.vb (та сама збірка App_Code) для GetByUser.</summary>
+        Friend Shared Function Map(reader As MySqlDataReader) As Service
             Return New Service With {
                 .ServiceId = reader.GetInt32("ServiceId"),
                 .ProviderId = reader.GetInt32("ProviderId"),
@@ -250,6 +251,30 @@ Namespace SumyPortal
                 End Using
             End Using
             Return result
+        End Function
+
+        ''' <summary>Одне оголошення "на модерації" за Id, з контактами постачальника —
+        ''' для email-сповіщення (AdminModeration.aspx), знімається ДО зміни статусу.</summary>
+        Public Shared Function GetPendingById(serviceId As Integer) As Service
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand(
+                    "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
+                    "s.Price, s.District, s.Phone, s.Status, s.RejectReason, s.CreatedAt, " &
+                    "u.FullName AS ProviderName, u.Email AS ProviderEmail " &
+                    "FROM Services s " &
+                    "JOIN Categories c ON c.CategoryId = s.CategoryId " &
+                    "JOIN Users u ON u.UserId = s.ProviderId " &
+                    "WHERE s.ServiceId = @ServiceId AND s.Status = 'Pending';", conn)
+                    cmd.Parameters.AddWithValue("@ServiceId", serviceId)
+                    Using reader = cmd.ExecuteReader()
+                        If Not reader.Read() Then Return Nothing
+                        Dim svc = Map(reader)
+                        svc.ProviderName = reader.GetString("ProviderName")
+                        svc.ProviderEmail = reader.GetString("ProviderEmail")
+                        Return svc
+                    End Using
+                End Using
+            End Using
         End Function
 
         ''' <summary>Схвалити: Pending → Approved. Пише запис у ModerationLog.</summary>

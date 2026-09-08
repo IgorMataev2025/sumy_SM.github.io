@@ -87,6 +87,28 @@ CREATE TABLE IF NOT EXISTS Donations (
     INDEX IX_Donations_OrderId (OrderId)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+CREATE TABLE IF NOT EXISTS Favorites (
+    UserId          INT NOT NULL,
+    ServiceId       INT NOT NULL,
+    CreatedAt       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (UserId, ServiceId),
+    CONSTRAINT FK_Favorites_User FOREIGN KEY (UserId) REFERENCES Users(UserId) ON DELETE CASCADE,
+    CONSTRAINT FK_Favorites_Service FOREIGN KEY (ServiceId) REFERENCES Services(ServiceId) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS Reviews (
+    ReviewId        INT AUTO_INCREMENT PRIMARY KEY,
+    ServiceId       INT NOT NULL,
+    ConsumerId      INT NOT NULL,
+    Rating          TINYINT NOT NULL,
+    Comment         VARCHAR(1000) NULL,
+    CreatedAt       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT FK_Reviews_Service FOREIGN KEY (ServiceId) REFERENCES Services(ServiceId) ON DELETE CASCADE,
+    CONSTRAINT FK_Reviews_Consumer FOREIGN KEY (ConsumerId) REFERENCES Users(UserId) ON DELETE CASCADE,
+    CONSTRAINT CK_Reviews_Rating CHECK (Rating BETWEEN 1 AND 5),
+    UNIQUE KEY UQ_Reviews_Service_Consumer (ServiceId, ConsumerId)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 -- Категорії MVP (ТЗ, розділ 3) — початкове наповнення довідника.
 INSERT INTO Categories (Name, Description, ParentId, IsActive)
 SELECT * FROM (SELECT

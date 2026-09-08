@@ -216,6 +216,58 @@ Namespace SumyPortal
             Return token
         End Function
 
+        ''' <summary>Редагування власних даних із особистого кабінету (Profile.aspx, п.6 уточненої постановки). Email і тип акаунта тут не змінюються.</summary>
+        Public Shared Function UpdateProfile(userId As Integer, fullName As String, phone As String, district As String,
+                                              companyName As String, edrpou As String) As Boolean
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand(
+                    "UPDATE Users SET FullName = @FullName, Phone = @Phone, District = @District, " &
+                    "CompanyName = @CompanyName, EDRPOU = @EDRPOU WHERE UserId = @UserId;", conn)
+                    cmd.Parameters.AddWithValue("@FullName", fullName)
+                    cmd.Parameters.AddWithValue("@Phone", If(String.IsNullOrWhiteSpace(phone), DBNull.Value, CObj(phone)))
+                    cmd.Parameters.AddWithValue("@District", If(String.IsNullOrWhiteSpace(district), DBNull.Value, CObj(district)))
+                    cmd.Parameters.AddWithValue("@CompanyName", If(String.IsNullOrWhiteSpace(companyName), DBNull.Value, CObj(companyName)))
+                    cmd.Parameters.AddWithValue("@EDRPOU", If(String.IsNullOrWhiteSpace(edrpou), DBNull.Value, CObj(edrpou)))
+                    cmd.Parameters.AddWithValue("@UserId", userId)
+                    Return cmd.ExecuteNonQuery() > 0
+                End Using
+            End Using
+        End Function
+
+        ''' <summary>
+        ''' Самостійне видалення акаунта (Profile.aspx, п.6 — реалізує право суб'єкта
+        ''' персональних даних на видалення з PrivacyPolicy.aspx без звернення на
+        ''' email адміністратора). Знеособлення, а не фізичне видалення рядка —
+        ''' Users.UserId лишається як FK у Services/ModerationLog/AdminId (referential
+        ''' integrity), тому email/ПІБ/телефон/реквізити затираються, а вхід
+        ''' блокується через IsActive (той самий механізм, що адмінська блокировка
+        ''' в AdminUsers.aspx). Адмінів самовидалення не стосується.
+        ''' </summary>
+        Public Shared Function DeleteAccount(userId As Integer) As Boolean
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand(
+                    "UPDATE Users SET FullName = 'Видалений користувач', Phone = NULL, " &
+                    "CompanyName = NULL, EDRPOU = NULL, District = NULL, " &
+                    "Email = CONCAT('deleted_', @UserId, '@safina.invalid'), " &
+                    "PasswordHash = @RandomHash, IsActive = FALSE " &
+                    "WHERE UserId = @UserId AND IsAdmin = FALSE;", conn)
+                    cmd.Parameters.AddWithValue("@RandomHash", PasswordHasher.Hash(Guid.NewGuid().ToString("N")))
+                    cmd.Parameters.AddWithValue("@UserId", userId)
+                    If cmd.ExecuteNonQuery() = 0 Then Return False
+                End Using
+
+                ' Опубліковані/на модерації оголошення теж несуть персональні дані
+                ' (контактний телефон) — знімаємо з публікації тим самим прийомом,
+                ' що Service.Unpublish.
+                Using cmd2 As New MySqlCommand(
+                    "UPDATE Services SET Status = 'Draft' WHERE ProviderId = @UserId AND Status IN ('Approved', 'Pending');", conn)
+                    cmd2.Parameters.AddWithValue("@UserId", userId)
+                    cmd2.ExecuteNonQuery()
+                End Using
+            End Using
+            Return True
+        End Function
+
         Public Shared Function ResetPassword(token As String, newPassword As String) As Boolean
             Using conn = DbHelper.GetConnection()
                 Using checkCmd As New MySqlCommand(

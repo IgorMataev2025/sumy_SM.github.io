@@ -12,6 +12,10 @@ portal/obj/
 # (папку Services/{ServiceId}/ застосунок створює сам при першому фото)
 portal/Uploads/Services/*
 
+# Dev-режим email (п.7, EmailSender.vb) — .eml-файли, які застосунок сам
+# пише замість реальної відправки; не код, не комітимо.
+portal/App_Data/EmailOutbox/*
+
 # Тимчасові файли IIS Express / Visual Studio
 *.suo
 *.user

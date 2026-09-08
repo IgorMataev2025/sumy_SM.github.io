@@ -38,6 +38,99 @@ Namespace SumyPortal
             Dim currentUser = UserAccount.FindByEmail(Page.User.Identity.Name)
             contractLink.Visible = (currentUser IsNot Nothing AndAlso currentUser.UserId <> svc.ProviderId)
             contractLink.NavigateUrl = ResolveUrl("~/ServiceContract.aspx?id=" & svc.ServiceId)
+
+            ' Вподобане (п.8 уточненої постановки) — доступне будь-якому залогіненому.
+            btnToggleFavorite.Visible = (currentUser IsNot Nothing)
+            If currentUser IsNot Nothing Then
+                Dim isFavorite = Favorite.IsFavorite(currentUser.UserId, svc.ServiceId)
+                btnToggleFavorite.Text = If(isFavorite, "★ Прибрати з обраного", "☆ Додати в обране")
+            End If
+
+            LoadReviews(svc.ServiceId)
+
+            ' Форма відгуку — будь-який залогінений, крім самого власника оголошення
+            ' (п.9 уточненої постановки), і лише якщо ще не залишав відгук на нього.
+            If currentUser Is Nothing OrElse currentUser.UserId = svc.ProviderId Then
+                reviewFormPanel.Visible = False
+                alreadyReviewedPanel.Visible = False
+            ElseIf Review.HasReviewed(svc.ServiceId, currentUser.UserId) Then
+                reviewFormPanel.Visible = False
+                alreadyReviewedPanel.Visible = True
+            Else
+                reviewFormPanel.Visible = True
+                alreadyReviewedPanel.Visible = False
+            End If
+        End Sub
+
+        Private Sub LoadReviews(serviceId As Integer)
+            Dim reviews = Review.GetByService(serviceId)
+            rptReviews.DataSource = reviews
+            rptReviews.DataBind()
+            noReviewsPanel.Visible = (reviews.Count = 0)
+
+            Dim average As Decimal? = Nothing
+            Dim count As Integer = 0
+            Review.GetSummary(serviceId, average, count)
+            ratingSummaryLiteral.Text = If(average.HasValue,
+                String.Format("★ {0:0.0} ({1} {2})", average.Value, count, PluralizeReviews(count)),
+                "Ще немає відгуків")
+        End Sub
+
+        ''' <summary>Українська відміна іменника "відгук" за кількістю (1/2-4/5+, з винятком 11-14).</summary>
+        Private Shared Function PluralizeReviews(count As Integer) As String
+            Dim mod100 = count Mod 100
+            If mod100 >= 11 AndAlso mod100 <= 14 Then Return "відгуків"
+            Select Case count Mod 10
+                Case 1 : Return "відгук"
+                Case 2, 3, 4 : Return "відгуки"
+                Case Else : Return "відгуків"
+            End Select
+        End Function
+
+        ''' <summary>
+        ''' Той самий прийом, що btnToggleFavorite_Click, — Response.Redirect на себе
+        ''' після збереження замість ведення двох шляхів заповнення полів.
+        ''' </summary>
+        Protected Sub btnSubmitReview_Click(sender As Object, e As EventArgs)
+            If Not Page.IsValid Then Return
+
+            Dim serviceId As Integer
+            If Not Integer.TryParse(Request.QueryString("id"), serviceId) Then Return
+
+            Dim currentUser = UserAccount.FindByEmail(Page.User.Identity.Name)
+            If currentUser Is Nothing Then Return
+
+            Dim svc = Service.GetApprovedById(serviceId)
+            If svc Is Nothing OrElse currentUser.UserId = svc.ProviderId Then Return
+
+            Dim rating As Integer
+            If Not Integer.TryParse(ddlRating.SelectedValue, rating) Then Return
+
+            Review.Add(serviceId, currentUser.UserId, rating, txtComment.Text)
+
+            Response.Redirect(Request.RawUrl, True)
+        End Sub
+
+        ''' <summary>
+        ''' Перемикає вподобане й перезавантажує сторінку звичайним GET
+        ''' (Response.Redirect на себе) — простіше, ніж вести два шляхи заповнення
+        ''' полів (початкове завантаження й постбек), той самий підхід, що вже
+        ''' використовує SaveService у ServiceEdit.aspx.vb для чернетки.
+        ''' </summary>
+        Protected Sub btnToggleFavorite_Click(sender As Object, e As EventArgs)
+            Dim serviceId As Integer
+            If Not Integer.TryParse(Request.QueryString("id"), serviceId) Then Return
+
+            Dim currentUser = UserAccount.FindByEmail(Page.User.Identity.Name)
+            If currentUser Is Nothing Then Return
+
+            If Favorite.IsFavorite(currentUser.UserId, serviceId) Then
+                Favorite.Remove(currentUser.UserId, serviceId)
+            Else
+                Favorite.Add(currentUser.UserId, serviceId)
+            End If
+
+            Response.Redirect(Request.RawUrl, True)
         End Sub
 
         Private Sub ShowNotFound()
