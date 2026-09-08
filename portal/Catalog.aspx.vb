@@ -42,11 +42,10 @@ Namespace SumyPortal
                 ddlCategory.Items.Add(New ListItem(cat.Name, cat.CategoryId.ToString()))
             Next
 
-            ddlDistrict.Items.Clear()
-            ddlDistrict.Items.Add(New ListItem("Всі райони", String.Empty))
-            For Each district In Service.GetDistinctApprovedDistricts()
-                ddlDistrict.Items.Add(New ListItem(district, district))
-            Next
+            ' Фіксований довідник районів (п.5 уточненої постановки), а не
+            ' лише ті, де вже є оголошення — щоб фільтр завжди показував усі
+            ' офіційні райони.
+            SumyDistricts.Populate(ddlDistrict, "Всі райони")
         End Sub
 
         Private Sub BindResults()

@@ -51,9 +51,8 @@
         </div>
 
         <div class="form-row">
-            <label for="<%= txtDistrict.ClientID %>">Район / громада</label>
-            <asp:TextBox ID="txtDistrict" runat="server" MaxLength="100" />
-            <!-- Повний довідник районів/громад Сумської області — відкрите питання ТЗ, розділ 10; поки вільний текст. -->
+            <label for="<%= ddlDistrict.ClientID %>">Район</label>
+            <asp:DropDownList ID="ddlDistrict" runat="server" />
         </div>
 
         <div class="form-row">

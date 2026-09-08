@@ -322,25 +322,6 @@ Namespace SumyPortal
             End Using
         End Function
 
-        ''' <summary>Райони, у яких є хоч одне опубліковане оголошення — наповнення фільтра
-        ''' (повний офіційний довідник районів/громад — відкрите питання ТЗ, розділ 10).</summary>
-        Public Shared Function GetDistinctApprovedDistricts() As List(Of String)
-            Dim result As New List(Of String)
-            Using conn = DbHelper.GetConnection()
-                Using cmd As New MySqlCommand(
-                    "SELECT DISTINCT District FROM Services " &
-                    "WHERE Status = 'Approved' AND District IS NOT NULL AND District <> '' " &
-                    "ORDER BY District;", conn)
-                    Using reader = cmd.ExecuteReader()
-                        While reader.Read()
-                            result.Add(reader.GetString(0))
-                        End While
-                    End Using
-                End Using
-            End Using
-            Return result
-        End Function
-
         Private Shared Function BuildSearchWhere(categoryId As Integer?, district As String, keyword As String,
                                                   minPrice As Decimal?, maxPrice As Decimal?,
                                                   parameters As List(Of MySqlParameter)) As String

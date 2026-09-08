@@ -9,6 +9,7 @@ Namespace SumyPortal
         Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
             If Not IsPostBack Then
                 legalEntityPanel.Visible = False
+                SumyDistricts.Populate(ddlDistrict, "Не вказано")
             End If
         End Sub
 
@@ -52,7 +53,7 @@ Namespace SumyPortal
                     AccountType.Provider, isLegalEntity,
                     If(isLegalEntity, txtCompanyName.Text.Trim(), Nothing),
                     If(isLegalEntity, txtEdrpou.Text.Trim(), Nothing),
-                    txtDistrict.Text.Trim())
+                    ddlDistrict.SelectedValue)
 
                 ' Dev-режим (немає SMTP): показуємо посилання прямо на сторінці замість
                 ' реального листа. На хостингу тут має бути виклик EmailSender (етап 5/деплой).

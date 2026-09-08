@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS Users (
     IsLegalEntity   BOOLEAN NOT NULL DEFAULT FALSE,
     CompanyName     VARCHAR(255) NULL,
     EDRPOU          VARCHAR(20)  NULL,
-    District        VARCHAR(100) NULL,
+    District        VARCHAR(100) NULL, -- одна з 5 офіційних назв, App_Code/SumyDistricts.vb
     IsActive        BOOLEAN NOT NULL DEFAULT TRUE,
     IsAdmin         BOOLEAN NOT NULL DEFAULT FALSE, -- етап 4, migration_003_admin.sql
     EmailConfirmed  BOOLEAN NOT NULL DEFAULT FALSE, -- етап 2, migration_002_auth.sql
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS Services (
     Title           VARCHAR(255) NOT NULL,
     Description     TEXT NULL,
     Price           DECIMAL(10,2) NULL,
-    District        VARCHAR(100) NULL,
+    District        VARCHAR(100) NULL, -- одна з 5 офіційних назв, App_Code/SumyDistricts.vb
     Phone           VARCHAR(50) NULL,
     Status          ENUM('Draft','Pending','Approved','Rejected') NOT NULL DEFAULT 'Draft',
     RejectReason    VARCHAR(500) NULL,

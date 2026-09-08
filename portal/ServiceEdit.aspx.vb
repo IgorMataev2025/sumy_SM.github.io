@@ -25,6 +25,7 @@ Namespace SumyPortal
 
             If Not IsPostBack Then
                 BindCategories()
+                SumyDistricts.Populate(ddlDistrict, "Не вказано")
 
                 If ServiceIdParam > 0 Then
                     Dim svc = Service.GetById(ServiceIdParam, CurrentProvider.UserId)
@@ -49,7 +50,12 @@ Namespace SumyPortal
                     txtTitle.Text = svc.Title
                     txtDescription.Text = svc.Description
                     txtPrice.Text = If(svc.Price.HasValue, svc.Price.Value.ToString("0.##", CultureInfo.InvariantCulture), String.Empty)
-                    txtDistrict.Text = svc.District
+                    ' Захист: старе оголошення могло зберегти район вільним текстом
+                    ' (до впровадження довідника) — якщо значення не входить у
+                    ' поточний список, SelectedValue кине виняток, тому перевіряємо.
+                    If ddlDistrict.Items.FindByValue(svc.District) IsNot Nothing Then
+                        ddlDistrict.SelectedValue = svc.District
+                    End If
                     txtPhone.Text = svc.Phone
 
                     BindPhotos(svc.ServiceId)
@@ -95,7 +101,7 @@ Namespace SumyPortal
             If Not String.IsNullOrWhiteSpace(txtPrice.Text) Then
                 price = Decimal.Parse(txtPrice.Text, CultureInfo.InvariantCulture)
             End If
-            Dim district = txtDistrict.Text.Trim()
+            Dim district = ddlDistrict.SelectedValue
             Dim phone = txtPhone.Text.Trim()
 
             Dim serviceId = ServiceIdParam

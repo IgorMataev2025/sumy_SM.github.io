@@ -37,8 +37,8 @@
         </div>
 
         <div class="form-row">
-            <label for="<%= txtDistrict.ClientID %>">Район / громада</label>
-            <asp:TextBox ID="txtDistrict" runat="server" MaxLength="100" />
+            <label for="<%= ddlDistrict.ClientID %>">Район</label>
+            <asp:DropDownList ID="ddlDistrict" runat="server" />
         </div>
 
         <div class="form-row">
