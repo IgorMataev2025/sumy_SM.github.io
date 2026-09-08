@@ -19,6 +19,13 @@ Namespace SumyPortal
         Protected Sub btnRegister_Click(sender As Object, e As EventArgs)
             If Not Page.IsValid Then Return
 
+            ' Згода на обробку персональних даних (п.4 уточненої постановки) —
+            ' CheckBox не покривається RequiredFieldValidator, перевіряємо вручну.
+            If Not chkPrivacyConsent.Checked Then
+                ShowError("Підтвердьте згоду на обробку персональних даних.")
+                Return
+            End If
+
             Dim email = txtEmail.Text.Trim().ToLowerInvariant()
             Dim isLegalEntity = chkLegalEntity.Checked
 

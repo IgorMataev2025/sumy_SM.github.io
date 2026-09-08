@@ -72,6 +72,14 @@
         </asp:Panel>
 
         <div class="form-row">
+            <asp:CheckBox ID="chkPrivacyConsent" runat="server" />
+            <label for="<%= chkPrivacyConsent.ClientID %>">
+                Я ознайомлений(-а) з <asp:HyperLink runat="server" NavigateUrl="~/PrivacyPolicy.aspx" Target="_blank">Політикою конфіденційності</asp:HyperLink>
+                і надаю згоду на обробку персональних даних
+            </label>
+        </div>
+
+        <div class="form-row">
             <asp:Button ID="btnRegister" runat="server" Text="Зареєструватися" OnClick="btnRegister_Click" CssClass="btn-primary" />
         </div>
     </asp:Panel>
