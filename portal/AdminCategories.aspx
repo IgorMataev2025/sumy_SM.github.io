@@ -4,6 +4,11 @@
 </asp:Content>
 <asp:Content ID="MainContent" ContentPlaceHolderID="MainContent" runat="server">
     <h1>Категорії послуг</h1>
+    <p class="stub-note">
+        <a href="~/AdminDashboard.aspx" runat="server">← Адмін-панель</a> ·
+        <a href="~/AdminModeration.aspx" runat="server">Модерація</a> ·
+        <a href="~/AdminUsers.aspx" runat="server">Користувачі</a>
+    </p>
 
     <asp:Label ID="infoLabel" runat="server" CssClass="stub-note" Visible="false" />
 

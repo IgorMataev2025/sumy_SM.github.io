@@ -14,7 +14,6 @@ Namespace SumyPortal
 
                 Dim account = UserAccount.FindByEmail(Page.User.Identity.Name)
                 myServicesLink.Visible = (account IsNot Nothing AndAlso account.UserType = "Provider")
-                adminNav.Visible = (account IsNot Nothing AndAlso account.IsAdmin)
             End If
         End Sub
 
