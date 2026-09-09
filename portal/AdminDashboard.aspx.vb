@@ -21,6 +21,9 @@ Namespace SumyPortal
                 categoryCountLiteral.Text = ServiceCategory.GetAllCategories().Count.ToString() & " категорій (активних і деактивованих)."
 
                 userCountLiteral.Text = UserAccount.GetAll().Count.ToString() & " зареєстрованих користувачів."
+
+                Dim logCount = AdminActionLog.GetRecent().Count
+                logCountLiteral.Text = If(logCount = 0, "Журнал порожній.", logCount.ToString() & " записів (останні дії адміністраторів).")
             End If
         End Sub
 

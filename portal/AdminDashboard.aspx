@@ -22,5 +22,9 @@
             <h3>Користувачі</h3>
             <p><asp:Literal ID="userCountLiteral" runat="server" /></p>
         </a>
+        <a class="category-card" href="~/AdminLog.aspx" runat="server">
+            <h3>Журнал дій</h3>
+            <p><asp:Literal ID="logCountLiteral" runat="server" /></p>
+        </a>
     </div>
 </asp:Content>

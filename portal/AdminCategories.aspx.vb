@@ -45,6 +45,7 @@ Namespace SumyPortal
                     If category IsNot Nothing Then
                         ServiceCategory.SetActive(categoryId, Not category.IsActive)
                         ShowInfo(If(category.IsActive, "Категорію деактивовано.", "Категорію активовано."))
+                        AdminActionLog.Log(CurrentAdmin.UserId, If(category.IsActive, "Деактивував категорію", "Активував категорію"), category.Name)
                     End If
                     BindCategories()
             End Select
@@ -59,9 +60,11 @@ Namespace SumyPortal
             If EditCategoryId > 0 Then
                 ServiceCategory.Update(EditCategoryId, name, description)
                 ShowInfo("Категорію оновлено.")
+                AdminActionLog.Log(CurrentAdmin.UserId, "Відредагував категорію", name)
             Else
                 ServiceCategory.Create(name, description)
                 ShowInfo("Категорію додано.")
+                AdminActionLog.Log(CurrentAdmin.UserId, "Додав категорію", name)
             End If
 
             ResetForm()

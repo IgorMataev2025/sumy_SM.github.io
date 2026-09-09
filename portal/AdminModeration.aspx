@@ -7,7 +7,8 @@
     <p class="stub-note">
         <a href="~/AdminDashboard.aspx" runat="server">← Адмін-панель</a> ·
         <a href="~/AdminCategories.aspx" runat="server">Категорії</a> ·
-        <a href="~/AdminUsers.aspx" runat="server">Користувачі</a>
+        <a href="~/AdminUsers.aspx" runat="server">Користувачі</a> ·
+        <a href="~/AdminLog.aspx" runat="server">Журнал дій</a>
     </p>
 
     <asp:Label ID="infoLabel" runat="server" CssClass="stub-note" Visible="false" />

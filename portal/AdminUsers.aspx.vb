@@ -25,6 +25,7 @@ Namespace SumyPortal
 
             If UserAccount.SetActive(userId, Not target.IsActive) Then
                 ShowInfo(If(target.IsActive, "Користувача заблоковано.", "Користувача розблоковано."))
+                AdminActionLog.Log(CurrentAdmin.UserId, If(target.IsActive, "Заблокував користувача", "Розблокував користувача"), target.Email)
             End If
 
             BindUsers()
