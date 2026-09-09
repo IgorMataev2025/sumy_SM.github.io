@@ -347,6 +347,31 @@ Namespace SumyPortal
             End Using
         End Function
 
+        ''' <summary>Оголошення за Id незалежно від статусу — для сторінок повідомлень (п.10, обмін
+        ''' Постачальник↔Споживач): розмова лишається доступною, навіть якщо оголошення пізніше
+        ''' зняли з публікації. Nothing, якщо оголошення взагалі не існує.</summary>
+        Public Shared Function GetForMessaging(serviceId As Integer) As Service
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand(
+                    "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
+                    "s.Price, s.District, s.Phone, s.Status, s.RejectReason, s.CreatedAt, " &
+                    "u.FullName AS ProviderName, u.Email AS ProviderEmail " &
+                    "FROM Services s " &
+                    "JOIN Categories c ON c.CategoryId = s.CategoryId " &
+                    "JOIN Users u ON u.UserId = s.ProviderId " &
+                    "WHERE s.ServiceId = @ServiceId;", conn)
+                    cmd.Parameters.AddWithValue("@ServiceId", serviceId)
+                    Using reader = cmd.ExecuteReader()
+                        If Not reader.Read() Then Return Nothing
+                        Dim svc = Map(reader)
+                        svc.ProviderName = reader.GetString("ProviderName")
+                        svc.ProviderEmail = reader.GetString("ProviderEmail")
+                        Return svc
+                    End Using
+                End Using
+            End Using
+        End Function
+
         Private Shared Function BuildSearchWhere(categoryId As Integer?, district As String, keyword As String,
                                                   minPrice As Decimal?, maxPrice As Decimal?,
                                                   parameters As List(Of MySqlParameter)) As String

@@ -46,6 +46,14 @@ Namespace SumyPortal
                 btnToggleFavorite.Text = If(isFavorite, "★ Прибрати з обраного", "☆ Додати в обране")
             End If
 
+            ' Повідомлення постачальнику (п.10 уточненої постановки) — MVP-спрощення:
+            ' ініціює лише споживач (не власник, і не інший постачальник, що переглядає
+            ' чужу картку), постачальник далі лише відповідає в уже створеній розмові.
+            messageLink.Visible = (currentUser IsNot Nothing AndAlso currentUser.UserType = "Consumer")
+            If currentUser IsNot Nothing Then
+                messageLink.NavigateUrl = ResolveUrl("~/MessageThread.aspx?serviceId=" & svc.ServiceId & "&consumerId=" & currentUser.UserId)
+            End If
+
             LoadReviews(svc.ServiceId)
 
             ' Форма відгуку — будь-який залогінений, крім самого власника оголошення

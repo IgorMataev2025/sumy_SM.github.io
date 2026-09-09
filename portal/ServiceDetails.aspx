@@ -34,6 +34,7 @@
             <p>
                 <asp:Button ID="btnToggleFavorite" runat="server" Visible="false" CausesValidation="false"
                     OnClick="btnToggleFavorite_Click" CssClass="btn-secondary" />
+                <asp:HyperLink ID="messageLink" runat="server" CssClass="btn-secondary" Visible="false">Написати постачальнику</asp:HyperLink>
             </p>
         </div>
 
