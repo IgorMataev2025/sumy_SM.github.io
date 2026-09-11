@@ -14,6 +14,10 @@
             <h3>Модерація оголошень</h3>
             <p><asp:Literal ID="pendingCountLiteral" runat="server" /></p>
         </a>
+        <a class="category-card" href="~/AdminServices.aspx" runat="server">
+            <h3>Усі оголошення</h3>
+            <p><asp:Literal ID="totalServicesCountLiteral" runat="server" /></p>
+        </a>
         <a class="category-card" href="~/AdminCategories.aspx" runat="server">
             <h3>Категорії послуг</h3>
             <p><asp:Literal ID="categoryCountLiteral" runat="server" /></p>

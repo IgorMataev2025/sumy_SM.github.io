@@ -90,6 +90,17 @@ Namespace SumyPortal
             End Using
         End Sub
 
+        ''' <summary>Видалення відгуку адміном (п.12 уточненої постановки, 2026-09-11) — лише видалення,
+        ''' без редагування чужого тексту (редагувати чиюсь думку від імені адміна нелогічно).</summary>
+        Public Shared Function AdminDelete(reviewId As Integer) As Boolean
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand("DELETE FROM Reviews WHERE ReviewId = @ReviewId;", conn)
+                    cmd.Parameters.AddWithValue("@ReviewId", reviewId)
+                    Return cmd.ExecuteNonQuery() > 0
+                End Using
+            End Using
+        End Function
+
     End Class
 
 End Namespace

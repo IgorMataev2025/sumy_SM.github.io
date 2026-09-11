@@ -14,13 +14,13 @@
             <a class="site-logo" href="~/Default.aspx" runat="server">Портал послуг</a>
             <nav class="site-nav">
                 <a href="~/Default.aspx" runat="server">Головна</a>
+                <a href="~/Catalog.aspx" runat="server">Каталог</a>
                 <a href="~/Donate.aspx" runat="server">Підтримати проєкт</a>
                 <asp:PlaceHolder ID="anonNav" runat="server">
                     <a href="~/Login.aspx" runat="server">Вхід</a>
                     <a href="~/Register.aspx" runat="server">Реєстрація</a>
                 </asp:PlaceHolder>
                 <asp:PlaceHolder ID="userNav" runat="server" Visible="false">
-                    <a href="~/Catalog.aspx" runat="server">Каталог</a>
                     <asp:HyperLink ID="myServicesLink" runat="server" NavigateUrl="~/MyServices.aspx" Visible="false">Мої оголошення</asp:HyperLink>
                     <a href="~/Favorites.aspx" runat="server">Обране</a>
                     <a href="~/Messages.aspx" runat="server">Повідомлення</a>

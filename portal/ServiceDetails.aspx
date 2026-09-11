@@ -28,7 +28,13 @@
         <div class="contact-box">
             <h2>Контакти постачальника</h2>
             <p><asp:Literal ID="providerNameLiteral" runat="server" /></p>
-            <p>Телефон: <asp:Literal ID="phoneLiteral" runat="server" /></p>
+            <asp:PlaceHolder ID="phoneHolder" runat="server">
+                <p>Телефон: <asp:Literal ID="phoneLiteral" runat="server" /></p>
+            </asp:PlaceHolder>
+            <asp:Panel ID="anonContactPanel" runat="server" Visible="false" CssClass="stub-note">
+                Щоб побачити телефон постачальника, <a href="Login.aspx">увійдіть</a>
+                або <a href="Register.aspx">зареєструйтесь</a>.
+            </asp:Panel>
             <p>Район: <asp:Literal ID="districtLiteral" runat="server" /></p>
             <p><asp:HyperLink ID="contractLink" runat="server" CssClass="btn-primary" Visible="false">Сформувати договір</asp:HyperLink></p>
             <p>

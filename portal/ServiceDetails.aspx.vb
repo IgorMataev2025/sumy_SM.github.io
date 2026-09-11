@@ -29,6 +29,13 @@ Namespace SumyPortal
             phoneLiteral.Text = svc.Phone
             districtLiteral.Text = If(String.IsNullOrEmpty(svc.District), "не вказано", svc.District)
 
+            ' Відкритий перегляд для USER (п.12 уточненої постановки, 2026-09-11):
+            ' сторінка тепер доступна анонімно (Web.config), але телефон —
+            ' реєстраційний реквізит постачальника — ховаємо від неавторизованих.
+            Dim isAuthenticated = Page.User.Identity.IsAuthenticated
+            phoneHolder.Visible = isAuthenticated
+            anonContactPanel.Visible = Not isAuthenticated
+
             Dim photos = Service.GetPhotos(svc.ServiceId)
             rptPhotos.DataSource = photos
             rptPhotos.DataBind()

@@ -440,6 +440,116 @@ Namespace SumyPortal
             Return result
         End Function
 
+        ' --- Адмін: повний CRUD над усіма оголошеннями (п.12 уточненої постановки, 2026-09-11) ---
+        ' На відміну від методів вище (GetByProvider/GetById/Update), тут немає перевірки
+        ' власника й обмеження за статусом — адмін бачить/редагує/видаляє будь-яке оголошення.
+
+        ''' <summary>Усі оголошення незалежно від статусу, з контактами постачальника — для AdminServices.aspx.</summary>
+        Public Shared Function GetAllForAdmin() As List(Of Service)
+            Dim result As New List(Of Service)
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand(
+                    "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
+                    "s.Price, s.District, s.Phone, s.Status, s.RejectReason, s.CreatedAt, " &
+                    "u.FullName AS ProviderName, u.Email AS ProviderEmail " &
+                    "FROM Services s " &
+                    "JOIN Categories c ON c.CategoryId = s.CategoryId " &
+                    "JOIN Users u ON u.UserId = s.ProviderId " &
+                    "ORDER BY s.CreatedAt DESC;", conn)
+                    Using reader = cmd.ExecuteReader()
+                        While reader.Read()
+                            Dim svc = Map(reader)
+                            svc.ProviderName = reader.GetString("ProviderName")
+                            svc.ProviderEmail = reader.GetString("ProviderEmail")
+                            result.Add(svc)
+                        End While
+                    End Using
+                End Using
+            End Using
+            Return result
+        End Function
+
+        ''' <summary>Оголошення за Id незалежно від власника/статусу — для адмінського редагування. Nothing, якщо не існує.</summary>
+        Public Shared Function GetByIdAny(serviceId As Integer) As Service
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand(
+                    "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
+                    "s.Price, s.District, s.Phone, s.Status, s.RejectReason, s.CreatedAt, " &
+                    "u.FullName AS ProviderName, u.Email AS ProviderEmail " &
+                    "FROM Services s " &
+                    "JOIN Categories c ON c.CategoryId = s.CategoryId " &
+                    "JOIN Users u ON u.UserId = s.ProviderId " &
+                    "WHERE s.ServiceId = @ServiceId;", conn)
+                    cmd.Parameters.AddWithValue("@ServiceId", serviceId)
+                    Using reader = cmd.ExecuteReader()
+                        If Not reader.Read() Then Return Nothing
+                        Dim svc = Map(reader)
+                        svc.ProviderName = reader.GetString("ProviderName")
+                        svc.ProviderEmail = reader.GetString("ProviderEmail")
+                        Return svc
+                    End Using
+                End Using
+            End Using
+        End Function
+
+        ''' <summary>Повне редагування адміном — без перевірки власника й статусу (на відміну від Update
+        ''' постачальника), дозволяє напряму змінити й Status/RejectReason.</summary>
+        Public Shared Function AdminUpdate(serviceId As Integer, categoryId As Integer, title As String, description As String,
+                                            price As Decimal?, district As String, phone As String,
+                                            status As String, rejectReason As String) As Boolean
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand(
+                    "UPDATE Services SET CategoryId = @CategoryId, Title = @Title, Description = @Description, " &
+                    "Price = @Price, District = @District, Phone = @Phone, Status = @Status, RejectReason = @RejectReason " &
+                    "WHERE ServiceId = @ServiceId;", conn)
+                    cmd.Parameters.AddWithValue("@ServiceId", serviceId)
+                    cmd.Parameters.AddWithValue("@CategoryId", categoryId)
+                    cmd.Parameters.AddWithValue("@Title", title)
+                    cmd.Parameters.AddWithValue("@Description", If(String.IsNullOrWhiteSpace(description), DBNull.Value, CObj(description)))
+                    cmd.Parameters.AddWithValue("@Price", If(price.HasValue, CObj(price.Value), DBNull.Value))
+                    cmd.Parameters.AddWithValue("@District", If(String.IsNullOrWhiteSpace(district), DBNull.Value, CObj(district)))
+                    cmd.Parameters.AddWithValue("@Phone", If(String.IsNullOrWhiteSpace(phone), DBNull.Value, CObj(phone)))
+                    cmd.Parameters.AddWithValue("@Status", status)
+                    cmd.Parameters.AddWithValue("@RejectReason", If(String.IsNullOrWhiteSpace(rejectReason), DBNull.Value, CObj(rejectReason)))
+                    Return cmd.ExecuteNonQuery() > 0
+                End Using
+            End Using
+        End Function
+
+        ''' <summary>Остаточне видалення оголошення адміном (на відміну від Unpublish постачальника —
+        ''' не "зняти з публікації", а видалити рядок повністю). ServicePhotos/ModerationLog/Favorites/
+        ''' Reviews/Messages прибираються каскадно (ON DELETE CASCADE, schema.sql) — тут лише БД,
+        ''' файли фото на диску видаляє сторінка (AdminServices.aspx.vb), знявши шляхи до цього виклику.</summary>
+        Public Shared Function AdminDelete(serviceId As Integer) As Boolean
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand("DELETE FROM Services WHERE ServiceId = @ServiceId;", conn)
+                    cmd.Parameters.AddWithValue("@ServiceId", serviceId)
+                    Return cmd.ExecuteNonQuery() > 0
+                End Using
+            End Using
+        End Function
+
+        ''' <summary>Видалення фото адміном — без перевірки власника (на відміну від DeletePhoto постачальника).
+        ''' Повертає шлях файлу для видалення з диска (або Nothing, якщо фото не знайдено).</summary>
+        Public Shared Function AdminDeletePhoto(photoId As Integer) As String
+            Using conn = DbHelper.GetConnection()
+                Dim filePath As String = Nothing
+                Using selectCmd As New MySqlCommand("SELECT FilePath FROM ServicePhotos WHERE PhotoId = @PhotoId;", conn)
+                    selectCmd.Parameters.AddWithValue("@PhotoId", photoId)
+                    Dim result = selectCmd.ExecuteScalar()
+                    If result Is Nothing Then Return Nothing
+                    filePath = CStr(result)
+                End Using
+
+                Using deleteCmd As New MySqlCommand("DELETE FROM ServicePhotos WHERE PhotoId = @PhotoId;", conn)
+                    deleteCmd.Parameters.AddWithValue("@PhotoId", photoId)
+                    deleteCmd.ExecuteNonQuery()
+                End Using
+
+                Return filePath
+            End Using
+        End Function
+
     End Class
 
 End Namespace

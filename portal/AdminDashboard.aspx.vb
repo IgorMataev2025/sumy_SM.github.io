@@ -18,6 +18,8 @@ Namespace SumyPortal
                     "Черга порожня.",
                     pendingCount.ToString() & " оголошення(нь) очікує(ють) рішення.")
 
+                totalServicesCountLiteral.Text = Service.GetAllForAdmin().Count.ToString() & " оголошень усіх статусів — прямий CRUD."
+
                 categoryCountLiteral.Text = ServiceCategory.GetAllCategories().Count.ToString() & " категорій (активних і деактивованих)."
 
                 userCountLiteral.Text = UserAccount.GetAll().Count.ToString() & " зареєстрованих користувачів."
