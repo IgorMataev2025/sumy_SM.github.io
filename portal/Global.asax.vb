@@ -10,6 +10,29 @@ Namespace SumyPortal
             ' Ініціалізація на старті застосунку (кеші довідників тощо — пізніше).
         End Sub
 
+        ''' <summary>
+        ''' Голий корінь застосунку ("/") IIS резолвить у Default.aspx як default
+        ''' document лише на стадії ResolveRequestCache — вона виконується ПІСЛЯ
+        ''' AuthenticateRequest/AuthorizeRequest, де вже спрацьовує ASP.NET-
+        ''' авторизація з Web.config. Тобто &lt;location path="Default.aspx"&gt;
+        ''' (allow users="*", відкритий перегляд для USER, п.12 уточненої
+        ''' постановки) до цього моменту ще не бачить, що запит насправді на
+        ''' Default.aspx — Request.Path усе ще "/" — і анонімного відвідувача
+        ''' редіректить на Login.aspx, хоча "/Default.aspx" напряму відкривався
+        ''' нормально (знайдено живим тестом 2026-09-11). Application_BeginRequest
+        ''' виконується найпершим у конвеєрі — переписуємо шлях тут, до того як
+        ''' дійде до авторизації.
+        ''' </summary>
+        Sub Application_BeginRequest(sender As Object, e As EventArgs)
+            Dim appPath = Request.ApplicationPath
+            If String.IsNullOrEmpty(appPath) Then appPath = "/"
+            If Not appPath.EndsWith("/") Then appPath &= "/"
+
+            If String.Equals(Request.Path, appPath, StringComparison.OrdinalIgnoreCase) Then
+                HttpContext.Current.RewritePath("~/Default.aspx")
+            End If
+        End Sub
+
         Sub Session_Start(sender As Object, e As EventArgs)
         End Sub
 
