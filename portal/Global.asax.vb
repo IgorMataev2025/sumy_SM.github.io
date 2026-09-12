@@ -14,6 +14,12 @@ Namespace SumyPortal
         Private Shared _nextStaleCheckAtUtc As DateTime = DateTime.MinValue
         Private Shared ReadOnly _staleCheckLock As New Object()
 
+        ''' <summary>Дайджест на email (п.25, наступна фіча понад MVP, 2026-09-12) — той самий
+        ''' throttle-прийом, що вище для застарілих оголошень, окрема пара змінних, бо
+        ''' перевірки незалежні одна від одної.</summary>
+        Private Shared _nextDigestCheckAtUtc As DateTime = DateTime.MinValue
+        Private Shared ReadOnly _digestCheckLock As New Object()
+
         Sub Application_Start(sender As Object, e As EventArgs)
             ' Ініціалізація на старті застосунку (кеші довідників тощо — пізніше).
         End Sub
@@ -44,6 +50,7 @@ Namespace SumyPortal
             End If
 
             CheckStaleServicesOnce()
+            CheckDigestOnce()
         End Sub
 
         ''' <summary>Автоматичне зняття застарілих оголошень (п.20, наступна фіча понад MVP,
@@ -79,6 +86,27 @@ Namespace SumyPortal
                     ' NotifyOtherParty у MessageThread.aspx.vb.
                 End Try
             Next
+        End Sub
+
+        ''' <summary>Дайджест на email (п.25, наступна фіча понад MVP, 2026-09-12) — раз на
+        ''' добу перевіряємо, кому час надіслати (кожен користувач має власний "з якого
+        ''' часу" — DigestSender.vb/UserAccount.GetDueForDigest), той самий "poor man's cron"
+        ''' підхід, що вже CheckStaleServicesOnce вище. Request.Url доступний саме тут (а не
+        ''' в DigestSender) — той самий прийом, що вже Sitemap.vb/Donate.aspx.vb для
+        ''' самопідлаштування домену без хардкоду.</summary>
+        Private Sub CheckDigestOnce()
+            If DateTime.UtcNow < _nextDigestCheckAtUtc Then Return
+
+            SyncLock _digestCheckLock
+                If DateTime.UtcNow < _nextDigestCheckAtUtc Then Return
+                _nextDigestCheckAtUtc = DateTime.UtcNow.AddDays(1)
+            End SyncLock
+
+            Dim days As Integer
+            If Not Integer.TryParse(ConfigurationManager.AppSettings("DigestIntervalDays"), days) Then days = 7
+
+            Dim baseUrl = Request.Url.GetLeftPart(UriPartial.Authority)
+            DigestSender.SendDueDigests(days, baseUrl)
         End Sub
 
         Sub Session_Start(sender As Object, e As EventArgs)

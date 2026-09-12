@@ -496,6 +496,44 @@ Namespace SumyPortal
             Return result
         End Function
 
+        ''' <summary>Легка модель одного пункту дайджесту на email (п.25, наступна фіча
+        ''' понад MVP, 2026-09-12) — окремий клас, а не Service, щоб не додавати ApprovedAt
+        ''' як публічну властивість Service, яку довелось би тримати синхронізованою в усіх
+        ''' SELECT/Map(reader) місцях (той самий "грабельний" список, що вже для Latitude/
+        ''' ViewCount/IsVerified).</summary>
+        Public Class DigestListing
+            Public Property ServiceId As Integer
+            Public Property Title As String
+            Public Property CategoryName As String
+            Public Property ApprovedAt As DateTime
+        End Class
+
+        ''' <summary>Усі опубліковані оголошення з датою публікації — для дайджесту на email
+        ''' (п.25). Один спільний запит замість окремого SELECT на кожного адресата: кожен
+        ''' користувач має власне "з якого часу" (LastDigestSentAt/CreatedAt), тож фільтрація
+        ''' "що саме нове для нього" відбувається в пам'яті, у DigestSender.vb.</summary>
+        Public Shared Function GetAllApprovedForDigest() As List(Of DigestListing)
+            Dim result As New List(Of DigestListing)
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand(
+                    "SELECT s.ServiceId, s.Title, c.Name AS CategoryName, s.ApprovedAt " &
+                    "FROM Services s JOIN Categories c ON c.CategoryId = s.CategoryId " &
+                    "WHERE s.Status = 'Approved' ORDER BY s.ApprovedAt DESC;", conn)
+                    Using reader = cmd.ExecuteReader()
+                        While reader.Read()
+                            result.Add(New DigestListing With {
+                                .ServiceId = reader.GetInt32("ServiceId"),
+                                .Title = reader.GetString("Title"),
+                                .CategoryName = reader.GetString("CategoryName"),
+                                .ApprovedAt = reader.GetDateTime("ApprovedAt")
+                            })
+                        End While
+                    End Using
+                End Using
+            End Using
+            Return result
+        End Function
+
         ' --- Каталог і пошук (споживач, ТЗ п.4.4) ---
 
         ''' <summary>Опубліковане оголошення за Id — для картки. Nothing, якщо не існує або не Approved.</summary>

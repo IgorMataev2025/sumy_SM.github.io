@@ -1,0 +1,2 @@
+ALTER TABLE Users
+    ADD COLUMN LastDigestSentAt DATETIME NULL;

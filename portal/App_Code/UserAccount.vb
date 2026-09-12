@@ -28,9 +28,14 @@ Namespace SumyPortal
         Public Property EmailConfirmed As Boolean
         Public Property CreatedAt As DateTime
 
+        ''' <summary>Дайджест на email (п.25, наступна фіча понад MVP, 2026-09-12) — коли
+        ''' користувачу востаннє надіслано дайджест нових оголошень; Nothing — ще ніколи
+        ''' (тоді відлік іде від CreatedAt, DigestSender.vb).</summary>
+        Public Property LastDigestSentAt As DateTime?
+
         Private Const SelectColumns As String =
             "UserId, Email, FullName, Phone, UserType, IsLegalEntity, " &
-            "CompanyName, EDRPOU, District, IsActive, IsAdmin, EmailConfirmed, CreatedAt "
+            "CompanyName, EDRPOU, District, IsActive, IsAdmin, EmailConfirmed, CreatedAt, LastDigestSentAt "
 
         Private Shared Function Map(reader As MySqlDataReader) As UserAccount
             Return New UserAccount With {
@@ -46,7 +51,8 @@ Namespace SumyPortal
                 .IsActive = reader.GetBoolean("IsActive"),
                 .IsAdmin = reader.GetBoolean("IsAdmin"),
                 .EmailConfirmed = reader.GetBoolean("EmailConfirmed"),
-                .CreatedAt = reader.GetDateTime("CreatedAt")
+                .CreatedAt = reader.GetDateTime("CreatedAt"),
+                .LastDigestSentAt = If(reader.IsDBNull(reader.GetOrdinal("LastDigestSentAt")), CType(Nothing, DateTime?), reader.GetDateTime("LastDigestSentAt"))
             }
         End Function
 
@@ -90,6 +96,41 @@ Namespace SumyPortal
             End Using
             Return result
         End Function
+
+        ''' <summary>Активні Споживачі з підтвердженим email, яким час надіслати дайджест
+        ''' нових оголошень (п.25, наступна фіча понад MVP, 2026-09-12) — COALESCE бере
+        ''' LastDigestSentAt, а для тих, хто ще не отримував жодного, CreatedAt (щоб не
+        ''' слати дайджест одразу після реєстрації, а лише через days днів). Постачальники
+        ''' дайджест не отримують — свідоме MVP-рішення (мета фічі — повернути споживачів).</summary>
+        Public Shared Function GetDueForDigest(days As Integer) As List(Of UserAccount)
+            Dim result As New List(Of UserAccount)
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand(
+                    "SELECT " & SelectColumns & "FROM Users " &
+                    "WHERE UserType = 'Consumer' AND IsActive = TRUE AND EmailConfirmed = TRUE " &
+                    "AND COALESCE(LastDigestSentAt, CreatedAt) < DATE_SUB(UTC_TIMESTAMP(), INTERVAL @Days DAY);", conn)
+                    cmd.Parameters.AddWithValue("@Days", days)
+                    Using reader = cmd.ExecuteReader()
+                        While reader.Read()
+                            result.Add(Map(reader))
+                        End While
+                    End Using
+                End Using
+            End Using
+            Return result
+        End Function
+
+        ''' <summary>Фіксує момент надсилання дайджесту (п.25) — незалежно від того, чи
+        ''' лист реально дійшов (той самий підхід, що вже архівація застарілих оголошень,
+        ''' п.20: помилка листа не повинна ламати чи повторювати основну дію).</summary>
+        Public Shared Sub MarkDigestSent(userId As Integer)
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand("UPDATE Users SET LastDigestSentAt = UTC_TIMESTAMP() WHERE UserId = @UserId;", conn)
+                    cmd.Parameters.AddWithValue("@UserId", userId)
+                    cmd.ExecuteNonQuery()
+                End Using
+            End Using
+        End Sub
 
         ''' <summary>Блокування/розблокування акаунта адміністратором (ТЗ, розділ 4.3). Адмінів блокувати не можна.</summary>
         Public Shared Function SetActive(userId As Integer, isActive As Boolean) As Boolean
