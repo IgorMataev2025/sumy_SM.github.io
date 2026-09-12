@@ -46,7 +46,9 @@ Namespace SumyPortal
                 Return
             End If
 
-            headingLiteral.Text = _svc.Title
+            ' Server.HtmlEncode — Title вільний текст постачальника, сторінка бачить
+            ' сесію співрозмовника (той самий прийом, що вже в ServiceDetails.aspx.vb).
+            headingLiteral.Text = Server.HtmlEncode(_svc.Title)
 
             If Not IsPostBack Then
                 BindThread()

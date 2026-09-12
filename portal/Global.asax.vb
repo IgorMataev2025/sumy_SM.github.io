@@ -29,7 +29,10 @@ Namespace SumyPortal
             If Not appPath.EndsWith("/") Then appPath &= "/"
 
             If String.Equals(Request.Path, appPath, StringComparison.OrdinalIgnoreCase) Then
-                HttpContext.Current.RewritePath("~/Default.aspx")
+                ' 3-аргументний overload (а не однорядковий RewritePath("~/Default.aspx"))
+                ' — однорядковий мовчки ОЧИЩУЄ рядок запиту, коли в переданому шляху
+                ' немає "?" (напр. https://site/?utm_source=... втратив би параметри).
+                HttpContext.Current.RewritePath("~/Default.aspx", String.Empty, Request.QueryString.ToString())
             End If
         End Sub
 

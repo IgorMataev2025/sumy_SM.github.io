@@ -1,9 +1,19 @@
 <%@ Page Title="" Language="VB" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="Profile.aspx.vb" Inherits="SumyPortal.Profile" %>
 <asp:Content ID="TitleContent" ContentPlaceHolderID="TitleContent" runat="server">
-    Мій профіль — Портал послуг Safina
+    Профіль — Портал послуг Safina
 </asp:Content>
 <asp:Content ID="MainContent" ContentPlaceHolderID="MainContent" runat="server">
-    <h1>Мій профіль</h1>
+    <h1><asp:Literal ID="headingLiteral" runat="server" Text="Мій профіль" /></h1>
+
+    <asp:Panel ID="notFoundPanel" runat="server" Visible="false" CssClass="stub-note">
+        Постачальника не знайдено.
+    </asp:Panel>
+
+    <!-- Публічний перегляд (постановка робочої тестової версії, 2026-09-12,
+         Profile.aspx?providerId=X) — лише ім'я/компанія, без форми редагування. -->
+    <asp:Panel ID="publicPanel" runat="server" Visible="false" CssClass="stub-note">
+        <p><asp:Literal ID="publicNameLiteral" runat="server" /></p>
+    </asp:Panel>
 
     <asp:Label ID="infoLabel" runat="server" CssClass="stub-note" Visible="false" />
 
@@ -60,5 +70,35 @@
         <asp:Button ID="btnDeleteAccount" runat="server" Text="Видалити акаунт" CssClass="btn-secondary"
             OnClick="btnDeleteAccount_Click" CausesValidation="false"
             OnClientClick="return confirm('Видалити акаунт безповоротно? Цю дію не можна скасувати самостійно.');" />
+    </asp:Panel>
+
+    <!-- Галерея (постановка робочої тестової версії, 2026-09-12) — окремо від фото
+         оголошень, публічна (бачить будь-хто за Profile.aspx?providerId=X). -->
+    <asp:Panel ID="galleryPanel" runat="server" CssClass="stub-note">
+        <h2>Галерея</h2>
+
+        <div class="catalog-grid photo-gallery">
+            <asp:Repeater ID="rptGallery" runat="server" OnItemCommand="rptGallery_ItemCommand" OnItemDataBound="rptGallery_ItemDataBound">
+                <ItemTemplate>
+                    <div class="photo-thumb">
+                        <img class="gallery-photo" src='<%#: ResolveUrl(CType(Container.DataItem, SumyPortal.ProviderGalleryPhoto).FilePath) %>' alt="" />
+                        <asp:LinkButton ID="lnkDeleteGalleryPhoto" runat="server" CommandName="Delete" CausesValidation="false"
+                            CommandArgument='<%#: CType(Container.DataItem, SumyPortal.ProviderGalleryPhoto).PhotoId %>'
+                            OnClientClick="return confirm('Видалити це фото з галереї?');">видалити</asp:LinkButton>
+                    </div>
+                </ItemTemplate>
+            </asp:Repeater>
+        </div>
+
+        <asp:Panel ID="noGalleryPhotosPanel" runat="server" Visible="false" CssClass="stub-note">
+            Фото в галереї ще немає.
+        </asp:Panel>
+
+        <asp:Panel ID="galleryUploadPanel" runat="server" Visible="false" CssClass="form-row">
+            <label for="<%= galleryFileUpload.ClientID %>">Додати фото (до <asp:Literal ID="maxGalleryPhotosLiteral" runat="server" /> шт., jpg/png/gif, ≤3МБ)</label>
+            <asp:FileUpload ID="galleryFileUpload" runat="server" AllowMultiple="true" />
+            <asp:Button ID="btnUploadGalleryPhoto" runat="server" Text="Завантажити" OnClick="btnUploadGalleryPhoto_Click" CausesValidation="false" CssClass="btn-secondary" />
+            <asp:Label ID="galleryErrorLabel" runat="server" CssClass="form-error" Visible="false" />
+        </asp:Panel>
     </asp:Panel>
 </asp:Content>

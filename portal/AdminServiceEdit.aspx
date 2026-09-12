@@ -52,6 +52,17 @@
         </div>
 
         <div class="form-row">
+            <label for="<%= txtLatitude.ClientID %>">Широта (необов'язково)</label>
+            <asp:TextBox ID="txtLatitude" runat="server" MaxLength="15" />
+            <asp:RegularExpressionValidator runat="server" ControlToValidate="txtLatitude" ErrorMessage="Широта — число, напр. 50.9077" ValidationExpression="^-?\d{1,3}(\.\d+)?$" Display="Dynamic" CssClass="field-error" />
+        </div>
+        <div class="form-row">
+            <label for="<%= txtLongitude.ClientID %>">Довгота (необов'язково)</label>
+            <asp:TextBox ID="txtLongitude" runat="server" MaxLength="15" />
+            <asp:RegularExpressionValidator runat="server" ControlToValidate="txtLongitude" ErrorMessage="Довгота — число, напр. 34.7981" ValidationExpression="^-?\d{1,3}(\.\d+)?$" Display="Dynamic" CssClass="field-error" />
+        </div>
+
+        <div class="form-row">
             <label for="<%= ddlStatus.ClientID %>">Статус</label>
             <asp:DropDownList ID="ddlStatus" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlStatus_SelectedIndexChanged">
                 <asp:ListItem Text="Чернетка" Value="Draft" />

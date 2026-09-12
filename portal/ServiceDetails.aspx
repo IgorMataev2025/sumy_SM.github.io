@@ -2,6 +2,13 @@
 <asp:Content ID="TitleContent" ContentPlaceHolderID="TitleContent" runat="server">
     <asp:Literal ID="titleLiteral" runat="server" /> — Портал послуг Safina
 </asp:Content>
+<asp:Content ID="HeadContent" ContentPlaceHolderID="HeadContent" runat="server">
+    <!-- Leaflet + OpenStreetMap — той самий CDN, що ServiceEdit.aspx (постановка робочої тестової версії, 2026-09-12). -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+</asp:Content>
 <asp:Content ID="MainContent" ContentPlaceHolderID="MainContent" runat="server">
     <p><a href="Catalog.aspx">← До каталогу</a></p>
 
@@ -28,6 +35,7 @@
         <div class="contact-box">
             <h2>Контакти постачальника</h2>
             <p><asp:Literal ID="providerNameLiteral" runat="server" /></p>
+            <p><asp:HyperLink ID="providerGalleryLink" runat="server" CssClass="btn-secondary">Галерея постачальника</asp:HyperLink></p>
             <asp:PlaceHolder ID="phoneHolder" runat="server">
                 <p>Телефон: <asp:Literal ID="phoneLiteral" runat="server" /></p>
             </asp:PlaceHolder>
@@ -36,6 +44,22 @@
                 або <a href="Register.aspx">зареєструйтесь</a>.
             </asp:Panel>
             <p>Район: <asp:Literal ID="districtLiteral" runat="server" /></p>
+            <asp:Panel ID="mapPanel" runat="server" Visible="false">
+                <p><b>Розташування на карті</b></p>
+                <div id="detailsMap" style="height:250px; border-radius:8px;"></div>
+                <!-- Скрипт усередині mapPanel навмисно — Visible="false" (немає мітки) не рендерить
+                     дітей узагалі, тож detailsMap у DOM не буде, а координати нема чим підставити. -->
+                <script>
+                    (function () {
+                        var map = L.map('detailsMap').setView([<%= LatitudeForScript %>, <%= LongitudeForScript %>], 15);
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '&copy; OpenStreetMap contributors',
+                            maxZoom: 19
+                        }).addTo(map);
+                        L.marker([<%= LatitudeForScript %>, <%= LongitudeForScript %>]).addTo(map);
+                    })();
+                </script>
+            </asp:Panel>
             <p><asp:HyperLink ID="contractLink" runat="server" CssClass="btn-primary" Visible="false">Сформувати договір</asp:HyperLink></p>
             <p>
                 <asp:Button ID="btnToggleFavorite" runat="server" Visible="false" CausesValidation="false"

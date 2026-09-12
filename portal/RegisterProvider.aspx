@@ -56,7 +56,7 @@
         </div>
 
         <div class="form-row">
-            <asp:CheckBox ID="chkLegalEntity" runat="server" Text="Юридична особа" AutoPostBack="true" OnCheckedChanged="chkLegalEntity_CheckedChanged" />
+            <asp:CheckBox ID="chkLegalEntity" runat="server" Text="Юридична особа" AutoPostBack="true" CausesValidation="false" OnCheckedChanged="chkLegalEntity_CheckedChanged" />
         </div>
         <asp:Panel ID="legalEntityPanel" runat="server" Visible="false">
             <div class="form-row">

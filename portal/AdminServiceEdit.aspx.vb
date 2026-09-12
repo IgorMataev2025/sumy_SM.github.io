@@ -41,9 +41,19 @@ Namespace SumyPortal
                     Return
                 End If
 
-                providerLiteral.Text = String.Format("Постачальник: {0} ({1})", svc.ProviderName, svc.ProviderEmail)
+                ' Server.HtmlEncode — Literal рендерить сирий HTML, а ProviderName/ProviderEmail
+                ' — вільний текст постачальника; сторінка бачить сесію адміна (той самий
+                ' прийом, що вже в ServiceContract.aspx.vb).
+                providerLiteral.Text = String.Format("Постачальник: {0} ({1})",
+                    Server.HtmlEncode(svc.ProviderName), Server.HtmlEncode(svc.ProviderEmail))
 
-                ddlCategory.SelectedValue = svc.CategoryId.ToString()
+                ' Захист: ddlCategory показує лише активні категорії (GetActiveCategories),
+                ' а це оголошення могло отримати категорію до її деактивації —
+                ' SelectedValue кине виняток без перевірки (той самий прийом, що вже для
+                ' District нижче, і що вже виправлено для ServiceEdit.aspx.vb постачальника).
+                If ddlCategory.Items.FindByValue(svc.CategoryId.ToString()) IsNot Nothing Then
+                    ddlCategory.SelectedValue = svc.CategoryId.ToString()
+                End If
                 txtTitle.Text = svc.Title
                 txtDescription.Text = svc.Description
                 txtPrice.Text = If(svc.Price.HasValue, svc.Price.Value.ToString("0.##", CultureInfo.InvariantCulture), String.Empty)
@@ -51,6 +61,8 @@ Namespace SumyPortal
                     ddlDistrict.SelectedValue = svc.District
                 End If
                 txtPhone.Text = svc.Phone
+                If svc.Latitude.HasValue Then txtLatitude.Text = svc.Latitude.Value.ToString(CultureInfo.InvariantCulture)
+                If svc.Longitude.HasValue Then txtLongitude.Text = svc.Longitude.Value.ToString(CultureInfo.InvariantCulture)
                 ddlStatus.SelectedValue = svc.Status
                 txtRejectReason.Text = svc.RejectReason
                 rejectReasonPanel.Visible = (svc.Status = "Rejected")
@@ -99,10 +111,26 @@ Namespace SumyPortal
             End If
             Dim district = ddlDistrict.SelectedValue
             Dim phone = txtPhone.Text.Trim()
+            Dim latitude As Decimal? = Nothing
+            If Not String.IsNullOrWhiteSpace(txtLatitude.Text) Then
+                latitude = Decimal.Parse(txtLatitude.Text, CultureInfo.InvariantCulture)
+            End If
+            Dim longitude As Decimal? = Nothing
+            If Not String.IsNullOrWhiteSpace(txtLongitude.Text) Then
+                longitude = Decimal.Parse(txtLongitude.Text, CultureInfo.InvariantCulture)
+            End If
             Dim status = ddlStatus.SelectedValue
             Dim rejectReason = If(status = "Rejected", txtRejectReason.Text.Trim(), Nothing)
 
-            Dim updated = Service.AdminUpdate(svc.ServiceId, categoryId, title, description, price, district, phone, status, rejectReason)
+            ' Той самий захист, що вже в AdminModeration.aspx.vb — без причини провайдер
+            ' бачить "Відхилено" без пояснення (MyServices.aspx рядок причини лише
+            ' Visible, коли RejectReason не порожній).
+            If status = "Rejected" AndAlso String.IsNullOrEmpty(rejectReason) Then
+                ShowError("Для статусу ""Відхилено"" потрібно вказати причину.")
+                Return
+            End If
+
+            Dim updated = Service.AdminUpdate(svc.ServiceId, categoryId, title, description, price, district, phone, latitude, longitude, status, rejectReason)
             If Not updated Then
                 ShowError("Не вдалося зберегти оголошення.")
                 Return

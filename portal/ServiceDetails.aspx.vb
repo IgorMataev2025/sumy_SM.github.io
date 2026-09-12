@@ -1,9 +1,15 @@
 Imports System
+Imports System.Globalization
 
 Namespace SumyPortal
 
     Public Class ServiceDetails
         Inherits System.Web.UI.Page
+
+        ''' <summary>Для інлайн-скрипта карти в ServiceDetails.aspx (<%= %>) — culture-invariant,
+        ''' щоб десяткова кома uk-UA (globalization Web.config) не зламала JS-літерал числа.</summary>
+        Protected Property LatitudeForScript As String
+        Protected Property LongitudeForScript As String
 
         Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
             If IsPostBack Then Return
@@ -20,14 +26,28 @@ Namespace SumyPortal
                 Return
             End If
 
-            titleLiteral.Text = svc.Title
-            headingLiteral.Text = svc.Title
-            categoryLiteral.Text = svc.CategoryName
+            ' Server.HtmlEncode — сторінка публічна (доступна анонімам, Web.config),
+            ' а Title/Description/ProviderName/Phone — вільний текст постачальника
+            ' (той самий прийом, що вже в ServiceContract.aspx.vb).
+            titleLiteral.Text = Server.HtmlEncode(svc.Title)
+            headingLiteral.Text = Server.HtmlEncode(svc.Title)
+            categoryLiteral.Text = Server.HtmlEncode(svc.CategoryName)
             priceLiteral.Text = If(svc.Price.HasValue, svc.Price.Value.ToString("0.## грн"), "Ціна за домовленістю")
-            descriptionLiteral.Text = svc.Description
-            providerNameLiteral.Text = svc.ProviderName
-            phoneLiteral.Text = svc.Phone
-            districtLiteral.Text = If(String.IsNullOrEmpty(svc.District), "не вказано", svc.District)
+            descriptionLiteral.Text = Server.HtmlEncode(svc.Description)
+            providerNameLiteral.Text = Server.HtmlEncode(svc.ProviderName)
+            ' Публічна галерея на акаунті постачальника (Profile.aspx?providerId=X) —
+            ' доступна будь-кому, включно з анонімами (постановка робочої тестової версії, 2026-09-12).
+            providerGalleryLink.NavigateUrl = ResolveUrl("~/Profile.aspx?providerId=" & svc.ProviderId)
+            phoneLiteral.Text = Server.HtmlEncode(svc.Phone)
+            districtLiteral.Text = Server.HtmlEncode(If(String.IsNullOrEmpty(svc.District), "не вказано", svc.District))
+
+            ' Геолокація (постановка робочої тестової версії, 2026-09-12) — лише інформативна
+            ' мітка, не замінює District. Панель/скрипт рендеряться лише коли координати є.
+            If svc.Latitude.HasValue AndAlso svc.Longitude.HasValue Then
+                LatitudeForScript = svc.Latitude.Value.ToString(CultureInfo.InvariantCulture)
+                LongitudeForScript = svc.Longitude.Value.ToString(CultureInfo.InvariantCulture)
+                mapPanel.Visible = True
+            End If
 
             ' Відкритий перегляд для USER (п.12 уточненої постановки, 2026-09-11):
             ' сторінка тепер доступна анонімно (Web.config), але телефон —

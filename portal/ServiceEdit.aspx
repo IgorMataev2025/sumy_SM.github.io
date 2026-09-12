@@ -2,6 +2,13 @@
 <asp:Content ID="TitleContent" ContentPlaceHolderID="TitleContent" runat="server">
     <asp:Literal ID="titleLiteral" runat="server" Text="Нове оголошення" /> — Портал послуг Safina
 </asp:Content>
+<asp:Content ID="HeadContent" ContentPlaceHolderID="HeadContent" runat="server">
+    <!-- Leaflet + OpenStreetMap — безкоштовно, без API-ключа (постановка робочої тестової версії, 2026-09-12). -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+</asp:Content>
 <asp:Content ID="MainContent" ContentPlaceHolderID="MainContent" runat="server">
     <h1><asp:Literal ID="headingLiteral" runat="server" Text="Нове оголошення" /></h1>
 
@@ -47,6 +54,14 @@
             <asp:RequiredFieldValidator runat="server" ControlToValidate="txtPhone" ErrorMessage="Вкажіть телефон" Display="Dynamic" CssClass="field-error" />
         </div>
 
+        <div class="form-row">
+            <label>Місцезнаходження на карті (необов'язково — клікніть, щоб поставити мітку)</label>
+            <div id="serviceMap" style="height:300px; border-radius:8px;"></div>
+            <p class="stub-note" id="mapHint">Мітку ще не встановлено.</p>
+            <asp:HiddenField ID="hidLatitude" runat="server" />
+            <asp:HiddenField ID="hidLongitude" runat="server" />
+        </div>
+
         <asp:Panel ID="existingPhotosPanel" runat="server" Visible="false" CssClass="form-row">
             <label>Наявні фото</label>
             <asp:Repeater ID="rptPhotos" runat="server">
@@ -74,5 +89,40 @@
         </div>
 
         <p><a href="MyServices.aspx">← До списку оголошень</a></p>
+
+        <!-- Скрипт усередині formPanel навмисно — Panel Visible="false" (lockedPanel-режим,
+             оголошення вже на модерації/опубліковане) не рендерить дітей узагалі, і DOM-елементи
+             serviceMap/hidLatitude/hidLongitude тоді відсутні; скрипт зовні панелі впав би на
+             getElementById(null). -->
+        <script>
+            (function () {
+                var latField = document.getElementById('<%= hidLatitude.ClientID %>');
+                var lngField = document.getElementById('<%= hidLongitude.ClientID %>');
+                var hint = document.getElementById('mapHint');
+                var hasMarker = !!(latField.value && lngField.value);
+                var initialLat = hasMarker ? parseFloat(latField.value) : 50.9077; // центр Сум за замовчуванням
+                var initialLng = hasMarker ? parseFloat(lngField.value) : 34.7981;
+
+                var map = L.map('serviceMap').setView([initialLat, initialLng], hasMarker ? 14 : 12);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors',
+                    maxZoom: 19
+                }).addTo(map);
+
+                var marker = hasMarker ? L.marker([initialLat, initialLng]).addTo(map) : null;
+                if (marker) { hint.style.display = 'none'; }
+
+                map.on('click', function (e) {
+                    if (marker) {
+                        marker.setLatLng(e.latlng);
+                    } else {
+                        marker = L.marker(e.latlng).addTo(map);
+                    }
+                    latField.value = e.latlng.lat.toFixed(6);
+                    lngField.value = e.latlng.lng.toFixed(6);
+                    hint.style.display = 'none';
+                });
+            })();
+        </script>
     </asp:Panel>
 </asp:Content>

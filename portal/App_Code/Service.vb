@@ -20,6 +20,13 @@ Namespace SumyPortal
         Public Property Price As Decimal?
         Public Property District As String
         Public Property Phone As String
+
+        ''' <summary>Геолокація оголошення (постановка робочої тестової версії, 2026-09-12) —
+        ''' клік на карті в ServiceEdit.aspx, лише інформативна мітка на ServiceDetails.aspx.
+        ''' Доповнює District (район), не замінює його. Nothing — постачальник ще не ставив мітку.</summary>
+        Public Property Latitude As Decimal?
+        Public Property Longitude As Decimal?
+
         Public Property Status As String
         Public Property RejectReason As String
         Public Property CreatedAt As DateTime
@@ -55,15 +62,24 @@ Namespace SumyPortal
                 .Price = If(reader.IsDBNull(reader.GetOrdinal("Price")), CType(Nothing, Decimal?), reader.GetDecimal("Price")),
                 .District = If(reader.IsDBNull(reader.GetOrdinal("District")), Nothing, reader.GetString("District")),
                 .Phone = If(reader.IsDBNull(reader.GetOrdinal("Phone")), Nothing, reader.GetString("Phone")),
+                .Latitude = If(reader.IsDBNull(reader.GetOrdinal("Latitude")), CType(Nothing, Decimal?), reader.GetDecimal("Latitude")),
+                .Longitude = If(reader.IsDBNull(reader.GetOrdinal("Longitude")), CType(Nothing, Decimal?), reader.GetDecimal("Longitude")),
                 .Status = reader.GetString("Status"),
                 .RejectReason = If(reader.IsDBNull(reader.GetOrdinal("RejectReason")), Nothing, reader.GetString("RejectReason")),
                 .CreatedAt = reader.GetDateTime("CreatedAt")
             }
         End Function
 
+        ''' <summary>
+        ''' Map() читає Latitude/Longitude безумовно (reader.GetOrdinal) — тому будь-який SELECT,
+        ''' переданий у Map(reader), ОБОВ'ЯЗКОВО має містити ці два стовпці, інакше
+        ''' IndexOutOfRangeException. Стосується й інших inline-запитів нижче
+        ''' (GetPendingForModeration/GetPendingById/GetApprovedById/GetForMessaging/
+        ''' GetAllForAdmin/GetByIdAny/SearchApproved), що дублюють цей самий список колонок.
+        ''' </summary>
         Private Const SelectBase As String =
             "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-            "s.Price, s.District, s.Phone, s.Status, s.RejectReason, s.CreatedAt " &
+            "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt " &
             "FROM Services s JOIN Categories c ON c.CategoryId = s.CategoryId "
 
         ''' <summary>Усі оголошення постачальника, найновіші зверху.</summary>
@@ -98,13 +114,14 @@ Namespace SumyPortal
 
         ''' <summary>Створює нове оголошення у статусі "Чернетка". Повертає ServiceId.</summary>
         Public Shared Function Create(providerId As Integer, categoryId As Integer, title As String, description As String,
-                                       price As Decimal?, district As String, phone As String) As Integer
+                                       price As Decimal?, district As String, phone As String,
+                                       latitude As Decimal?, longitude As Decimal?) As Integer
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
-                    "INSERT INTO Services (ProviderId, CategoryId, Title, Description, Price, District, Phone, Status, CreatedAt) " &
-                    "VALUES (@ProviderId, @CategoryId, @Title, @Description, @Price, @District, @Phone, 'Draft', UTC_TIMESTAMP()); " &
+                    "INSERT INTO Services (ProviderId, CategoryId, Title, Description, Price, District, Phone, Latitude, Longitude, Status, CreatedAt) " &
+                    "VALUES (@ProviderId, @CategoryId, @Title, @Description, @Price, @District, @Phone, @Latitude, @Longitude, 'Draft', UTC_TIMESTAMP()); " &
                     "SELECT LAST_INSERT_ID();", conn)
-                    AddCommonParams(cmd, providerId, categoryId, title, description, price, district, phone)
+                    AddCommonParams(cmd, providerId, categoryId, title, description, price, district, phone, latitude, longitude)
                     Return Convert.ToInt32(cmd.ExecuteScalar())
                 End Using
             End Using
@@ -113,21 +130,23 @@ Namespace SumyPortal
         ''' <summary>Редагування власного оголошення (тільки поки Draft або Rejected — після подачі на модерацію
         ''' зміни заборонені до вирішення модератора). Повертає False, якщо не знайдено/не власник/не той статус.</summary>
         Public Shared Function Update(serviceId As Integer, providerId As Integer, categoryId As Integer, title As String,
-                                       description As String, price As Decimal?, district As String, phone As String) As Boolean
+                                       description As String, price As Decimal?, district As String, phone As String,
+                                       latitude As Decimal?, longitude As Decimal?) As Boolean
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "UPDATE Services SET CategoryId = @CategoryId, Title = @Title, Description = @Description, " &
-                    "Price = @Price, District = @District, Phone = @Phone " &
+                    "Price = @Price, District = @District, Phone = @Phone, Latitude = @Latitude, Longitude = @Longitude " &
                     "WHERE ServiceId = @ServiceId AND ProviderId = @ProviderId AND Status IN ('Draft', 'Rejected');", conn)
                     cmd.Parameters.AddWithValue("@ServiceId", serviceId)
-                    AddCommonParams(cmd, providerId, categoryId, title, description, price, district, phone)
+                    AddCommonParams(cmd, providerId, categoryId, title, description, price, district, phone, latitude, longitude)
                     Return cmd.ExecuteNonQuery() > 0
                 End Using
             End Using
         End Function
 
         Private Shared Sub AddCommonParams(cmd As MySqlCommand, providerId As Integer, categoryId As Integer, title As String,
-                                            description As String, price As Decimal?, district As String, phone As String)
+                                            description As String, price As Decimal?, district As String, phone As String,
+                                            latitude As Decimal?, longitude As Decimal?)
             cmd.Parameters.AddWithValue("@ProviderId", providerId)
             cmd.Parameters.AddWithValue("@CategoryId", categoryId)
             cmd.Parameters.AddWithValue("@Title", title)
@@ -135,6 +154,8 @@ Namespace SumyPortal
             cmd.Parameters.AddWithValue("@Price", If(price.HasValue, CObj(price.Value), DBNull.Value))
             cmd.Parameters.AddWithValue("@District", If(String.IsNullOrWhiteSpace(district), DBNull.Value, CObj(district)))
             cmd.Parameters.AddWithValue("@Phone", If(String.IsNullOrWhiteSpace(phone), DBNull.Value, CObj(phone)))
+            cmd.Parameters.AddWithValue("@Latitude", If(latitude.HasValue, CObj(latitude.Value), DBNull.Value))
+            cmd.Parameters.AddWithValue("@Longitude", If(longitude.HasValue, CObj(longitude.Value), DBNull.Value))
         End Sub
 
         ''' <summary>Подати на модерацію: Draft/Rejected → Pending.</summary>
@@ -234,7 +255,7 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Status, s.RejectReason, s.CreatedAt, " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, " &
                     "u.FullName AS ProviderName, u.Email AS ProviderEmail " &
                     "FROM Services s " &
                     "JOIN Categories c ON c.CategoryId = s.CategoryId " &
@@ -259,7 +280,7 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Status, s.RejectReason, s.CreatedAt, " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, " &
                     "u.FullName AS ProviderName, u.Email AS ProviderEmail " &
                     "FROM Services s " &
                     "JOIN Categories c ON c.CategoryId = s.CategoryId " &
@@ -329,7 +350,7 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Status, s.RejectReason, s.CreatedAt, " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, " &
                     "u.FullName AS ProviderName, u.Email AS ProviderEmail " &
                     "FROM Services s " &
                     "JOIN Categories c ON c.CategoryId = s.CategoryId " &
@@ -354,7 +375,7 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Status, s.RejectReason, s.CreatedAt, " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, " &
                     "u.FullName AS ProviderName, u.Email AS ProviderEmail " &
                     "FROM Services s " &
                     "JOIN Categories c ON c.CategoryId = s.CategoryId " &
@@ -423,7 +444,7 @@ Namespace SumyPortal
 
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Status, s.RejectReason, s.CreatedAt " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt " &
                     "FROM Services s JOIN Categories c ON c.CategoryId = s.CategoryId " & whereSql2 &
                     "ORDER BY s.CreatedAt DESC LIMIT @PageSize OFFSET @Offset;", conn)
                     cmd.Parameters.AddRange(selectParams.ToArray())
@@ -450,7 +471,7 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Status, s.RejectReason, s.CreatedAt, " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, " &
                     "u.FullName AS ProviderName, u.Email AS ProviderEmail " &
                     "FROM Services s " &
                     "JOIN Categories c ON c.CategoryId = s.CategoryId " &
@@ -474,7 +495,7 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Status, s.RejectReason, s.CreatedAt, " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, " &
                     "u.FullName AS ProviderName, u.Email AS ProviderEmail " &
                     "FROM Services s " &
                     "JOIN Categories c ON c.CategoryId = s.CategoryId " &
@@ -496,11 +517,13 @@ Namespace SumyPortal
         ''' постачальника), дозволяє напряму змінити й Status/RejectReason.</summary>
         Public Shared Function AdminUpdate(serviceId As Integer, categoryId As Integer, title As String, description As String,
                                             price As Decimal?, district As String, phone As String,
+                                            latitude As Decimal?, longitude As Decimal?,
                                             status As String, rejectReason As String) As Boolean
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "UPDATE Services SET CategoryId = @CategoryId, Title = @Title, Description = @Description, " &
-                    "Price = @Price, District = @District, Phone = @Phone, Status = @Status, RejectReason = @RejectReason " &
+                    "Price = @Price, District = @District, Phone = @Phone, Latitude = @Latitude, Longitude = @Longitude, " &
+                    "Status = @Status, RejectReason = @RejectReason " &
                     "WHERE ServiceId = @ServiceId;", conn)
                     cmd.Parameters.AddWithValue("@ServiceId", serviceId)
                     cmd.Parameters.AddWithValue("@CategoryId", categoryId)
@@ -509,6 +532,8 @@ Namespace SumyPortal
                     cmd.Parameters.AddWithValue("@Price", If(price.HasValue, CObj(price.Value), DBNull.Value))
                     cmd.Parameters.AddWithValue("@District", If(String.IsNullOrWhiteSpace(district), DBNull.Value, CObj(district)))
                     cmd.Parameters.AddWithValue("@Phone", If(String.IsNullOrWhiteSpace(phone), DBNull.Value, CObj(phone)))
+                    cmd.Parameters.AddWithValue("@Latitude", If(latitude.HasValue, CObj(latitude.Value), DBNull.Value))
+                    cmd.Parameters.AddWithValue("@Longitude", If(longitude.HasValue, CObj(longitude.Value), DBNull.Value))
                     cmd.Parameters.AddWithValue("@Status", status)
                     cmd.Parameters.AddWithValue("@RejectReason", If(String.IsNullOrWhiteSpace(rejectReason), DBNull.Value, CObj(rejectReason)))
                     Return cmd.ExecuteNonQuery() > 0

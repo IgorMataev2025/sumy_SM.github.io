@@ -42,9 +42,9 @@
                 </div>
                 <p class="service-category"><%#: CType(Container.DataItem, SumyPortal.ServiceCategory).Description %></p>
                 <div class="service-card-actions">
-                    <asp:LinkButton runat="server" CommandName="Edit"
+                    <asp:LinkButton runat="server" CommandName="Edit" CausesValidation="false"
                         CommandArgument='<%#: CType(Container.DataItem, SumyPortal.ServiceCategory).CategoryId %>'>Редагувати</asp:LinkButton>
-                    <asp:LinkButton runat="server" CommandName="ToggleActive"
+                    <asp:LinkButton runat="server" CommandName="ToggleActive" CausesValidation="false"
                         CommandArgument='<%#: CType(Container.DataItem, SumyPortal.ServiceCategory).CategoryId %>'>
                         <%#: If(CType(Container.DataItem, SumyPortal.ServiceCategory).IsActive, "Деактивувати", "Активувати") %>
                     </asp:LinkButton>

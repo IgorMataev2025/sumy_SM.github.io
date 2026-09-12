@@ -408,6 +408,49 @@
     але НЕ бачить ні форму, ні «вже залишили» (бо не може лишати
     відгук на себе); перевірено і в БД — рядок `Reviews` коректний.
 
+- **Геолокація оголошень + галерея на акаунті постачальника** (постановка
+  робочої тестової версії, 2026-09-12) — основний гравець цього етапу:
+  Постачальник.
+  - Геолокація (`Services.Latitude/Longitude`, `DECIMAL(9,6)`,
+    `migration_009_geolocation_gallery.sql`) — клік на карті
+    (Leaflet + OpenStreetMap, CDN unpkg, безкоштовно, без API-ключа) у
+    `ServiceEdit.aspx` ставить/пересуває мітку, координати йдуть у
+    приховані `hidLatitude/hidLongitude`. Лише інформативна мітка на
+    `ServiceDetails.aspx` (не пошук за відстанню) — **доповнює** поле
+    «Район», не замінює його. `AdminServiceEdit.aspx` редагує ті самі
+    координати простими текстовими полями (без карти — адмін рідко
+    переставляє точку, головне — не втратити дані при збереженні
+    інших полів).
+  - Галерея (`ProviderGalleryPhotos`, окрема таблиця й клас
+    `App_Code/ProviderGalleryPhoto.vb` — той самий патерн методів, що
+    `ServicePhotos`/`Service.vb`) — до 5 фото ≤3МБ на акаунті
+    постачальника, **не** прив'язана до конкретного оголошення (на
+    відміну від фото послуг). Публічна: `Profile.aspx?providerId=X`
+    доступний і неавторизованим (Web.config `<location>`, той самий
+    прийом, що `ServiceDetails.aspx`). Посилання «Галерея
+    постачальника» — на `ServiceDetails.aspx`.
+  - `Profile.aspx` тепер має два режими (варіант 1 з обговорення,
+    рішення користувача — не окрема сторінка): без `?providerId=` —
+    звична форма редагування "мій профіль" (вимагає входу, як і
+    раніше); з `?providerId=X` і це не власний Id — публічний
+    read-only перегляд (ім'я/компанія + галерея, без форми
+    редагування чужих даних, форма й danger-zone не рендеряться
+    взагалі). Захист від підробленого postback: `btnSave_Click`/
+    `btnDeleteAccount_Click`/`rptGallery_ItemCommand`/
+    `btnUploadGalleryPhoto_Click` ще раз перевіряють `IsOwnProfile` у
+    коді — прихований (`Visible=False`) контрол усе одно лишається в
+    дереві сторінки ASP.NET, і `__EVENTTARGET` можна підробити напряму
+    в POST, тож самого лише приховання в розмітці недостатньо.
+  - `Service.Map(reader)` читає `Latitude/Longitude` **безумовно**
+    (`reader.GetOrdinal`) — тому кожен SELECT, переданий у `Map`,
+    мусить містити ці два стовпці, інакше `IndexOutOfRangeException`.
+    Оновлено всі 8 місць у `Service.vb` (SelectBase +
+    GetPendingForModeration/GetPendingById/GetApprovedById/
+    GetForMessaging/GetAllForAdmin/GetByIdAny/SearchApproved) і ще одне
+    поза ним — `App_Code/Favorite.vb: GetByUser` (той самий патерн,
+    дублює список колонок для власного JOIN) — знайдено окремим
+    `grep`, не живим тестом, саме тому, що це легко пропустити.
+
 ## Що ще НЕ зроблено (за межами ТЗ MVP)
 
 - Середня оцінка з відгуків на картках `Catalog.aspx`/`Favorites.aspx`

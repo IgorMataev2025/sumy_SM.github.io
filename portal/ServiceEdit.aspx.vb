@@ -46,7 +46,13 @@ Namespace SumyPortal
                         Return
                     End If
 
-                    ddlCategory.SelectedValue = svc.CategoryId.ToString()
+                    ' Захист: адмін міг деактивувати категорію (AdminCategories.aspx) після
+                    ' того, як це оголошення її отримало — ddlCategory показує лише активні
+                    ' (GetActiveCategories), тому SelectedValue кине виняток без перевірки
+                    ' (той самий прийом, що вже для District нижче).
+                    If ddlCategory.Items.FindByValue(svc.CategoryId.ToString()) IsNot Nothing Then
+                        ddlCategory.SelectedValue = svc.CategoryId.ToString()
+                    End If
                     txtTitle.Text = svc.Title
                     txtDescription.Text = svc.Description
                     txtPrice.Text = If(svc.Price.HasValue, svc.Price.Value.ToString("0.##", CultureInfo.InvariantCulture), String.Empty)
@@ -57,6 +63,10 @@ Namespace SumyPortal
                         ddlDistrict.SelectedValue = svc.District
                     End If
                     txtPhone.Text = svc.Phone
+                    If svc.Latitude.HasValue AndAlso svc.Longitude.HasValue Then
+                        hidLatitude.Value = svc.Latitude.Value.ToString(CultureInfo.InvariantCulture)
+                        hidLongitude.Value = svc.Longitude.Value.ToString(CultureInfo.InvariantCulture)
+                    End If
 
                     BindPhotos(svc.ServiceId)
                 End If
@@ -104,11 +114,23 @@ Namespace SumyPortal
             Dim district = ddlDistrict.SelectedValue
             Dim phone = txtPhone.Text.Trim()
 
+            ' Геолокація (постановка робочої тестової версії, 2026-09-12) — необов'язкова,
+            ' hidLatitude/hidLongitude заповнюються JS кліком на карті (ServiceEdit.aspx);
+            ' порожні, якщо постачальник не ставив мітку.
+            Dim latitude As Decimal? = Nothing
+            Dim longitude As Decimal? = Nothing
+            Dim parsedLat, parsedLng As Decimal
+            If Decimal.TryParse(hidLatitude.Value, NumberStyles.Float, CultureInfo.InvariantCulture, parsedLat) AndAlso
+               Decimal.TryParse(hidLongitude.Value, NumberStyles.Float, CultureInfo.InvariantCulture, parsedLng) Then
+                latitude = parsedLat
+                longitude = parsedLng
+            End If
+
             Dim serviceId = ServiceIdParam
             If serviceId = 0 Then
-                serviceId = Service.Create(CurrentProvider.UserId, categoryId, title, description, price, district, phone)
+                serviceId = Service.Create(CurrentProvider.UserId, categoryId, title, description, price, district, phone, latitude, longitude)
             Else
-                Dim updated = Service.Update(serviceId, CurrentProvider.UserId, categoryId, title, description, price, district, phone)
+                Dim updated = Service.Update(serviceId, CurrentProvider.UserId, categoryId, title, description, price, district, phone, latitude, longitude)
                 If Not updated Then
                     ShowError("Не вдалося зберегти — оголошення вже на модерації або опубліковано.")
                     Return Nothing
