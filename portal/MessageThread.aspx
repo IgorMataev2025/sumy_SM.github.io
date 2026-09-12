@@ -19,7 +19,7 @@
                         <b><%#: CType(Container.DataItem, SumyPortal.DialogMessage).SenderName %></b> ·
                         <%#: CType(Container.DataItem, SumyPortal.DialogMessage).SentAt.ToString("dd.MM.yyyy HH:mm") %>
                     </p>
-                    <p><%#: CType(Container.DataItem, SumyPortal.DialogMessage).Body %></p>
+                    <p class="message-body"><%#: CType(Container.DataItem, SumyPortal.DialogMessage).Body %></p>
                 </div>
             </ItemTemplate>
         </asp:Repeater>
@@ -30,8 +30,25 @@
 
         <asp:Panel ID="replyFormPanel" runat="server" CssClass="auth-form">
             <asp:Label ID="errorLabel" runat="server" CssClass="form-error" Visible="false" />
+
+            <!-- Структурована заявка (постановка робочої тестової версії, 2026-09-12) —
+                 лише для першого звернення споживача (порожня розмова): дата/адреса
+                 об'єднуються в текст першого повідомлення при відправці, окремої
+                 сутності/статусу заявки немає (рішення користувача — платформа про
+                 стосунки, а не е-комерс із трекінгом виконання замовлення). -->
+            <asp:Panel ID="orderFieldsPanel" runat="server" Visible="false">
+                <div class="form-row">
+                    <label for="<%= txtDesiredDate.ClientID %>">Бажана дата/час (необов'язково)</label>
+                    <asp:TextBox ID="txtDesiredDate" runat="server" MaxLength="100" />
+                </div>
+                <div class="form-row">
+                    <label for="<%= txtAddress.ClientID %>">Адреса виконання (необов'язково)</label>
+                    <asp:TextBox ID="txtAddress" runat="server" MaxLength="255" />
+                </div>
+            </asp:Panel>
+
             <div class="form-row">
-                <label for="<%= txtBody.ClientID %>">Повідомлення</label>
+                <label for="<%= txtBody.ClientID %>"><asp:Literal ID="bodyLabelLiteral" runat="server" Text="Повідомлення" /></label>
                 <asp:TextBox ID="txtBody" runat="server" TextMode="MultiLine" Rows="3" MaxLength="2000" />
             </div>
             <div class="form-row">

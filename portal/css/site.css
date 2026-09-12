@@ -259,6 +259,13 @@ fieldset.form-row {
     margin: 0;
 }
 
+/* Текст повідомлення (MessageThread.aspx) — зберігає переноси рядків
+   (структурована заявка формує тіло з кількох рядків, Environment.NewLine),
+   звичайний <p> їх би зігнорував (знайдено живим тестом, 2026-09-12). */
+.message-body {
+    white-space: pre-line;
+}
+
 .status-badge {
     font-size: 0.8rem;
     color: var(--color-muted);

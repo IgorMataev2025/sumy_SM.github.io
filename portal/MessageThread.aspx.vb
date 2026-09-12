@@ -1,4 +1,5 @@
 Imports System
+Imports System.Collections.Generic
 
 Namespace SumyPortal
 
@@ -60,15 +61,42 @@ Namespace SumyPortal
             rptMessages.DataSource = thread
             rptMessages.DataBind()
             noMessagesPanel.Visible = (thread.Count = 0)
+
+            ' Структурована заявка — лише коли розмова ще порожня і пише сам споживач
+            ' (не постачальник, що першим би "відповідав" у ще не початій розмові —
+            ' теоретично неможливо, бо кнопка на ServiceDetails.aspx і так лише для
+            ' Consumer, але перевіряємо явно, а не покладаємось на це побічно).
+            orderFieldsPanel.Visible = (thread.Count = 0) AndAlso (CurrentUserId = _consumerId)
+            bodyLabelLiteral.Text = If(orderFieldsPanel.Visible, "Деталі / коментар", "Повідомлення")
         End Sub
 
         Protected Sub btnSend_Click(sender As Object, e As EventArgs)
-            Dim body = txtBody.Text.Trim()
-            If String.IsNullOrEmpty(body) Then
+            Dim comment = txtBody.Text.Trim()
+            If String.IsNullOrEmpty(comment) Then
                 errorLabel.Text = "Введіть текст повідомлення."
                 errorLabel.Visible = True
                 Return
             End If
+
+            Dim body = comment
+            If orderFieldsPanel.Visible Then
+                ' Дата/адреса об'єднуються в текст першого повідомлення — окремої
+                ' сутності/статусу заявки немає (рішення користувача, 2026-09-12).
+                Dim details As New List(Of String)
+                If Not String.IsNullOrWhiteSpace(txtDesiredDate.Text) Then
+                    details.Add("Бажана дата/час: " & txtDesiredDate.Text.Trim())
+                End If
+                If Not String.IsNullOrWhiteSpace(txtAddress.Text) Then
+                    details.Add("Адреса: " & txtAddress.Text.Trim())
+                End If
+                If details.Count > 0 Then
+                    body = String.Join(Environment.NewLine, details) & Environment.NewLine & Environment.NewLine & comment
+                End If
+            End If
+
+            ' Messages.Body VARCHAR(2000) — дата+адреса можуть додати понад ліміт
+            ' txtBody (теж 2000), тому підрізаємо, а не покладаємось на MySQL-помилку.
+            If body.Length > 2000 Then body = body.Substring(0, 2000)
 
             DialogMessage.Send(_serviceId, _consumerId, CurrentUserId, body)
             NotifyOtherParty(body)
