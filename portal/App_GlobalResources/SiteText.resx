@@ -42,6 +42,11 @@
   <data name="Catalog_Validator_Number" xml:space="preserve"><value>Число</value></data>
   <data name="Catalog_Btn_Search" xml:space="preserve"><value>Знайти</value></data>
   <data name="Catalog_Btn_Reset" xml:space="preserve"><value>Скинути</value></data>
+  <data name="Catalog_Label_Sort" xml:space="preserve"><value>Сортування</value></data>
+  <data name="Catalog_Sort_New" xml:space="preserve"><value>Спочатку нові</value></data>
+  <data name="Catalog_Sort_PriceAsc" xml:space="preserve"><value>Ціна: спочатку дешевші</value></data>
+  <data name="Catalog_Sort_PriceDesc" xml:space="preserve"><value>Ціна: спочатку дорожчі</value></data>
+  <data name="Catalog_Sort_Popular" xml:space="preserve"><value>Спочатку популярні</value></data>
   <data name="Catalog_Empty" xml:space="preserve"><value>За заданими критеріями нічого не знайдено.</value></data>
   <data name="Catalog_Photo_Placeholder" xml:space="preserve"><value>Фото немає</value></data>
   <data name="Catalog_Pagination_Prev" xml:space="preserve"><value>← Попередня</value></data>

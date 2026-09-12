@@ -542,9 +542,26 @@ Namespace SumyPortal
             Return sb.ToString()
         End Function
 
-        ''' <summary>Пошук опублікованих оголошень з фільтрами і пагінацією (ТЗ, розділ 4.4).</summary>
+        ''' <summary>Безпечний ORDER BY для сортування каталогу (п.23, наступна фіча понад MVP,
+        ''' 2026-09-12) — whitelist фіксованих значень з UI (Catalog.aspx: ddlSort), НЕ пряма
+        ''' конкатенація довільного рядка від користувача (захист від SQL-ін'єкції). Договірна
+        ''' ціна (Price IS NULL) при сортуванні за ціною завжди йде в кінець незалежно від напрямку.</summary>
+        Private Shared Function BuildSortOrder(sortBy As String) As String
+            Select Case sortBy
+                Case "price_asc"
+                    Return "ORDER BY (s.Price IS NULL), s.Price ASC "
+                Case "price_desc"
+                    Return "ORDER BY (s.Price IS NULL), s.Price DESC "
+                Case "popular"
+                    Return "ORDER BY s.ViewCount DESC "
+                Case Else ' "new" і будь-яке невідоме значення — безпечний дефолт
+                    Return "ORDER BY s.CreatedAt DESC "
+            End Select
+        End Function
+
+        ''' <summary>Пошук опублікованих оголошень з фільтрами, сортуванням і пагінацією (ТЗ, розділ 4.4).</summary>
         Public Shared Function SearchApproved(categoryId As Integer?, district As String, keyword As String,
-                                               minPrice As Decimal?, maxPrice As Decimal?,
+                                               minPrice As Decimal?, maxPrice As Decimal?, sortBy As String,
                                                pageNumber As Integer, pageSize As Integer,
                                                ByRef totalCount As Integer) As List(Of Service)
             Dim result As New List(Of Service)
@@ -566,7 +583,7 @@ Namespace SumyPortal
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
                     "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified " &
                     "FROM Services s JOIN Categories c ON c.CategoryId = s.CategoryId " & whereSql2 &
-                    "ORDER BY s.CreatedAt DESC LIMIT @PageSize OFFSET @Offset;", conn)
+                    BuildSortOrder(sortBy) & "LIMIT @PageSize OFFSET @Offset;", conn)
                     cmd.Parameters.AddRange(selectParams.ToArray())
                     cmd.Parameters.AddWithValue("@PageSize", pageSize)
                     cmd.Parameters.AddWithValue("@Offset", (pageNumber - 1) * pageSize)

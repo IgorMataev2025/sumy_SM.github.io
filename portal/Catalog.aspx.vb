@@ -76,14 +76,16 @@ Namespace SumyPortal
             Dim minPrice As Decimal? = ParsePrice(txtMinPrice.Text)
             Dim maxPrice As Decimal? = ParsePrice(txtMaxPrice.Text)
 
+            Dim sortBy = ddlSort.SelectedValue
+
             Dim total As Integer
-            Dim items = Service.SearchApproved(categoryId, district, keyword, minPrice, maxPrice, CurrentPage, PageSize, total)
+            Dim items = Service.SearchApproved(categoryId, district, keyword, minPrice, maxPrice, sortBy, CurrentPage, PageSize, total)
 
             ' Захист від виходу за межі (напр. якщо дані змінились між запитами) — повертаємось на останню сторінку.
             Dim totalPagesCheck = Math.Max(1, CInt(Math.Ceiling(total / CDbl(PageSize))))
             If CurrentPage > totalPagesCheck Then
                 CurrentPage = totalPagesCheck
-                items = Service.SearchApproved(categoryId, district, keyword, minPrice, maxPrice, CurrentPage, PageSize, total)
+                items = Service.SearchApproved(categoryId, district, keyword, minPrice, maxPrice, sortBy, CurrentPage, PageSize, total)
             End If
 
             For Each item In items
@@ -167,6 +169,14 @@ Namespace SumyPortal
             txtKeyword.Text = String.Empty
             txtMinPrice.Text = String.Empty
             txtMaxPrice.Text = String.Empty
+            ddlSort.SelectedIndex = 0
+            CurrentPage = 1
+            BindResults()
+        End Sub
+
+        ''' <summary>Сортування каталогу (п.23) — AutoPostBack на ddlSort застосовує вибір
+        ''' одразу, без окремого натискання "Знайти" (рішення користувача — "динамічно").</summary>
+        Protected Sub ddlSort_SelectedIndexChanged(sender As Object, e As EventArgs)
             CurrentPage = 1
             BindResults()
         End Sub

@@ -42,6 +42,11 @@
   <data name="Catalog_Validator_Number" xml:space="preserve"><value>Number</value></data>
   <data name="Catalog_Btn_Search" xml:space="preserve"><value>Search</value></data>
   <data name="Catalog_Btn_Reset" xml:space="preserve"><value>Reset</value></data>
+  <data name="Catalog_Label_Sort" xml:space="preserve"><value>Sort by</value></data>
+  <data name="Catalog_Sort_New" xml:space="preserve"><value>Newest first</value></data>
+  <data name="Catalog_Sort_PriceAsc" xml:space="preserve"><value>Price: low to high</value></data>
+  <data name="Catalog_Sort_PriceDesc" xml:space="preserve"><value>Price: high to low</value></data>
+  <data name="Catalog_Sort_Popular" xml:space="preserve"><value>Most popular</value></data>
   <data name="Catalog_Empty" xml:space="preserve"><value>No results found for the given criteria.</value></data>
   <data name="Catalog_Photo_Placeholder" xml:space="preserve"><value>No photo</value></data>
   <data name="Catalog_Pagination_Prev" xml:space="preserve"><value>← Previous</value></data>

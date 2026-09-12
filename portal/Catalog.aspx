@@ -46,6 +46,19 @@
                 <asp:Button ID="btnReset" runat="server" Text="<%$ Resources:SiteText, Catalog_Btn_Reset %>" OnClick="btnReset_Click" CausesValidation="false" CssClass="btn-secondary" />
             </div>
         </div>
+        <!-- Сортування каталогу (п.23, наступна фіча понад MVP, 2026-09-12) — окремий рядок,
+             AutoPostBack застосовує вибір одразу, без "Знайти" (рішення користувача — "динамічно"). -->
+        <div class="filter-row">
+            <div class="form-row">
+                <label for="<%= ddlSort.ClientID %>"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Label_Sort %>" /></label>
+                <asp:DropDownList ID="ddlSort" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlSort_SelectedIndexChanged" CausesValidation="false">
+                    <asp:ListItem Text="<%$ Resources:SiteText, Catalog_Sort_New %>" Value="new" />
+                    <asp:ListItem Text="<%$ Resources:SiteText, Catalog_Sort_PriceAsc %>" Value="price_asc" />
+                    <asp:ListItem Text="<%$ Resources:SiteText, Catalog_Sort_PriceDesc %>" Value="price_desc" />
+                    <asp:ListItem Text="<%$ Resources:SiteText, Catalog_Sort_Popular %>" Value="popular" />
+                </asp:DropDownList>
+            </div>
+        </div>
     </asp:Panel>
 
     <!-- Перемикач Список/Карта (продовження геолокації, п.13, постановка робочої тестової
