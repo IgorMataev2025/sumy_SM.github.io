@@ -463,6 +463,39 @@ Namespace SumyPortal
             Return result
         End Function
 
+        ''' <summary>Схожі оголошення (п.24, наступна фіча понад MVP, 2026-09-12) — інші
+        ''' Approved-оголошення тієї ж категорії, крім самого поточного, найновіші перші,
+        ''' без фолбеку на інші категорії/райони (свідоме MVP-спрощення). Той самий принцип
+        ''' вузького SELECT, що GetApprovedForSitemap (п.21) — повертає Service лише з полями,
+        ''' потрібними для картки (ServiceId/Title/Price/District/CategoryName); решта полів
+        ''' лишаються дефолтними, Map(reader)/SelectBase тут навмисно не використовуються.</summary>
+        Public Shared Function GetSimilar(categoryId As Integer, excludeServiceId As Integer, limit As Integer) As List(Of Service)
+            Dim result As New List(Of Service)
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand(
+                    "SELECT s.ServiceId, s.Title, s.Price, s.District, c.Name AS CategoryName " &
+                    "FROM Services s JOIN Categories c ON c.CategoryId = s.CategoryId " &
+                    "WHERE s.Status = 'Approved' AND s.CategoryId = @CategoryId AND s.ServiceId <> @ExcludeServiceId " &
+                    "ORDER BY s.CreatedAt DESC LIMIT @Limit;", conn)
+                    cmd.Parameters.AddWithValue("@CategoryId", categoryId)
+                    cmd.Parameters.AddWithValue("@ExcludeServiceId", excludeServiceId)
+                    cmd.Parameters.AddWithValue("@Limit", limit)
+                    Using reader = cmd.ExecuteReader()
+                        While reader.Read()
+                            result.Add(New Service With {
+                                .ServiceId = reader.GetInt32("ServiceId"),
+                                .Title = reader.GetString("Title"),
+                                .Price = If(reader.IsDBNull(reader.GetOrdinal("Price")), CType(Nothing, Decimal?), reader.GetDecimal("Price")),
+                                .District = If(reader.IsDBNull(reader.GetOrdinal("District")), Nothing, reader.GetString("District")),
+                                .CategoryName = reader.GetString("CategoryName")
+                            })
+                        End While
+                    End Using
+                End Using
+            End Using
+            Return result
+        End Function
+
         ' --- Каталог і пошук (споживач, ТЗ п.4.4) ---
 
         ''' <summary>Опубліковане оголошення за Id — для картки. Nothing, якщо не існує або не Approved.</summary>

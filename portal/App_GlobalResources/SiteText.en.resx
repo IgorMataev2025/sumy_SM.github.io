@@ -75,6 +75,7 @@
   <data name="Details_MapHeading" xml:space="preserve"><value>Location on Map</value></data>
   <data name="Details_ContractLink" xml:space="preserve"><value>Generate Contract</value></data>
   <data name="Details_ReviewsHeading" xml:space="preserve"><value>Rating &amp; Reviews</value></data>
+  <data name="Details_SimilarHeading" xml:space="preserve"><value>Similar listings</value></data>
   <data name="Details_NoReviewsPanel" xml:space="preserve"><value>No reviews yet.</value></data>
   <data name="Details_AlreadyReviewed" xml:space="preserve"><value>You have already left a review for this listing.</value></data>
   <data name="Details_LeaveReviewHeading" xml:space="preserve"><value>Leave a Review</value></data>

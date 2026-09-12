@@ -114,6 +114,7 @@ Namespace SumyPortal
 
             _isReviewsOwnerView = (currentUser IsNot Nothing AndAlso currentUser.UserId = svc.ProviderId)
             LoadReviews(svc.ServiceId)
+            LoadSimilar(svc)
 
             ' Форма відгуку — будь-який залогінений, крім самого власника оголошення
             ' (п.9 уточненої постановки), і лише якщо ще не залишав відгук на нього.
@@ -127,6 +128,23 @@ Namespace SumyPortal
                 reviewFormPanel.Visible = True
                 alreadyReviewedPanel.Visible = False
             End If
+        End Sub
+
+        ''' <summary>Схожі оголошення (п.24, наступна фіча понад MVP, 2026-09-12) — до 4 інших
+        ''' Approved-оголошень тієї ж категорії; блок повністю прихований, якщо немає жодного
+        ''' (свідоме MVP-спрощення, без фолбеку на інші категорії/райони).</summary>
+        Private Sub LoadSimilar(svc As Service)
+            Const SimilarLimit As Integer = 4
+            Dim similar = Service.GetSimilar(svc.CategoryId, svc.ServiceId, SimilarLimit)
+
+            For Each item In similar
+                Dim photos = Service.GetPhotos(item.ServiceId)
+                If photos.Count > 0 Then item.ThumbnailUrl = photos(0).FilePath
+            Next
+
+            rptSimilar.DataSource = similar
+            rptSimilar.DataBind()
+            similarPanel.Visible = (similar.Count > 0)
         End Sub
 
         Private Sub LoadReviews(serviceId As Integer)

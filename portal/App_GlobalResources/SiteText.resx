@@ -75,6 +75,7 @@
   <data name="Details_MapHeading" xml:space="preserve"><value>Розташування на карті</value></data>
   <data name="Details_ContractLink" xml:space="preserve"><value>Сформувати договір</value></data>
   <data name="Details_ReviewsHeading" xml:space="preserve"><value>Рейтинг та відгуки</value></data>
+  <data name="Details_SimilarHeading" xml:space="preserve"><value>Схожі оголошення</value></data>
   <data name="Details_NoReviewsPanel" xml:space="preserve"><value>Відгуків ще немає.</value></data>
   <data name="Details_AlreadyReviewed" xml:space="preserve"><value>Ви вже залишили відгук на це оголошення.</value></data>
   <data name="Details_LeaveReviewHeading" xml:space="preserve"><value>Залишити відгук</value></data>

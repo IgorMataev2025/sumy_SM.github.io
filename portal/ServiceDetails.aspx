@@ -72,6 +72,36 @@
             </p>
         </div>
 
+        <!-- Схожі оголошення (п.24, наступна фіча понад MVP, 2026-09-12) — та сама верстка
+             картки, що на Catalog.aspx (catalog-grid/catalog-card), рендериться лише коли
+             є хоч одне схоже оголошення (similarPanel.Visible у ServiceDetails.aspx.vb). -->
+        <asp:Panel ID="similarPanel" runat="server" Visible="false" CssClass="similar-section">
+            <h2><asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_SimilarHeading %>" /></h2>
+            <div class="catalog-grid">
+                <asp:Repeater ID="rptSimilar" runat="server">
+                    <ItemTemplate>
+                        <a class="catalog-card" href='<%#: "ServiceDetails.aspx?id=" & CType(Container.DataItem, SumyPortal.Service).ServiceId %>'>
+                            <div class="catalog-thumb">
+                                <asp:Image runat="server" Visible='<%#: Not String.IsNullOrEmpty(CType(Container.DataItem, SumyPortal.Service).ThumbnailUrl) %>'
+                                    ImageUrl='<%#: If(String.IsNullOrEmpty(CType(Container.DataItem, SumyPortal.Service).ThumbnailUrl), "", ResolveUrl(CType(Container.DataItem, SumyPortal.Service).ThumbnailUrl)) %>' AlternateText="" />
+                                <span class="catalog-thumb-placeholder" runat="server" visible='<%#: String.IsNullOrEmpty(CType(Container.DataItem, SumyPortal.Service).ThumbnailUrl) %>'><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Photo_Placeholder %>" /></span>
+                            </div>
+                            <div class="catalog-card-body">
+                                <h3><%#: CType(Container.DataItem, SumyPortal.Service).Title %></h3>
+                                <p class="service-category">
+                                    <%#: CType(Container.DataItem, SumyPortal.Service).CategoryName %>
+                                    <%#: If(String.IsNullOrEmpty(CType(Container.DataItem, SumyPortal.Service).District), "", " · " & CType(Container.DataItem, SumyPortal.Service).District) %>
+                                </p>
+                                <p class="catalog-price">
+                                    <%#: If(CType(Container.DataItem, SumyPortal.Service).Price.HasValue, CType(Container.DataItem, SumyPortal.Service).Price.Value.ToString("0.## грн"), Resources.SiteText.Price_Negotiable) %>
+                                </p>
+                            </div>
+                        </a>
+                    </ItemTemplate>
+                </asp:Repeater>
+            </div>
+        </asp:Panel>
+
         <div class="reviews-section">
             <h2><asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_ReviewsHeading %>" /></h2>
             <p class="rating-summary"><asp:Literal ID="ratingSummaryLiteral" runat="server" /></p>

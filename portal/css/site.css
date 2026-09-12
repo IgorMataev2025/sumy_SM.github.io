@@ -565,6 +565,13 @@ fieldset.form-row {
     color: #b3261e;
 }
 
+/* Схожі оголошення (ServiceDetails.aspx, п.24, наступна фіча понад MVP, 2026-09-12) —
+   та сама сітка карток, що catalog-grid на Catalog.aspx, без обмеження max-width
+   (на відміну від reviews-section) — картки самі розтягуються на всю ширину. */
+.similar-section {
+    margin-top: 2rem;
+}
+
 /* Рейтинги/відгуки (ServiceDetails.aspx, п.9 уточненої постановки) */
 .reviews-section {
     margin-top: 2rem;
