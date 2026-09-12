@@ -384,6 +384,54 @@ Namespace SumyPortal
             End Using
         End Function
 
+        ''' <summary>Автоматичне зняття застарілих оголошень (п.20, наступна фіча понад MVP,
+        ''' 2026-09-12) — опубліковане оголошення, що не оновлювалось понад заданий поріг
+        ''' днів від дати публікації (ApprovedAt), знімається з публікації (Approved → Draft,
+        ''' та сама дія, що ручна кнопка "Зняти з публікації" в MyServices.aspx). Причина
+        ''' пишеться в RejectReason — той самий стовпець і той самий блок на MyServices.aspx,
+        ''' що вже показує причину відхилення адміном (без нового поля/UI). Чернетки й
+        ''' оголошення на модерації не чіпає — лише вже опубліковані. Повертає список знятих
+        ''' оголошень (із контактами постачальника) — для email-сповіщення (Global.asax.vb).</summary>
+        Public Shared Function ArchiveStaleApproved(days As Integer) As List(Of Service)
+            Dim result As New List(Of Service)
+            Dim reason = String.Format("Автоматично знято з публікації — оголошення не оновлювалося понад {0} днів.", days)
+
+            Using conn = DbHelper.GetConnection()
+                Using selectCmd As New MySqlCommand(
+                    "SELECT s.ServiceId, s.Title, u.FullName AS ProviderName, u.Email AS ProviderEmail " &
+                    "FROM Services s JOIN Users u ON u.UserId = s.ProviderId " &
+                    "WHERE s.Status = 'Approved' AND s.ApprovedAt < DATE_SUB(UTC_TIMESTAMP(), INTERVAL @Days DAY);", conn)
+                    selectCmd.Parameters.AddWithValue("@Days", days)
+                    Using reader = selectCmd.ExecuteReader()
+                        While reader.Read()
+                            result.Add(New Service With {
+                                .ServiceId = reader.GetInt32("ServiceId"),
+                                .Title = reader.GetString("Title"),
+                                .ProviderName = reader.GetString("ProviderName"),
+                                .ProviderEmail = reader.GetString("ProviderEmail")
+                            })
+                        End While
+                    End Using
+                End Using
+
+                ' Окремий UPDATE на кожен рядок (а не один пакетний WHERE IN) — той самий
+                ' стиль, що вже в проєкті (напр. ProcessPhotoDeletions), і дає точний
+                ' захист "лише якщо ще Approved" на випадок, якщо стан устиг змінитись
+                ' між SELECT і UPDATE (напр. постачальник щойно сам зняв публікацію).
+                For Each svc In result
+                    Using updateCmd As New MySqlCommand(
+                        "UPDATE Services SET Status = 'Draft', RejectReason = @Reason " &
+                        "WHERE ServiceId = @ServiceId AND Status = 'Approved';", conn)
+                        updateCmd.Parameters.AddWithValue("@Reason", reason)
+                        updateCmd.Parameters.AddWithValue("@ServiceId", svc.ServiceId)
+                        updateCmd.ExecuteNonQuery()
+                    End Using
+                Next
+            End Using
+
+            Return result
+        End Function
+
         ' --- Каталог і пошук (споживач, ТЗ п.4.4) ---
 
         ''' <summary>Опубліковане оголошення за Id — для картки. Nothing, якщо не існує або не Approved.</summary>
