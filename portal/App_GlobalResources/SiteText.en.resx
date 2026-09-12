@@ -83,6 +83,9 @@
   <data name="Reviews_Summary_None" xml:space="preserve"><value>No reviews yet</value></data>
   <data name="Review_Singular" xml:space="preserve"><value>review</value></data>
   <data name="Review_Plural" xml:space="preserve"><value>reviews</value></data>
+  <data name="Details_ProviderReplyHeading" xml:space="preserve"><value>Provider's reply:</value></data>
+  <data name="Details_ProviderReplyLabel" xml:space="preserve"><value>Your reply (visible to everyone)</value></data>
+  <data name="Details_ProviderReplyBtn" xml:space="preserve"><value>Save Reply</value></data>
 
   <data name="District_NotSpecified" xml:space="preserve"><value>Not specified</value></data>
 

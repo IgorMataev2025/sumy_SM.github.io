@@ -21,6 +21,12 @@ Namespace SumyPortal
         Public Property Comment As String
         Public Property CreatedAt As DateTime
 
+        ''' <summary>Відповідь постачальника (п.19, наступна фіча понад MVP, 2026-09-12) —
+        ''' одна на відгук, зберігається просто на цьому ж рядку (без окремої таблиці/треду).
+        ''' Nothing — постачальник ще не відповідав.</summary>
+        Public Property ProviderReply As String
+        Public Property ProviderReplyAt As DateTime?
+
         Public Shared Function HasReviewed(serviceId As Integer, consumerId As Integer) As Boolean
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
@@ -53,7 +59,7 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "SELECT r.ReviewId, r.ServiceId, r.ConsumerId, u.FullName AS ConsumerName, " &
-                    "r.Rating, r.Comment, r.CreatedAt " &
+                    "r.Rating, r.Comment, r.CreatedAt, r.ProviderReply, r.ProviderReplyAt " &
                     "FROM Reviews r JOIN Users u ON u.UserId = r.ConsumerId " &
                     "WHERE r.ServiceId = @ServiceId ORDER BY r.CreatedAt DESC;", conn)
                     cmd.Parameters.AddWithValue("@ServiceId", serviceId)
@@ -66,13 +72,35 @@ Namespace SumyPortal
                                 .ConsumerName = reader.GetString("ConsumerName"),
                                 .Rating = reader.GetInt32("Rating"),
                                 .Comment = If(reader.IsDBNull(reader.GetOrdinal("Comment")), Nothing, reader.GetString("Comment")),
-                                .CreatedAt = reader.GetDateTime("CreatedAt")
+                                .CreatedAt = reader.GetDateTime("CreatedAt"),
+                                .ProviderReply = If(reader.IsDBNull(reader.GetOrdinal("ProviderReply")), Nothing, reader.GetString("ProviderReply")),
+                                .ProviderReplyAt = If(reader.IsDBNull(reader.GetOrdinal("ProviderReplyAt")), CType(Nothing, DateTime?), reader.GetDateTime("ProviderReplyAt"))
                             })
                         End While
                     End Using
                 End Using
             End Using
             Return result
+        End Function
+
+        ''' <summary>Постачальник додає/редагує/прибирає (порожній текст) відповідь під відгуком
+        ''' на власне оголошення. Власника перевіряє сам SQL (JOIN на Services.ProviderId) —
+        ''' підроблений постбек на чужий відгук просто не оновить жодного рядка, той самий
+        ''' прийом, що Service.Update для постачальника. Повертає False, якщо відгук не
+        ''' належить оголошенню цього постачальника (або взагалі не існує).</summary>
+        Public Shared Function SetProviderReply(reviewId As Integer, providerId As Integer, replyText As String) As Boolean
+            Dim trimmed = If(String.IsNullOrWhiteSpace(replyText), Nothing, replyText.Trim())
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand(
+                    "UPDATE Reviews r JOIN Services s ON s.ServiceId = r.ServiceId " &
+                    "SET r.ProviderReply = @Reply, r.ProviderReplyAt = " & If(trimmed Is Nothing, "NULL", "UTC_TIMESTAMP()") & " " &
+                    "WHERE r.ReviewId = @ReviewId AND s.ProviderId = @ProviderId;", conn)
+                    cmd.Parameters.AddWithValue("@Reply", If(trimmed Is Nothing, DBNull.Value, CObj(trimmed)))
+                    cmd.Parameters.AddWithValue("@ReviewId", reviewId)
+                    cmd.Parameters.AddWithValue("@ProviderId", providerId)
+                    Return cmd.ExecuteNonQuery() > 0
+                End Using
+            End Using
         End Function
 
         ''' <summary>Середня оцінка (Nothing, якщо відгуків немає) і їх кількість — одним запитом.</summary>

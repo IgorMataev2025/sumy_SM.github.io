@@ -83,6 +83,9 @@
   <data name="Reviews_Summary_None" xml:space="preserve"><value>Ще немає відгуків</value></data>
   <data name="Review_Singular" xml:space="preserve"><value>відгук</value></data>
   <data name="Review_Plural" xml:space="preserve"><value>відгуків</value></data>
+  <data name="Details_ProviderReplyHeading" xml:space="preserve"><value>Відповідь постачальника:</value></data>
+  <data name="Details_ProviderReplyLabel" xml:space="preserve"><value>Ваша відповідь (видно всім відвідувачам)</value></data>
+  <data name="Details_ProviderReplyBtn" xml:space="preserve"><value>Зберегти відповідь</value></data>
 
   <data name="District_NotSpecified" xml:space="preserve"><value>Не вказано</value></data>
 

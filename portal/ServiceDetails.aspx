@@ -71,7 +71,7 @@
             <h2><asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_ReviewsHeading %>" /></h2>
             <p class="rating-summary"><asp:Literal ID="ratingSummaryLiteral" runat="server" /></p>
 
-            <asp:Repeater ID="rptReviews" runat="server">
+            <asp:Repeater ID="rptReviews" runat="server" OnItemDataBound="rptReviews_ItemDataBound" OnItemCommand="rptReviews_ItemCommand">
                 <ItemTemplate>
                     <div class="review-card">
                         <p class="review-meta">
@@ -81,6 +81,28 @@
                         </p>
                         <asp:Literal runat="server" Visible='<%#: Not String.IsNullOrEmpty(CType(Container.DataItem, SumyPortal.Review).Comment) %>'
                             Text='<%#: CType(Container.DataItem, SumyPortal.Review).Comment %>' />
+
+                        <!-- Відповідь постачальника (п.19, наступна фіча понад MVP, 2026-09-12) —
+                             готова відповідь бачить будь-хто (Visible виставляється в
+                             rptReviews_ItemDataBound, коли ProviderReply не порожній). -->
+                        <asp:Panel ID="providerReplyPanel" runat="server" Visible="false" CssClass="stub-note">
+                            <b><asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_ProviderReplyHeading %>" /></b>
+                            <asp:Literal ID="providerReplyLiteral" runat="server" />
+                        </asp:Panel>
+
+                        <!-- Форма відповіді — лише власнику оголошення (Visible виставляється в
+                             rptReviews_ItemDataBound); той самий контрол і для першої відповіді,
+                             і для редагування вже написаної (просто перезаписує, без версій). -->
+                        <asp:Panel ID="ownerReplyFormPanel" runat="server" Visible="false" CssClass="form-row">
+                            <label>
+                                <asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_ProviderReplyLabel %>" />
+                            </label>
+                            <asp:TextBox ID="txtProviderReply" runat="server" TextMode="MultiLine" Rows="2" MaxLength="1000"
+                                Text='<%#: CType(Container.DataItem, SumyPortal.Review).ProviderReply %>' />
+                            <asp:LinkButton runat="server" CommandName="Reply" CausesValidation="false"
+                                CommandArgument='<%#: CType(Container.DataItem, SumyPortal.Review).ReviewId %>'
+                                Text="<%$ Resources:SiteText, Details_ProviderReplyBtn %>" CssClass="btn-secondary" />
+                        </asp:Panel>
                     </div>
                 </ItemTemplate>
             </asp:Repeater>

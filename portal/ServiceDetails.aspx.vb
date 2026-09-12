@@ -11,6 +11,14 @@ Namespace SumyPortal
         Protected Property LatitudeForScript As String
         Protected Property LongitudeForScript As String
 
+        ''' <summary>Відповідь постачальника на відгук (п.19, наступна фіча понад MVP, 2026-09-12) —
+        ''' чи показувати форму відповіді під кожним відгуком у rptReviews_ItemDataBound.
+        ''' Обчислюється в LoadReviews лише при не-постбек завантаженні (той самий виклик,
+        ''' що й сам LoadReviews) — постбек-обробник rptReviews_ItemCommand цим полем НЕ
+        ''' користується для перевірки прав, лише для UI: справжній захист власника — у
+        ''' самому SQL Review.SetProviderReply (JOIN на Services.ProviderId).</summary>
+        Private _isReviewsOwnerView As Boolean
+
         ''' <summary>Багатомовність (постановка робочої тестової версії, 2026-09-12) —
         ''' офіційна точка ASP.NET Web Forms для програмної культури, до того як
         ''' вона "застигне" на задекларованому в Web.config значенні (uk-UA).</summary>
@@ -95,6 +103,7 @@ Namespace SumyPortal
                 messageLink.NavigateUrl = ResolveUrl("~/MessageThread.aspx?serviceId=" & svc.ServiceId & "&consumerId=" & currentUser.UserId)
             End If
 
+            _isReviewsOwnerView = (currentUser IsNot Nothing AndAlso currentUser.UserId = svc.ProviderId)
             LoadReviews(svc.ServiceId)
 
             ' Форма відгуку — будь-який залогінений, крім самого власника оголошення
@@ -123,6 +132,46 @@ Namespace SumyPortal
             ratingSummaryLiteral.Text = If(average.HasValue,
                 String.Format("★ {0:0.0} ({1} {2})", average.Value, count, PluralizeReviews(count)),
                 Resources.SiteText.Reviews_Summary_None)
+        End Sub
+
+        ''' <summary>Показує готову відповідь постачальника (якщо є) і форму для її
+        ''' додавання/редагування (лише власнику оголошення — п.19, наступна фіча понад
+        ''' MVP, 2026-09-12).</summary>
+        Protected Sub rptReviews_ItemDataBound(sender As Object, e As RepeaterItemEventArgs)
+            If e.Item.ItemType <> ListItemType.Item AndAlso e.Item.ItemType <> ListItemType.AlternatingItem Then Return
+
+            Dim review = CType(e.Item.DataItem, Review)
+
+            If Not String.IsNullOrEmpty(review.ProviderReply) Then
+                Dim providerReplyPanel = CType(e.Item.FindControl("providerReplyPanel"), Panel)
+                Dim providerReplyLiteral = CType(e.Item.FindControl("providerReplyLiteral"), Literal)
+                providerReplyPanel.Visible = True
+                providerReplyLiteral.Text = Server.HtmlEncode(review.ProviderReply)
+            End If
+
+            Dim ownerReplyFormPanel = CType(e.Item.FindControl("ownerReplyFormPanel"), Panel)
+            ownerReplyFormPanel.Visible = _isReviewsOwnerView
+        End Sub
+
+        ''' <summary>Постачальник зберігає/редагує/прибирає відповідь під конкретним відгуком.
+        ''' Не покладається на _isReviewsOwnerView (те поле лише для UI й не заповнюється на
+        ''' постбеку — Page_Load виходить на самому початку при IsPostBack) — справжній захист
+        ''' від чужого відгуку в самому Review.SetProviderReply (SQL JOIN на ProviderId).</summary>
+        Protected Sub rptReviews_ItemCommand(source As Object, e As RepeaterCommandEventArgs)
+            If e.CommandName <> "Reply" Then Return
+
+            Dim currentUser = UserAccount.FindByEmail(Page.User.Identity.Name)
+            If currentUser Is Nothing Then Return
+
+            Dim reviewId As Integer
+            If Not Integer.TryParse(Convert.ToString(e.CommandArgument), reviewId) Then Return
+
+            Dim txtReply = TryCast(e.Item.FindControl("txtProviderReply"), TextBox)
+            If txtReply Is Nothing Then Return
+
+            Review.SetProviderReply(reviewId, currentUser.UserId, txtReply.Text)
+
+            Response.Redirect(Request.RawUrl, True)
         End Sub
 
         ''' <summary>Відміна іменника "відгук" за кількістю. Українська: 1/2-4/5+ з винятком
