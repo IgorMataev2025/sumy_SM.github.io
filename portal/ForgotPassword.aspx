@@ -3,16 +3,15 @@
     Відновлення пароля — Портал послуг Safina
 </asp:Content>
 <asp:Content ID="MainContent" ContentPlaceHolderID="MainContent" runat="server">
-    <h1>Відновлення пароля</h1>
+    <h1><asp:Literal runat="server" Text="<%$ Resources:SiteText, ForgotPassword_Heading %>" /></h1>
 
     <asp:Panel ID="resultPanel" runat="server" Visible="false" CssClass="stub-note">
         <p>
-            Якщо такий email зареєстрований, для нього створено посилання для
-            скидання пароля.
+            <asp:Literal runat="server" Text="<%$ Resources:SiteText, ForgotPassword_Result_Text %>" />
         </p>
         <p>
-            <b>Dev-режим</b> (реальна пошта не підключена): посилання нижче,
-            якщо email існує в системі.
+            <b><asp:Literal runat="server" Text="<%$ Resources:SiteText, Register_DevMode_Label %>" /></b>
+            <asp:Literal runat="server" Text="<%$ Resources:SiteText, ForgotPassword_DevMode_Note %>" />
         </p>
         <asp:HyperLink ID="resetLink" runat="server" />
     </asp:Panel>
@@ -21,10 +20,10 @@
         <div class="form-row">
             <label for="<%= txtEmail.ClientID %>">Email</label>
             <asp:TextBox ID="txtEmail" runat="server" TextMode="Email" MaxLength="255" />
-            <asp:RequiredFieldValidator runat="server" ControlToValidate="txtEmail" ErrorMessage="Вкажіть email" Display="Dynamic" CssClass="field-error" />
+            <asp:RequiredFieldValidator runat="server" ControlToValidate="txtEmail" ErrorMessage="<%$ Resources:SiteText, ForgotPassword_Val_Email %>" Display="Dynamic" CssClass="field-error" />
         </div>
         <div class="form-row">
-            <asp:Button ID="btnSubmit" runat="server" Text="Надіслати посилання" OnClick="btnSubmit_Click" CssClass="btn-primary" />
+            <asp:Button ID="btnSubmit" runat="server" Text="<%$ Resources:SiteText, ForgotPassword_Btn_Submit %>" OnClick="btnSubmit_Click" CssClass="btn-primary" />
         </div>
     </asp:Panel>
 </asp:Content>

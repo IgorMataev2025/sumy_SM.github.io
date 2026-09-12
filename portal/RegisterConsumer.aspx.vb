@@ -6,9 +6,14 @@ Namespace SumyPortal
     Public Class RegisterConsumer
         Inherits System.Web.UI.Page
 
+        Protected Overrides Sub InitializeCulture()
+            LocalizationHelper.ApplyCulture(Me)
+            MyBase.InitializeCulture()
+        End Sub
+
         Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
             If Not IsPostBack Then
-                SumyDistricts.Populate(ddlDistrict, "Не вказано")
+                SumyDistricts.Populate(ddlDistrict, Resources.SiteText.District_NotSpecified)
             End If
         End Sub
 
@@ -18,14 +23,14 @@ Namespace SumyPortal
             ' Згода на обробку персональних даних (п.4 уточненої постановки) —
             ' CheckBox не покривається RequiredFieldValidator, перевіряємо вручну.
             If Not chkPrivacyConsent.Checked Then
-                ShowError("Підтвердьте згоду на обробку персональних даних.")
+                ShowError(Resources.SiteText.Register_Err_Consent)
                 Return
             End If
 
             Dim email = txtEmail.Text.Trim().ToLowerInvariant()
 
             If UserAccount.EmailExists(email) Then
-                ShowError("Користувач із таким email вже зареєстрований.")
+                ShowError(Resources.SiteText.Register_Err_EmailExists)
                 Return
             End If
 
@@ -43,7 +48,7 @@ Namespace SumyPortal
                 formPanel.Visible = False
                 successPanel.Visible = True
             Catch ex As MySqlException
-                ShowError("Не вдалося зберегти дані — спробуйте пізніше.")
+                ShowError(Resources.SiteText.Register_Err_SaveFailed)
             End Try
         End Sub
 

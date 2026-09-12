@@ -3,27 +3,26 @@
     Підтримка проєкту — Портал послуг Safina
 </asp:Content>
 <asp:Content ID="MainContent" ContentPlaceHolderID="MainContent" runat="server">
-    <h1>Підтримка проєкту</h1>
+    <h1><asp:Literal runat="server" Text="<%$ Resources:SiteText, DonationResult_Heading %>" /></h1>
 
     <asp:Panel ID="successPanel" runat="server" Visible="false" CssClass="stub-note">
-        <p>Дякуємо! Ваш внесок (<asp:Literal ID="successAmountLiteral" runat="server" />) отримано.</p>
+        <p><asp:Literal ID="successTextLiteral" runat="server" /></p>
     </asp:Panel>
 
     <asp:Panel ID="pendingPanel" runat="server" Visible="false" CssClass="stub-note">
         <p>
-            Дякуємо! Оплата обробляється — статус оновиться протягом кількох
-            хвилин після підтвердження від LiqPay.
+            <asp:Literal runat="server" Text="<%$ Resources:SiteText, DonationResult_Pending %>" />
         </p>
     </asp:Panel>
 
     <asp:Panel ID="failurePanel" runat="server" Visible="false" CssClass="stub-note">
-        <p>На жаль, оплату не вдалося завершити.</p>
-        <p><asp:HyperLink runat="server" NavigateUrl="~/Donate.aspx">← Спробувати ще раз</asp:HyperLink></p>
+        <p><asp:Literal runat="server" Text="<%$ Resources:SiteText, DonationResult_Failure %>" /></p>
+        <p><asp:HyperLink runat="server" NavigateUrl="~/Donate.aspx" Text="<%$ Resources:SiteText, DonationResult_RetryLink %>" /></p>
     </asp:Panel>
 
     <asp:Panel ID="notFoundPanel" runat="server" Visible="false" CssClass="stub-note">
-        <p>Внесок не знайдено.</p>
+        <p><asp:Literal runat="server" Text="<%$ Resources:SiteText, DonationResult_NotFound %>" /></p>
     </asp:Panel>
 
-    <p><asp:HyperLink runat="server" NavigateUrl="~/Default.aspx">← На головну</asp:HyperLink></p>
+    <p><asp:HyperLink runat="server" NavigateUrl="~/Default.aspx" Text="<%$ Resources:SiteText, DonationResult_BackHome %>" /></p>
 </asp:Content>

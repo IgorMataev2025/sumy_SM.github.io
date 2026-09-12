@@ -8,6 +8,11 @@ Namespace SumyPortal
     Public Class Messages
         Inherits System.Web.UI.Page
 
+        Protected Overrides Sub InitializeCulture()
+            LocalizationHelper.ApplyCulture(Me)
+            MyBase.InitializeCulture()
+        End Sub
+
         Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
             If IsPostBack Then Return
 

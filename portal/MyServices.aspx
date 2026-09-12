@@ -3,14 +3,14 @@
     Мої оголошення — Портал послуг Safina
 </asp:Content>
 <asp:Content ID="MainContent" ContentPlaceHolderID="MainContent" runat="server">
-    <h1>Мої оголошення</h1>
+    <h1><asp:Literal runat="server" Text="<%$ Resources:SiteText, MyServices_Heading %>" /></h1>
 
-    <p><a href="ServiceEdit.aspx" class="btn-primary btn-link">+ Нове оголошення</a></p>
+    <p><a href="ServiceEdit.aspx" class="btn-primary btn-link"><asp:Literal runat="server" Text="<%$ Resources:SiteText, MyServices_NewLink %>" /></a></p>
 
     <asp:Label ID="infoLabel" runat="server" CssClass="stub-note" Visible="false" />
 
     <asp:Panel ID="emptyPanel" runat="server" Visible="false" CssClass="stub-note">
-        У вас поки немає оголошень.
+        <asp:Literal runat="server" Text="<%$ Resources:SiteText, MyServices_Empty %>" />
     </asp:Panel>
 
     <asp:Repeater ID="rptServices" runat="server" OnItemCommand="rptServices_ItemCommand">
@@ -23,22 +23,20 @@
                 <p class="service-category"><%#: CType(Container.DataItem, SumyPortal.Service).CategoryName %></p>
 
                 <asp:Literal runat="server" Visible='<%#: Not String.IsNullOrEmpty(CType(Container.DataItem, SumyPortal.Service).RejectReason) %>'
-                    Text='<%#: "Причина відхилення: " & CType(Container.DataItem, SumyPortal.Service).RejectReason %>' />
+                    Text='<%#: Resources.SiteText.MyServices_RejectReasonPrefix & CType(Container.DataItem, SumyPortal.Service).RejectReason %>' />
 
                 <div class="service-card-actions">
-                    <a href='<%#: "ServiceEdit.aspx?id=" & CType(Container.DataItem, SumyPortal.Service).ServiceId %>'>Редагувати</a>
+                    <a href='<%#: "ServiceEdit.aspx?id=" & CType(Container.DataItem, SumyPortal.Service).ServiceId %>'><%#: Resources.SiteText.MyServices_Edit %></a>
 
                     <asp:LinkButton runat="server" CommandName="Submit"
                         CommandArgument='<%#: CType(Container.DataItem, SumyPortal.Service).ServiceId %>'
-                        Visible='<%#: CType(Container.DataItem, SumyPortal.Service).Status = "Draft" OrElse CType(Container.DataItem, SumyPortal.Service).Status = "Rejected" %>'>
-                        Подати на модерацію
-                    </asp:LinkButton>
+                        Visible='<%#: CType(Container.DataItem, SumyPortal.Service).Status = "Draft" OrElse CType(Container.DataItem, SumyPortal.Service).Status = "Rejected" %>'
+                        Text="<%$ Resources:SiteText, MyServices_Submit %>" />
 
                     <asp:LinkButton runat="server" CommandName="Unpublish"
                         CommandArgument='<%#: CType(Container.DataItem, SumyPortal.Service).ServiceId %>'
-                        Visible='<%#: CType(Container.DataItem, SumyPortal.Service).Status = "Approved" %>'>
-                        Зняти з публікації
-                    </asp:LinkButton>
+                        Visible='<%#: CType(Container.DataItem, SumyPortal.Service).Status = "Approved" %>'
+                        Text="<%$ Resources:SiteText, MyServices_Unpublish %>" />
                 </div>
             </div>
         </ItemTemplate>

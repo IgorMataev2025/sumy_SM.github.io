@@ -6,10 +6,15 @@ Namespace SumyPortal
     Public Class RegisterProvider
         Inherits System.Web.UI.Page
 
+        Protected Overrides Sub InitializeCulture()
+            LocalizationHelper.ApplyCulture(Me)
+            MyBase.InitializeCulture()
+        End Sub
+
         Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
             If Not IsPostBack Then
                 legalEntityPanel.Visible = False
-                SumyDistricts.Populate(ddlDistrict, "Не вказано")
+                SumyDistricts.Populate(ddlDistrict, Resources.SiteText.District_NotSpecified)
             End If
         End Sub
 
@@ -23,7 +28,7 @@ Namespace SumyPortal
             ' Згода на обробку персональних даних (п.4 уточненої постановки) —
             ' CheckBox не покривається RequiredFieldValidator, перевіряємо вручну.
             If Not chkPrivacyConsent.Checked Then
-                ShowError("Підтвердьте згоду на обробку персональних даних.")
+                ShowError(Resources.SiteText.Register_Err_Consent)
                 Return
             End If
 
@@ -34,16 +39,16 @@ Namespace SumyPortal
             ' якщо панель була невидима (RegularExpressionValidator в ASP.NET все одно
             ' валідує приховані поля, тому додатково перевіряємо обов'язковість тут).
             If isLegalEntity AndAlso String.IsNullOrWhiteSpace(txtCompanyName.Text) Then
-                ShowError("Вкажіть назву компанії.")
+                ShowError(Resources.SiteText.RegisterProvider_Err_CompanyName)
                 Return
             End If
             If isLegalEntity AndAlso String.IsNullOrWhiteSpace(txtEdrpou.Text) Then
-                ShowError("Вкажіть ЄДРПОУ.")
+                ShowError(Resources.SiteText.RegisterProvider_Err_Edrpou)
                 Return
             End If
 
             If UserAccount.EmailExists(email) Then
-                ShowError("Користувач із таким email вже зареєстрований.")
+                ShowError(Resources.SiteText.Register_Err_EmailExists)
                 Return
             End If
 
@@ -63,7 +68,7 @@ Namespace SumyPortal
                 formPanel.Visible = False
                 successPanel.Visible = True
             Catch ex As MySqlException
-                ShowError("Не вдалося зберегти дані — спробуйте пізніше.")
+                ShowError(Resources.SiteText.Register_Err_SaveFailed)
             End Try
         End Sub
 

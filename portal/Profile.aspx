@@ -3,10 +3,10 @@
     Профіль — Портал послуг Safina
 </asp:Content>
 <asp:Content ID="MainContent" ContentPlaceHolderID="MainContent" runat="server">
-    <h1><asp:Literal ID="headingLiteral" runat="server" Text="Мій профіль" /></h1>
+    <h1><asp:Literal ID="headingLiteral" runat="server" /></h1>
 
     <asp:Panel ID="notFoundPanel" runat="server" Visible="false" CssClass="stub-note">
-        Постачальника не знайдено.
+        <asp:Literal runat="server" Text="<%$ Resources:SiteText, Profile_NotFound %>" />
     </asp:Panel>
 
     <!-- Публічний перегляд (постановка робочої тестової версії, 2026-09-12,
@@ -27,55 +27,53 @@
         </div>
 
         <div class="form-row">
-            <label for="<%= txtFullName.ClientID %>">ПІБ</label>
+            <label for="<%= txtFullName.ClientID %>"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Register_Label_FullName %>" /></label>
             <asp:TextBox ID="txtFullName" runat="server" MaxLength="255" />
-            <asp:RequiredFieldValidator runat="server" ControlToValidate="txtFullName" ErrorMessage="Вкажіть ПІБ" Display="Dynamic" CssClass="field-error" />
+            <asp:RequiredFieldValidator runat="server" ControlToValidate="txtFullName" ErrorMessage="<%$ Resources:SiteText, Register_Val_FullName %>" Display="Dynamic" CssClass="field-error" />
         </div>
 
         <div class="form-row">
-            <label for="<%= txtPhone.ClientID %>">Телефон</label>
+            <label for="<%= txtPhone.ClientID %>"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Register_Label_Phone %>" /></label>
             <asp:TextBox ID="txtPhone" runat="server" MaxLength="50" />
         </div>
 
         <div class="form-row">
-            <label for="<%= ddlDistrict.ClientID %>">Район</label>
+            <label for="<%= ddlDistrict.ClientID %>"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Register_Label_District %>" /></label>
             <asp:DropDownList ID="ddlDistrict" runat="server" />
         </div>
 
         <asp:Panel ID="legalEntityPanel" runat="server" Visible="false">
             <div class="form-row">
-                <label for="<%= txtCompanyName.ClientID %>">Назва компанії</label>
+                <label for="<%= txtCompanyName.ClientID %>"><asp:Literal runat="server" Text="<%$ Resources:SiteText, RegisterProvider_Label_CompanyName %>" /></label>
                 <asp:TextBox ID="txtCompanyName" runat="server" MaxLength="255" />
             </div>
             <div class="form-row">
-                <label for="<%= txtEdrpou.ClientID %>">ЄДРПОУ</label>
+                <label for="<%= txtEdrpou.ClientID %>"><asp:Literal runat="server" Text="<%$ Resources:SiteText, RegisterProvider_Label_Edrpou %>" /></label>
                 <asp:TextBox ID="txtEdrpou" runat="server" MaxLength="20" />
-                <asp:RegularExpressionValidator runat="server" ControlToValidate="txtEdrpou" ErrorMessage="ЄДРПОУ — 8 цифр" ValidationExpression="^\d{8}$" Display="Dynamic" CssClass="field-error" />
+                <asp:RegularExpressionValidator runat="server" ControlToValidate="txtEdrpou" ErrorMessage="<%$ Resources:SiteText, RegisterProvider_Val_Edrpou %>" ValidationExpression="^\d{8}$" Display="Dynamic" CssClass="field-error" />
             </div>
         </asp:Panel>
 
         <div class="form-row">
-            <asp:Button ID="btnSave" runat="server" Text="Зберегти" OnClick="btnSave_Click" CssClass="btn-primary" />
+            <asp:Button ID="btnSave" runat="server" Text="<%$ Resources:SiteText, Profile_Btn_Save %>" OnClick="btnSave_Click" CssClass="btn-primary" />
         </div>
     </asp:Panel>
 
     <asp:Panel ID="dangerZonePanel" runat="server" CssClass="stub-note danger-zone">
-        <h2>Видалення акаунта</h2>
+        <h2><asp:Literal runat="server" Text="<%$ Resources:SiteText, Profile_DangerZone_Heading %>" /></h2>
         <p>
-            Видалення знеособлює ваші дані (ПІБ, телефон, email, реквізити) і
-            блокує вхід; ваші опубліковані оголошення знімаються з публікації.
-            Дію не можна скасувати самостійно — див.
-            <asp:HyperLink runat="server" NavigateUrl="~/PrivacyPolicy.aspx" Target="_blank">Політику конфіденційності</asp:HyperLink>.
+            <asp:Literal runat="server" Text="<%$ Resources:SiteText, Profile_DangerZone_Text %>" />
+            <asp:HyperLink runat="server" NavigateUrl="~/PrivacyPolicy.aspx" Target="_blank" Text="<%$ Resources:SiteText, Profile_DangerZone_PrivacyLink %>" />.
         </p>
-        <asp:Button ID="btnDeleteAccount" runat="server" Text="Видалити акаунт" CssClass="btn-secondary"
+        <asp:Button ID="btnDeleteAccount" runat="server" Text="<%$ Resources:SiteText, Profile_Btn_DeleteAccount %>" CssClass="btn-secondary"
             OnClick="btnDeleteAccount_Click" CausesValidation="false"
-            OnClientClick="return confirm('Видалити акаунт безповоротно? Цю дію не можна скасувати самостійно.');" />
+            OnClientClick="<%$ Resources:SiteText, Profile_DeleteConfirmJs %>" />
     </asp:Panel>
 
     <!-- Галерея (постановка робочої тестової версії, 2026-09-12) — окремо від фото
          оголошень, публічна (бачить будь-хто за Profile.aspx?providerId=X). -->
     <asp:Panel ID="galleryPanel" runat="server" CssClass="stub-note">
-        <h2>Галерея</h2>
+        <h2><asp:Literal runat="server" Text="<%$ Resources:SiteText, Profile_Gallery_Heading %>" /></h2>
 
         <div class="catalog-grid photo-gallery">
             <asp:Repeater ID="rptGallery" runat="server" OnItemCommand="rptGallery_ItemCommand" OnItemDataBound="rptGallery_ItemDataBound">
@@ -89,20 +87,25 @@
                         <img class="gallery-photo" src='<%#: ResolveUrl(CType(Container.DataItem, SumyPortal.ProviderGalleryPhoto).FilePath) %>' alt="" />
                         <asp:LinkButton ID="lnkDeleteGalleryPhoto" runat="server" CommandName="Delete" CausesValidation="false"
                             CommandArgument='<%#: CType(Container.DataItem, SumyPortal.ProviderGalleryPhoto).PhotoId %>'
-                            OnClientClick="return confirm('Видалити це фото з галереї?');">видалити</asp:LinkButton>
+                            OnClientClick="<%$ Resources:SiteText, Profile_DeleteGalleryConfirmJs %>"
+                            Text="<%$ Resources:SiteText, Profile_Gallery_Delete %>" />
                     </div>
                 </ItemTemplate>
             </asp:Repeater>
         </div>
 
         <asp:Panel ID="noGalleryPhotosPanel" runat="server" Visible="false" CssClass="stub-note">
-            Фото в галереї ще немає.
+            <asp:Literal runat="server" Text="<%$ Resources:SiteText, Profile_Gallery_Empty %>" />
         </asp:Panel>
 
         <asp:Panel ID="galleryUploadPanel" runat="server" Visible="false" CssClass="form-row">
-            <label for="<%= galleryFileUpload.ClientID %>">Додати фото (до <asp:Literal ID="maxGalleryPhotosLiteral" runat="server" /> шт., jpg/png/gif, ≤3МБ)</label>
+            <label for="<%= galleryFileUpload.ClientID %>">
+                <asp:Literal runat="server" Text="<%$ Resources:SiteText, Profile_Gallery_UploadLabel_Prefix %>" />
+                <asp:Literal ID="maxGalleryPhotosLiteral" runat="server" />
+                <asp:Literal runat="server" Text="<%$ Resources:SiteText, Profile_Gallery_UploadLabel_Suffix %>" />
+            </label>
             <asp:FileUpload ID="galleryFileUpload" runat="server" AllowMultiple="true" />
-            <asp:Button ID="btnUploadGalleryPhoto" runat="server" Text="Завантажити" OnClick="btnUploadGalleryPhoto_Click" CausesValidation="false" CssClass="btn-secondary" />
+            <asp:Button ID="btnUploadGalleryPhoto" runat="server" Text="<%$ Resources:SiteText, Profile_Gallery_Btn_Upload %>" OnClick="btnUploadGalleryPhoto_Click" CausesValidation="false" CssClass="btn-secondary" />
             <asp:Label ID="galleryErrorLabel" runat="server" CssClass="form-error" Visible="false" />
         </asp:Panel>
     </asp:Panel>

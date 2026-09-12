@@ -3,10 +3,10 @@
     Розмова — Портал послуг Safina
 </asp:Content>
 <asp:Content ID="MainContent" ContentPlaceHolderID="MainContent" runat="server">
-    <p><a href="~/Messages.aspx" runat="server">← Усі повідомлення</a></p>
+    <p><a href="~/Messages.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, MessageThread_BackToAll %>" /></a></p>
 
     <asp:Panel ID="notFoundPanel" runat="server" Visible="false" CssClass="stub-note">
-        Розмову не знайдено, або у вас немає до неї доступу.
+        <asp:Literal runat="server" Text="<%$ Resources:SiteText, MessageThread_NotFound %>" />
     </asp:Panel>
 
     <asp:Panel ID="threadPanel" runat="server">
@@ -25,7 +25,7 @@
         </asp:Repeater>
 
         <asp:Panel ID="noMessagesPanel" runat="server" Visible="false" CssClass="stub-note">
-            Повідомлень ще немає — напишіть перше.
+            <asp:Literal runat="server" Text="<%$ Resources:SiteText, MessageThread_NoMessages %>" />
         </asp:Panel>
 
         <asp:Panel ID="replyFormPanel" runat="server" CssClass="auth-form">
@@ -38,21 +38,21 @@
                  стосунки, а не е-комерс із трекінгом виконання замовлення). -->
             <asp:Panel ID="orderFieldsPanel" runat="server" Visible="false">
                 <div class="form-row">
-                    <label for="<%= txtDesiredDate.ClientID %>">Бажана дата/час (необов'язково)</label>
+                    <label for="<%= txtDesiredDate.ClientID %>"><asp:Literal runat="server" Text="<%$ Resources:SiteText, MessageThread_OrderDate_Label %>" /></label>
                     <asp:TextBox ID="txtDesiredDate" runat="server" MaxLength="100" />
                 </div>
                 <div class="form-row">
-                    <label for="<%= txtAddress.ClientID %>">Адреса виконання (необов'язково)</label>
+                    <label for="<%= txtAddress.ClientID %>"><asp:Literal runat="server" Text="<%$ Resources:SiteText, MessageThread_OrderAddress_Label %>" /></label>
                     <asp:TextBox ID="txtAddress" runat="server" MaxLength="255" />
                 </div>
             </asp:Panel>
 
             <div class="form-row">
-                <label for="<%= txtBody.ClientID %>"><asp:Literal ID="bodyLabelLiteral" runat="server" Text="Повідомлення" /></label>
+                <label for="<%= txtBody.ClientID %>"><asp:Literal ID="bodyLabelLiteral" runat="server" /></label>
                 <asp:TextBox ID="txtBody" runat="server" TextMode="MultiLine" Rows="3" MaxLength="2000" />
             </div>
             <div class="form-row">
-                <asp:Button ID="btnSend" runat="server" Text="Надіслати" OnClick="btnSend_Click" CssClass="btn-primary" />
+                <asp:Button ID="btnSend" runat="server" Text="<%$ Resources:SiteText, MessageThread_Btn_Send %>" OnClick="btnSend_Click" CssClass="btn-primary" />
             </div>
         </asp:Panel>
     </asp:Panel>

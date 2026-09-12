@@ -12,6 +12,11 @@ Namespace SumyPortal
     Public Class DonationResult
         Inherits System.Web.UI.Page
 
+        Protected Overrides Sub InitializeCulture()
+            LocalizationHelper.ApplyCulture(Me)
+            MyBase.InitializeCulture()
+        End Sub
+
         Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
             If IsPostBack Then Return
 
@@ -29,7 +34,8 @@ Namespace SumyPortal
 
             Select Case record.Status
                 Case "Success"
-                    successAmountLiteral.Text = Server.HtmlEncode(record.Amount.ToString("0.## грн"))
+                    successTextLiteral.Text = String.Format(Resources.SiteText.DonationResult_Success,
+                        Server.HtmlEncode(record.Amount.ToString("0.## грн")))
                     successPanel.Visible = True
                 Case "Failure"
                     failurePanel.Visible = True

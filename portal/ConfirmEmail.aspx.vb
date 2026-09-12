@@ -5,19 +5,24 @@ Namespace SumyPortal
     Public Class ConfirmEmail
         Inherits System.Web.UI.Page
 
+        Protected Overrides Sub InitializeCulture()
+            LocalizationHelper.ApplyCulture(Me)
+            MyBase.InitializeCulture()
+        End Sub
+
         Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
             Dim token = Request.QueryString("token")
 
             If String.IsNullOrEmpty(token) Then
-                resultText.Text = "Не вказано токен підтвердження."
+                resultText.Text = Resources.SiteText.ConfirmEmail_NoToken
                 Return
             End If
 
             If UserAccount.ConfirmEmail(token) Then
-                resultText.Text = "Email підтверджено. Тепер ви можете <a href='" &
-                    ResolveUrl("~/Login.aspx") & "'>увійти</a>."
+                resultText.Text = String.Format(Resources.SiteText.ConfirmEmail_Success,
+                    "<a href='" & ResolveUrl("~/Login.aspx") & "'>", "</a>")
             Else
-                resultText.Text = "Посилання недійсне або вже використане."
+                resultText.Text = Resources.SiteText.ConfirmEmail_InvalidToken
             End If
         End Sub
 

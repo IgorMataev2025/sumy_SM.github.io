@@ -33,6 +33,11 @@ Namespace SumyPortal
         ''' False — сторонній/анонімний відвідувач бачить лише публічну галерею.</summary>
         Private IsOwnProfile As Boolean
 
+        Protected Overrides Sub InitializeCulture()
+            LocalizationHelper.ApplyCulture(Me)
+            MyBase.InitializeCulture()
+        End Sub
+
         Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
             Dim loggedInUser = UserAccount.FindByEmail(Page.User.Identity.Name)
 
@@ -69,13 +74,13 @@ Namespace SumyPortal
                 CurrentUser = loggedInUser
             End If
 
-            headingLiteral.Text = If(IsOwnProfile, "Мій профіль", "Профіль постачальника: " & Server.HtmlEncode(CurrentUser.FullName))
+            headingLiteral.Text = If(IsOwnProfile, Resources.SiteText.Profile_Heading, Resources.SiteText.Profile_PublicHeading_Prefix & Server.HtmlEncode(CurrentUser.FullName))
             formPanel.Visible = IsOwnProfile
             publicPanel.Visible = Not IsOwnProfile
 
             If Not IsPostBack Then
                 If IsOwnProfile Then
-                    SumyDistricts.Populate(ddlDistrict, "Не вказано")
+                    SumyDistricts.Populate(ddlDistrict, Resources.SiteText.District_NotSpecified)
                     BindProfile()
                 Else
                     publicNameLiteral.Text = Server.HtmlEncode(
@@ -122,23 +127,23 @@ Namespace SumyPortal
             Dim edrpou = If(CurrentUser.IsLegalEntity, txtEdrpou.Text.Trim(), Nothing)
 
             If CurrentUser.IsLegalEntity AndAlso String.IsNullOrWhiteSpace(companyName) Then
-                ShowError("Вкажіть назву компанії.")
+                ShowError(Resources.SiteText.RegisterProvider_Err_CompanyName)
                 Return
             End If
             If CurrentUser.IsLegalEntity AndAlso String.IsNullOrWhiteSpace(edrpou) Then
-                ShowError("Вкажіть ЄДРПОУ.")
+                ShowError(Resources.SiteText.RegisterProvider_Err_Edrpou)
                 Return
             End If
 
             Try
                 UserAccount.UpdateProfile(CurrentUser.UserId, txtFullName.Text.Trim(), txtPhone.Text.Trim(),
                                            ddlDistrict.SelectedValue, companyName, edrpou)
-                infoLabel.Text = "Дані збережено."
+                infoLabel.Text = Resources.SiteText.Profile_Msg_Saved
                 infoLabel.Visible = True
                 CurrentUser = UserAccount.GetById(CurrentUser.UserId)
                 BindProfile()
             Catch ex As MySqlException
-                ShowError("Не вдалося зберегти — спробуйте пізніше.")
+                ShowError(Resources.SiteText.Profile_Err_SaveFailed)
             End Try
         End Sub
 
@@ -149,7 +154,7 @@ Namespace SumyPortal
                 FormsAuthentication.SignOut()
                 Response.Redirect("~/Default.aspx", True)
             Else
-                ShowError("Не вдалося видалити акаунт — спробуйте пізніше.")
+                ShowError(Resources.SiteText.Profile_Err_DeleteFailed)
             End If
         End Sub
 
@@ -195,17 +200,17 @@ Namespace SumyPortal
                     If posted Is Nothing OrElse posted.ContentLength = 0 Then Continue For
 
                     If currentCount >= MaxGalleryPhotos Then
-                        ShowGalleryError(String.Format("Можна додати не більше {0} фото — частину файлів не збережено.", MaxGalleryPhotos))
+                        ShowGalleryError(String.Format(Resources.SiteText.Photo_Err_MaxCount, MaxGalleryPhotos))
                         Exit For
                     End If
 
                     Dim ext = Path.GetExtension(posted.FileName).ToLowerInvariant()
                     If Array.IndexOf(AllowedExtensions, ext) < 0 Then
-                        ShowGalleryError("Дозволені формати фото: jpg, png, gif.")
+                        ShowGalleryError(Resources.SiteText.Photo_Err_BadFormat)
                         Continue For
                     End If
                     If posted.ContentLength > MaxFileSizeBytes Then
-                        ShowGalleryError("Розмір одного фото не повинен перевищувати 3 МБ.")
+                        ShowGalleryError(Resources.SiteText.Photo_Err_TooLarge)
                         Continue For
                     End If
 

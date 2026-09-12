@@ -3,11 +3,12 @@
     Обране — Портал послуг Safina
 </asp:Content>
 <asp:Content ID="MainContent" ContentPlaceHolderID="MainContent" runat="server">
-    <h1>Обране</h1>
+    <h1><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Favorites %>" /></h1>
 
     <asp:Panel ID="emptyPanel" runat="server" Visible="false" CssClass="stub-note">
-        Ви ще не додали жодного оголошення в обране — знайдіть цікаве в
-        <a href="Catalog.aspx">каталозі</a> і натисніть «Додати в обране» на його сторінці.
+        <asp:Literal runat="server" Text="<%$ Resources:SiteText, Favorites_Empty_Prefix %>" />
+        <a href="Catalog.aspx"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Favorites_Empty_CatalogLink %>" /></a>
+        <asp:Literal runat="server" Text="<%$ Resources:SiteText, Favorites_Empty_Suffix %>" />
     </asp:Panel>
 
     <div class="catalog-grid">
@@ -21,7 +22,7 @@
                             <%#: If(String.IsNullOrEmpty(CType(Container.DataItem, SumyPortal.Service).District), "", " · " & CType(Container.DataItem, SumyPortal.Service).District) %>
                         </p>
                         <p class="catalog-price">
-                            <%#: If(CType(Container.DataItem, SumyPortal.Service).Price.HasValue, CType(Container.DataItem, SumyPortal.Service).Price.Value.ToString("0.## грн"), "Ціна за домовленістю") %>
+                            <%#: If(CType(Container.DataItem, SumyPortal.Service).Price.HasValue, CType(Container.DataItem, SumyPortal.Service).Price.Value.ToString("0.## грн"), Resources.SiteText.Price_Negotiable) %>
                         </p>
                     </div>
                 </a>

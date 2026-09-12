@@ -3,10 +3,10 @@
     Повідомлення — Портал послуг Safina
 </asp:Content>
 <asp:Content ID="MainContent" ContentPlaceHolderID="MainContent" runat="server">
-    <h1>Повідомлення</h1>
+    <h1><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Messages %>" /></h1>
 
     <asp:Panel ID="emptyPanel" runat="server" Visible="false" CssClass="stub-note">
-        Розмов ще немає. Напишіть постачальнику з картки оголошення в каталозі.
+        <asp:Literal runat="server" Text="<%$ Resources:SiteText, Messages_Empty %>" />
     </asp:Panel>
 
     <asp:Repeater ID="rptConversations" runat="server">

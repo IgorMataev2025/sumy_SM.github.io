@@ -5,6 +5,11 @@ Namespace SumyPortal
     Public Class ForgotPassword
         Inherits System.Web.UI.Page
 
+        Protected Overrides Sub InitializeCulture()
+            LocalizationHelper.ApplyCulture(Me)
+            MyBase.InitializeCulture()
+        End Sub
+
         Protected Sub btnSubmit_Click(sender As Object, e As EventArgs)
             If Not Page.IsValid Then Return
 

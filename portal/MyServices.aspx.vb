@@ -5,6 +5,11 @@ Namespace SumyPortal
     Public Class MyServices
         Inherits ProviderPageBase
 
+        Protected Overrides Sub InitializeCulture()
+            LocalizationHelper.ApplyCulture(Me)
+            MyBase.InitializeCulture()
+        End Sub
+
         Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
             If Not IsPostBack Then
                 BindServices()
@@ -26,12 +31,12 @@ Namespace SumyPortal
                 Case "Submit"
                     ok = Service.SubmitForModeration(serviceId, CurrentProvider.UserId)
                     If ok Then
-                        ShowInfo("Оголошення подано на модерацію.")
+                        ShowInfo(Resources.SiteText.MyServices_Msg_Submitted)
                     End If
                 Case "Unpublish"
                     ok = Service.Unpublish(serviceId, CurrentProvider.UserId)
                     If ok Then
-                        ShowInfo("Оголошення знято з публікації.")
+                        ShowInfo(Resources.SiteText.MyServices_Msg_Unpublished)
                     End If
             End Select
 

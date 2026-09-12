@@ -79,4 +79,168 @@
   <data name="Reviews_Summary_None" xml:space="preserve"><value>No reviews yet</value></data>
   <data name="Review_Singular" xml:space="preserve"><value>review</value></data>
   <data name="Review_Plural" xml:space="preserve"><value>reviews</value></data>
+
+  <data name="District_NotSpecified" xml:space="preserve"><value>Not specified</value></data>
+
+  <data name="Login_Heading" xml:space="preserve"><value>Log In</value></data>
+  <data name="Login_Label_Password" xml:space="preserve"><value>Password</value></data>
+  <data name="Login_Val_Email" xml:space="preserve"><value>Enter your email</value></data>
+  <data name="Login_Val_Password" xml:space="preserve"><value>Enter your password</value></data>
+  <data name="Login_Btn_Submit" xml:space="preserve"><value>Log In</value></data>
+  <data name="Login_ForgotPassword" xml:space="preserve"><value>Forgot your password?</value></data>
+  <data name="Login_NoAccount_Prefix" xml:space="preserve"><value>Don't have an account?</value></data>
+  <data name="Login_Register_Link" xml:space="preserve"><value>Register</value></data>
+
+  <data name="Register_Heading" xml:space="preserve"><value>Registration</value></data>
+  <data name="Register_Intro" xml:space="preserve"><value>Providers and Consumers register separately — choose your account type:</value></data>
+  <data name="Register_Consumer_Title" xml:space="preserve"><value>Consumer</value></data>
+  <data name="Register_Consumer_Desc" xml:space="preserve"><value>Looking for services</value></data>
+  <data name="Register_Consumer_Btn" xml:space="preserve"><value>Register as a Consumer</value></data>
+  <data name="Register_Provider_Title" xml:space="preserve"><value>Provider</value></data>
+  <data name="Register_Provider_Desc" xml:space="preserve"><value>Providing services</value></data>
+  <data name="Register_Provider_Btn" xml:space="preserve"><value>Register as a Provider</value></data>
+
+  <data name="RegisterConsumer_Heading" xml:space="preserve"><value>Registration: Consumer (looking for services)</value></data>
+  <data name="RegisterProvider_Heading" xml:space="preserve"><value>Registration: Provider (providing services)</value></data>
+  <data name="Register_BackChooseType" xml:space="preserve"><value>← Wrong account type? Choose another</value></data>
+  <data name="Register_Success_Thanks" xml:space="preserve"><value>Thank you for registering! Please confirm your email.</value></data>
+  <data name="Register_DevMode_Label" xml:space="preserve"><value>Dev mode</value></data>
+  <data name="Register_DevMode_Note" xml:space="preserve"><value>(real email is not connected yet — see README): the confirmation link is below; in production it will be sent by email.</value></data>
+  <data name="Register_ConfirmEmailLink" xml:space="preserve"><value>Confirm email</value></data>
+  <data name="Register_Val_Email" xml:space="preserve"><value>Enter your email</value></data>
+  <data name="Register_Val_EmailInvalid" xml:space="preserve"><value>Invalid email</value></data>
+  <data name="Register_Label_Password" xml:space="preserve"><value>Password (at least 8 characters)</value></data>
+  <data name="Register_Val_Password" xml:space="preserve"><value>Enter your password</value></data>
+  <data name="Register_Val_PasswordLength" xml:space="preserve"><value>Password must be at least 8 characters</value></data>
+  <data name="Register_Label_PasswordConfirm" xml:space="preserve"><value>Confirm password</value></data>
+  <data name="Register_Val_PasswordMismatch" xml:space="preserve"><value>Passwords do not match</value></data>
+  <data name="Register_Label_FullName" xml:space="preserve"><value>Full name</value></data>
+  <data name="Register_Val_FullName" xml:space="preserve"><value>Enter your full name</value></data>
+  <data name="Register_Label_Phone" xml:space="preserve"><value>Phone</value></data>
+  <data name="Register_Label_District" xml:space="preserve"><value>District</value></data>
+  <data name="Register_Consent_Prefix" xml:space="preserve"><value>I have read the</value></data>
+  <data name="Register_Consent_PrivacyLink" xml:space="preserve"><value>Privacy Policy</value></data>
+  <data name="Register_Consent_Suffix" xml:space="preserve"><value>and consent to the processing of my personal data</value></data>
+  <data name="Register_Btn_Submit" xml:space="preserve"><value>Register</value></data>
+  <data name="RegisterProvider_LegalEntity_Checkbox" xml:space="preserve"><value>Legal entity</value></data>
+  <data name="RegisterProvider_Label_CompanyName" xml:space="preserve"><value>Company name</value></data>
+  <data name="RegisterProvider_Label_Edrpou" xml:space="preserve"><value>EDRPOU code</value></data>
+  <data name="RegisterProvider_Val_Edrpou" xml:space="preserve"><value>EDRPOU code must be 8 digits</value></data>
+  <data name="Register_Err_Consent" xml:space="preserve"><value>Please confirm your consent to the processing of personal data.</value></data>
+  <data name="Register_Err_EmailExists" xml:space="preserve"><value>A user with this email is already registered.</value></data>
+  <data name="Register_Err_SaveFailed" xml:space="preserve"><value>Failed to save the data — please try again later.</value></data>
+  <data name="RegisterProvider_Err_CompanyName" xml:space="preserve"><value>Enter the company name.</value></data>
+  <data name="RegisterProvider_Err_Edrpou" xml:space="preserve"><value>Enter the EDRPOU code.</value></data>
+
+  <data name="ConfirmEmail_Heading" xml:space="preserve"><value>Email Confirmation</value></data>
+  <data name="ConfirmEmail_Success" xml:space="preserve"><value>Email confirmed. You can now {0}log in{1}.</value></data>
+  <data name="ConfirmEmail_NoToken" xml:space="preserve"><value>No confirmation token specified.</value></data>
+  <data name="ConfirmEmail_InvalidToken" xml:space="preserve"><value>The link is invalid or has already been used.</value></data>
+
+  <data name="ForgotPassword_Heading" xml:space="preserve"><value>Password Recovery</value></data>
+  <data name="ForgotPassword_Result_Text" xml:space="preserve"><value>If this email is registered, a password reset link has been created for it.</value></data>
+  <data name="ForgotPassword_DevMode_Note" xml:space="preserve"><value>(real email is not connected): the link below appears if the email exists in the system.</value></data>
+  <data name="ForgotPassword_Val_Email" xml:space="preserve"><value>Enter your email</value></data>
+  <data name="ForgotPassword_Btn_Submit" xml:space="preserve"><value>Send Link</value></data>
+
+  <data name="ResetPassword_Heading" xml:space="preserve"><value>Set a New Password</value></data>
+  <data name="ResetPassword_InvalidToken_Prefix" xml:space="preserve"><value>The link is invalid or has already been used. Try</value></data>
+  <data name="ResetPassword_InvalidToken_Link" xml:space="preserve"><value>requesting a new one</value></data>
+  <data name="ResetPassword_Success_Prefix" xml:space="preserve"><value>Password updated. You can now</value></data>
+  <data name="ResetPassword_Label_NewPassword" xml:space="preserve"><value>New password (at least 8 characters)</value></data>
+  <data name="ResetPassword_Btn_Submit" xml:space="preserve"><value>Save Password</value></data>
+
+  <data name="MyServices_Heading" xml:space="preserve"><value>My Listings</value></data>
+  <data name="MyServices_NewLink" xml:space="preserve"><value>+ New Listing</value></data>
+  <data name="MyServices_Empty" xml:space="preserve"><value>You don't have any listings yet.</value></data>
+  <data name="MyServices_RejectReasonPrefix" xml:space="preserve"><value>Rejection reason: </value></data>
+  <data name="MyServices_Edit" xml:space="preserve"><value>Edit</value></data>
+  <data name="MyServices_Submit" xml:space="preserve"><value>Submit for Moderation</value></data>
+  <data name="MyServices_Unpublish" xml:space="preserve"><value>Unpublish</value></data>
+  <data name="MyServices_Msg_Submitted" xml:space="preserve"><value>The listing has been submitted for moderation.</value></data>
+  <data name="MyServices_Msg_Unpublished" xml:space="preserve"><value>The listing has been unpublished.</value></data>
+
+  <data name="Favorites_Empty_Prefix" xml:space="preserve"><value>You haven't added any listings to favorites yet — find something interesting in the</value></data>
+  <data name="Favorites_Empty_CatalogLink" xml:space="preserve"><value>catalog</value></data>
+  <data name="Favorites_Empty_Suffix" xml:space="preserve"><value>and click "Add to Favorites" on its page.</value></data>
+
+  <data name="Messages_Empty" xml:space="preserve"><value>No conversations yet. Message a provider from a listing card in the catalog.</value></data>
+
+  <data name="Donate_Heading" xml:space="preserve"><value>Support the Safina Project</value></data>
+  <data name="Donate_Intro" xml:space="preserve"><value>The Safina portal is developed as a volunteer project for residents of Sumy and the region. If you found it useful, you can support its development with a voluntary contribution — payment is processed via LiqPay, and the portal never sees or stores your card details.</value></data>
+  <data name="Donate_Legend_Amount" xml:space="preserve"><value>Contribution amount, UAH</value></data>
+  <data name="Donate_Amount_Custom" xml:space="preserve"><value>Other amount</value></data>
+  <data name="Donate_Label_CustomAmount" xml:space="preserve"><value>Custom amount (UAH, if "Other amount" is selected)</value></data>
+  <data name="Donate_Label_DonorName" xml:space="preserve"><value>Name (optional)</value></data>
+  <data name="Donate_Label_DonorEmail" xml:space="preserve"><value>Email for receipt (optional)</value></data>
+  <data name="Donate_Val_EmailInvalid" xml:space="preserve"><value>Invalid email</value></data>
+  <data name="Donate_Btn_Submit" xml:space="preserve"><value>Support via LiqPay</value></data>
+  <data name="Donate_Err_InvalidAmount" xml:space="preserve"><value>Please enter a valid amount.</value></data>
+  <data name="Donate_Err_AmountRange" xml:space="preserve"><value>The amount must be between 1 and 100,000 UAH.</value></data>
+
+  <data name="DonationResult_Heading" xml:space="preserve"><value>Project Support</value></data>
+  <data name="DonationResult_Success" xml:space="preserve"><value>Thank you! Your contribution ({0}) has been received.</value></data>
+  <data name="DonationResult_Pending" xml:space="preserve"><value>Thank you! Your payment is being processed — the status will update within a few minutes after confirmation from LiqPay.</value></data>
+  <data name="DonationResult_Failure" xml:space="preserve"><value>Unfortunately, the payment could not be completed.</value></data>
+  <data name="DonationResult_RetryLink" xml:space="preserve"><value>← Try again</value></data>
+  <data name="DonationResult_NotFound" xml:space="preserve"><value>Contribution not found.</value></data>
+  <data name="DonationResult_BackHome" xml:space="preserve"><value>← Back to home</value></data>
+
+  <data name="Profile_Heading" xml:space="preserve"><value>My Profile</value></data>
+  <data name="Profile_NotFound" xml:space="preserve"><value>Provider not found.</value></data>
+  <data name="Profile_PublicHeading_Prefix" xml:space="preserve"><value>Provider profile: </value></data>
+  <data name="Profile_Btn_Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Profile_DangerZone_Heading" xml:space="preserve"><value>Account Deletion</value></data>
+  <data name="Profile_DangerZone_Text" xml:space="preserve"><value>Deletion anonymizes your data (name, phone, email, business details) and blocks login; your published listings are unpublished. This action cannot be undone by yourself — see the</value></data>
+  <data name="Profile_DangerZone_PrivacyLink" xml:space="preserve"><value>Privacy Policy</value></data>
+  <data name="Profile_Btn_DeleteAccount" xml:space="preserve"><value>Delete Account</value></data>
+  <data name="Profile_DeleteConfirmJs" xml:space="preserve"><value>return confirm('Delete your account permanently? This action cannot be undone by yourself.');</value></data>
+  <data name="Profile_DeleteGalleryConfirmJs" xml:space="preserve"><value>return confirm('Delete this photo from the gallery?');</value></data>
+  <data name="Profile_Gallery_Heading" xml:space="preserve"><value>Gallery</value></data>
+  <data name="Profile_Gallery_Empty" xml:space="preserve"><value>No photos in the gallery yet.</value></data>
+  <data name="Profile_Gallery_Delete" xml:space="preserve"><value>delete</value></data>
+  <data name="Profile_Gallery_UploadLabel_Prefix" xml:space="preserve"><value>Add photos (up to</value></data>
+  <data name="Profile_Gallery_UploadLabel_Suffix" xml:space="preserve"><value>photos, jpg/png/gif, ≤3MB)</value></data>
+  <data name="Profile_Gallery_Btn_Upload" xml:space="preserve"><value>Upload</value></data>
+  <data name="Profile_Msg_Saved" xml:space="preserve"><value>Data saved.</value></data>
+  <data name="Profile_Err_SaveFailed" xml:space="preserve"><value>Failed to save — please try again later.</value></data>
+  <data name="Profile_Err_DeleteFailed" xml:space="preserve"><value>Failed to delete the account — please try again later.</value></data>
+
+  <data name="Photo_Err_MaxCount" xml:space="preserve"><value>You can add up to {0} photos — some files were not saved.</value></data>
+  <data name="Photo_Err_BadFormat" xml:space="preserve"><value>Allowed photo formats: jpg, png, gif.</value></data>
+  <data name="Photo_Err_TooLarge" xml:space="preserve"><value>Each photo must not exceed 3 MB.</value></data>
+
+  <data name="ServiceEdit_Heading_New" xml:space="preserve"><value>New Listing</value></data>
+  <data name="ServiceEdit_Heading_Edit" xml:space="preserve"><value>Edit Listing</value></data>
+  <data name="ServiceEdit_Locked_Pending" xml:space="preserve"><value>The listing has already been submitted for moderation — editing is unavailable until the administrator makes a decision.</value></data>
+  <data name="ServiceEdit_Locked_Approved" xml:space="preserve"><value>The listing is published. To edit it, first unpublish it from the listings page.</value></data>
+  <data name="ServiceEdit_BackToList" xml:space="preserve"><value>← Back to Listings</value></data>
+  <data name="ServiceEdit_Label_Category" xml:space="preserve"><value>Category</value></data>
+  <data name="ServiceEdit_Label_Title" xml:space="preserve"><value>Title</value></data>
+  <data name="ServiceEdit_Val_Title" xml:space="preserve"><value>Enter a title</value></data>
+  <data name="ServiceEdit_Label_Description" xml:space="preserve"><value>Description</value></data>
+  <data name="ServiceEdit_Label_Price" xml:space="preserve"><value>Price, UAH (optional)</value></data>
+  <data name="ServiceEdit_Val_Price" xml:space="preserve"><value>Price must be a number, e.g. 250 or 250.50</value></data>
+  <data name="ServiceEdit_Label_Phone" xml:space="preserve"><value>Contact phone</value></data>
+  <data name="ServiceEdit_Val_Phone" xml:space="preserve"><value>Enter a phone number</value></data>
+  <data name="ServiceEdit_Map_Label" xml:space="preserve"><value>Location on the map (optional — click to place a marker)</value></data>
+  <data name="ServiceEdit_Map_Hint" xml:space="preserve"><value>No marker set yet.</value></data>
+  <data name="ServiceEdit_ExistingPhotos_Label" xml:space="preserve"><value>Existing Photos</value></data>
+  <data name="ServiceEdit_AddPhoto_Prefix" xml:space="preserve"><value>Add photos (up to</value></data>
+  <data name="ServiceEdit_AddPhoto_Suffix" xml:space="preserve"><value>photos, jpg/png/gif)</value></data>
+  <data name="ServiceEdit_Btn_SaveDraft" xml:space="preserve"><value>Save as Draft</value></data>
+  <data name="ServiceEdit_Btn_SubmitModeration" xml:space="preserve"><value>Save and Submit for Moderation</value></data>
+  <data name="ServiceEdit_Err_LockedSave" xml:space="preserve"><value>Failed to save — the listing is already under moderation or published.</value></data>
+
+  <data name="MessageThread_BackToAll" xml:space="preserve"><value>← All Messages</value></data>
+  <data name="MessageThread_NotFound" xml:space="preserve"><value>Conversation not found, or you don't have access to it.</value></data>
+  <data name="MessageThread_NoMessages" xml:space="preserve"><value>No messages yet — write the first one.</value></data>
+  <data name="MessageThread_OrderDate_Label" xml:space="preserve"><value>Desired date/time (optional)</value></data>
+  <data name="MessageThread_OrderAddress_Label" xml:space="preserve"><value>Service address (optional)</value></data>
+  <data name="MessageThread_Label_Message" xml:space="preserve"><value>Message</value></data>
+  <data name="MessageThread_Label_Details" xml:space="preserve"><value>Details / comment</value></data>
+  <data name="MessageThread_Btn_Send" xml:space="preserve"><value>Send</value></data>
+  <data name="MessageThread_Err_EmptyBody" xml:space="preserve"><value>Enter a message.</value></data>
+  <data name="MessageThread_DesiredDatePrefix" xml:space="preserve"><value>Desired date/time: </value></data>
+  <data name="MessageThread_AddressPrefix" xml:space="preserve"><value>Address: </value></data>
 </root>

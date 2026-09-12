@@ -20,12 +20,24 @@ Namespace SumyPortal
             End Get
         End Property
 
+        Protected Overrides Sub InitializeCulture()
+            LocalizationHelper.ApplyCulture(Me)
+            MyBase.InitializeCulture()
+        End Sub
+
         Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
             maxPhotosLiteral.Text = MaxPhotos.ToString()
 
             If Not IsPostBack Then
+                ' За замовчуванням — нове оголошення; нижче перевизначається для режиму
+                ' редагування. Встановлюємо лише тут (не на кожному Page_Load), бо
+                ' Literal.Text зберігається у ViewState — інакше постбек (валідація,
+                ' завантаження фото) скидав би заголовок назад на "Нове оголошення".
+                headingLiteral.Text = Resources.SiteText.ServiceEdit_Heading_New
+                titleLiteral.Text = Resources.SiteText.ServiceEdit_Heading_New
+
                 BindCategories()
-                SumyDistricts.Populate(ddlDistrict, "Не вказано")
+                SumyDistricts.Populate(ddlDistrict, Resources.SiteText.District_NotSpecified)
 
                 If ServiceIdParam > 0 Then
                     Dim svc = Service.GetById(ServiceIdParam, CurrentProvider.UserId)
@@ -34,15 +46,15 @@ Namespace SumyPortal
                         Return
                     End If
 
-                    headingLiteral.Text = "Редагування оголошення"
-                    titleLiteral.Text = "Редагування оголошення"
+                    headingLiteral.Text = Resources.SiteText.ServiceEdit_Heading_Edit
+                    titleLiteral.Text = Resources.SiteText.ServiceEdit_Heading_Edit
 
                     If svc.Status <> "Draft" AndAlso svc.Status <> "Rejected" Then
                         formPanel.Visible = False
                         lockedPanel.Visible = True
                         lockedText.Text = If(svc.Status = "Pending",
-                            "Оголошення вже подано на модерацію — редагування недоступне, доки адміністратор не прийме рішення.",
-                            "Оголошення опубліковано. Щоб редагувати, спершу зніміть його з публікації в списку оголошень.")
+                            Resources.SiteText.ServiceEdit_Locked_Pending,
+                            Resources.SiteText.ServiceEdit_Locked_Approved)
                         Return
                     End If
 
@@ -132,7 +144,7 @@ Namespace SumyPortal
             Else
                 Dim updated = Service.Update(serviceId, CurrentProvider.UserId, categoryId, title, description, price, district, phone, latitude, longitude)
                 If Not updated Then
-                    ShowError("Не вдалося зберегти — оголошення вже на модерації або опубліковано.")
+                    ShowError(Resources.SiteText.ServiceEdit_Err_LockedSave)
                     Return Nothing
                 End If
             End If
@@ -166,17 +178,17 @@ Namespace SumyPortal
                 If posted Is Nothing OrElse posted.ContentLength = 0 Then Continue For
 
                 If currentCount >= MaxPhotos Then
-                    ShowError(String.Format("Можна додати не більше {0} фото — частину файлів не збережено.", MaxPhotos))
+                    ShowError(String.Format(Resources.SiteText.Photo_Err_MaxCount, MaxPhotos))
                     Exit For
                 End If
 
                 Dim ext = Path.GetExtension(posted.FileName).ToLowerInvariant()
                 If Array.IndexOf(AllowedExtensions, ext) < 0 Then
-                    ShowError("Дозволені формати фото: jpg, png, gif.")
+                    ShowError(Resources.SiteText.Photo_Err_BadFormat)
                     Continue For
                 End If
                 If posted.ContentLength > MaxFileSizeBytes Then
-                    ShowError("Розмір одного фото не повинен перевищувати 3 МБ.")
+                    ShowError(Resources.SiteText.Photo_Err_TooLarge)
                     Continue For
                 End If
 

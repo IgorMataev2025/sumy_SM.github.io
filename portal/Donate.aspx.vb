@@ -11,13 +11,18 @@ Namespace SumyPortal
     Public Class Donate
         Inherits System.Web.UI.Page
 
+        Protected Overrides Sub InitializeCulture()
+            LocalizationHelper.ApplyCulture(Me)
+            MyBase.InitializeCulture()
+        End Sub
+
         Protected Sub btnDonate_Click(sender As Object, e As EventArgs)
             If Not Page.IsValid Then Return
 
             Dim amount As Decimal
             If rblAmount.SelectedValue = "custom" Then
                 If Not Decimal.TryParse(txtCustomAmount.Text, NumberStyles.Number, CultureInfo.InvariantCulture, amount) Then
-                    ShowError("Вкажіть коректну суму.")
+                    ShowError(Resources.SiteText.Donate_Err_InvalidAmount)
                     Return
                 End If
             Else
@@ -25,7 +30,7 @@ Namespace SumyPortal
             End If
 
             If amount < 1 OrElse amount > 100000 Then
-                ShowError("Сума має бути від 1 до 100 000 грн.")
+                ShowError(Resources.SiteText.Donate_Err_AmountRange)
                 Return
             End If
 

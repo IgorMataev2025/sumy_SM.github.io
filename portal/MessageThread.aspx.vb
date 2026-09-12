@@ -13,6 +13,11 @@ Namespace SumyPortal
     Public Class MessageThread
         Inherits System.Web.UI.Page
 
+        Protected Overrides Sub InitializeCulture()
+            LocalizationHelper.ApplyCulture(Me)
+            MyBase.InitializeCulture()
+        End Sub
+
         ''' <summary>Для розмітки — щоб відрізнити "свої" бульбашки від "чужих" (CssClass у Repeater).</summary>
         Protected Property CurrentUserId As Integer
 
@@ -67,13 +72,13 @@ Namespace SumyPortal
             ' теоретично неможливо, бо кнопка на ServiceDetails.aspx і так лише для
             ' Consumer, але перевіряємо явно, а не покладаємось на це побічно).
             orderFieldsPanel.Visible = (thread.Count = 0) AndAlso (CurrentUserId = _consumerId)
-            bodyLabelLiteral.Text = If(orderFieldsPanel.Visible, "Деталі / коментар", "Повідомлення")
+            bodyLabelLiteral.Text = If(orderFieldsPanel.Visible, Resources.SiteText.MessageThread_Label_Details, Resources.SiteText.MessageThread_Label_Message)
         End Sub
 
         Protected Sub btnSend_Click(sender As Object, e As EventArgs)
             Dim comment = txtBody.Text.Trim()
             If String.IsNullOrEmpty(comment) Then
-                errorLabel.Text = "Введіть текст повідомлення."
+                errorLabel.Text = Resources.SiteText.MessageThread_Err_EmptyBody
                 errorLabel.Visible = True
                 Return
             End If
@@ -84,10 +89,10 @@ Namespace SumyPortal
                 ' сутності/статусу заявки немає (рішення користувача, 2026-09-12).
                 Dim details As New List(Of String)
                 If Not String.IsNullOrWhiteSpace(txtDesiredDate.Text) Then
-                    details.Add("Бажана дата/час: " & txtDesiredDate.Text.Trim())
+                    details.Add(Resources.SiteText.MessageThread_DesiredDatePrefix & txtDesiredDate.Text.Trim())
                 End If
                 If Not String.IsNullOrWhiteSpace(txtAddress.Text) Then
-                    details.Add("Адреса: " & txtAddress.Text.Trim())
+                    details.Add(Resources.SiteText.MessageThread_AddressPrefix & txtAddress.Text.Trim())
                 End If
                 If details.Count > 0 Then
                     body = String.Join(Environment.NewLine, details) & Environment.NewLine & Environment.NewLine & comment

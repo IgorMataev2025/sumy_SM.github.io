@@ -11,6 +11,11 @@ Namespace SumyPortal
             End Get
         End Property
 
+        Protected Overrides Sub InitializeCulture()
+            LocalizationHelper.ApplyCulture(Me)
+            MyBase.InitializeCulture()
+        End Sub
+
         Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
             If Not IsPostBack AndAlso String.IsNullOrEmpty(Token) Then
                 formPanel.Visible = False
