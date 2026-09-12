@@ -445,6 +445,20 @@ fieldset.form-row {
     margin-top: 1.5rem;
 }
 
+/* Перемикач Список/Карта (Catalog.aspx, карта каталогу — продовження геолокації,
+   п.13, постановка робочої тестової версії, 2026-09-12). */
+.catalog-view-toggle {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.view-toggle-btn.view-toggle-active {
+    background: var(--color-primary);
+    color: #fff;
+    border-color: var(--color-primary);
+}
+
 .service-details {
     max-width: 720px;
 }

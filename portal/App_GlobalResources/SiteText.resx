@@ -49,6 +49,10 @@
   <data name="Catalog_AllCategories" xml:space="preserve"><value>Всі категорії</value></data>
   <data name="Catalog_AllDistricts" xml:space="preserve"><value>Всі райони</value></data>
   <data name="Catalog_PageInfo" xml:space="preserve"><value>Знайдено: {0}. Сторінка {1} з {2}.</value></data>
+  <data name="Catalog_View_List" xml:space="preserve"><value>Список</value></data>
+  <data name="Catalog_View_Map" xml:space="preserve"><value>Карта</value></data>
+  <data name="Catalog_Map_Empty" xml:space="preserve"><value>Жодне з відфільтрованих оголошень не має мітки на карті.</value></data>
+  <data name="Catalog_Map_DetailsLink" xml:space="preserve"><value>Детальніше</value></data>
 
   <data name="Price_Negotiable" xml:space="preserve"><value>Ціна за домовленістю</value></data>
 

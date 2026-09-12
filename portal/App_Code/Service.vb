@@ -461,6 +461,38 @@ Namespace SumyPortal
             Return result
         End Function
 
+        ''' <summary>Опубліковані оголошення з міткою на карті, що відповідають тим самим фільтрам,
+        ''' що й SearchApproved (категорія/район/ключове слово/ціна) — для перемикача "Карта" на
+        ''' Catalog.aspx (продовження геолокації, п.13). Без пагінації — карта показує всі відповідні
+        ''' одразу, це інший спосіб огляду, не по PageSize. Оголошення без мітки (Latitude/Longitude
+        ''' Nothing — постачальник її не ставив) сюди не потрапляють, лишаючись доступними у звичайному
+        ''' списку.</summary>
+        Public Shared Function SearchApprovedForMap(categoryId As Integer?, district As String, keyword As String,
+                                                      minPrice As Decimal?, maxPrice As Decimal?) As List(Of Service)
+            Dim result As New List(Of Service)
+
+            Using conn = DbHelper.GetConnection()
+                Dim parameters As New List(Of MySqlParameter)
+                Dim whereSql = BuildSearchWhere(categoryId, district, keyword, minPrice, maxPrice, parameters)
+                whereSql &= "AND s.Latitude IS NOT NULL AND s.Longitude IS NOT NULL "
+
+                Using cmd As New MySqlCommand(
+                    "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt " &
+                    "FROM Services s JOIN Categories c ON c.CategoryId = s.CategoryId " & whereSql &
+                    "ORDER BY s.CreatedAt DESC;", conn)
+                    cmd.Parameters.AddRange(parameters.ToArray())
+                    Using reader = cmd.ExecuteReader()
+                        While reader.Read()
+                            result.Add(Map(reader))
+                        End While
+                    End Using
+                End Using
+            End Using
+
+            Return result
+        End Function
+
         ' --- Адмін: повний CRUD над усіма оголошеннями (п.12 уточненої постановки, 2026-09-11) ---
         ' На відміну від методів вище (GetByProvider/GetById/Update), тут немає перевірки
         ' власника й обмеження за статусом — адмін бачить/редагує/видаляє будь-яке оголошення.
