@@ -440,6 +440,15 @@ fieldset.form-row {
     border: 1px solid var(--color-border);
 }
 
+/* Галерея на акаунті постачальника (Profile.aspx) — обгортка навколо .gallery-photo
+   + посилання "видалити" під фото. НЕ .photo-thumb (той для 100x100 мініатюр
+   ServiceEdit.aspx з чекбоксами — .photo-thumb img переважив би .gallery-photo). */
+.gallery-tile {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
 .contact-box {
     background: var(--color-surface);
     border: 1px solid var(--color-border);

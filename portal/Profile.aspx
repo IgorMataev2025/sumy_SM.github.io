@@ -80,7 +80,12 @@
         <div class="catalog-grid photo-gallery">
             <asp:Repeater ID="rptGallery" runat="server" OnItemCommand="rptGallery_ItemCommand" OnItemDataBound="rptGallery_ItemDataBound">
                 <ItemTemplate>
-                    <div class="photo-thumb">
+                    <!-- .gallery-tile, а не .photo-thumb (той — для маленьких 100x100 мініатюр
+                         ServiceEdit.aspx з чекбоксами; тут .photo-thumb img переважав би
+                         .gallery-photo через вищу специфічність CSS-селектора й стискав фото
+                         до 100x100 замість повноцінної картки 100%/4:3 — знайдено живим
+                         тестом мобільної верстки, 2026-09-12). -->
+                    <div class="gallery-tile">
                         <img class="gallery-photo" src='<%#: ResolveUrl(CType(Container.DataItem, SumyPortal.ProviderGalleryPhoto).FilePath) %>' alt="" />
                         <asp:LinkButton ID="lnkDeleteGalleryPhoto" runat="server" CommandName="Delete" CausesValidation="false"
                             CommandArgument='<%#: CType(Container.DataItem, SumyPortal.ProviderGalleryPhoto).PhotoId %>'
