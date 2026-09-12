@@ -31,12 +31,25 @@ Namespace SumyPortal
         Public Property RejectReason As String
         Public Property CreatedAt As DateTime
 
+        ''' <summary>Лічильник переглядів ServiceDetails.aspx (п.17, статистика для постачальника,
+        ''' 2026-09-12) — +1 при кожному не-постбек завантаженні опублікованого оголошення,
+        ''' включно з переглядами самого власника (свідомо не фільтруємо).</summary>
+        Public Property ViewCount As Integer
+
         ''' <summary>Заповнюється лише для черги модерації і картки оголошення — контакти постачальника.</summary>
         Public Property ProviderName As String
         Public Property ProviderEmail As String
 
         ''' <summary>Заповнюється лише для каталогу (Catalog.aspx) — шлях до першого фото, якщо є.</summary>
         Public Property ThumbnailUrl As String
+
+        ''' <summary>Заповнюються лише для MyServices.aspx (п.17, статистика для постачальника) —
+        ''' розмови/вподобання/відгуки рахуються "на льоту" з наявних таблиць окремим запитом
+        ''' (BindStats у MyServices.aspx.vb), а не тут — Map(reader) їх не знає.</summary>
+        Public Property ConversationCount As Integer
+        Public Property FavoriteCount As Integer
+        Public Property ReviewAverage As Decimal?
+        Public Property ReviewCount As Integer
 
         Public ReadOnly Property StatusLabel As String
             Get
@@ -66,20 +79,22 @@ Namespace SumyPortal
                 .Longitude = If(reader.IsDBNull(reader.GetOrdinal("Longitude")), CType(Nothing, Decimal?), reader.GetDecimal("Longitude")),
                 .Status = reader.GetString("Status"),
                 .RejectReason = If(reader.IsDBNull(reader.GetOrdinal("RejectReason")), Nothing, reader.GetString("RejectReason")),
-                .CreatedAt = reader.GetDateTime("CreatedAt")
+                .CreatedAt = reader.GetDateTime("CreatedAt"),
+                .ViewCount = reader.GetInt32("ViewCount")
             }
         End Function
 
         ''' <summary>
-        ''' Map() читає Latitude/Longitude безумовно (reader.GetOrdinal) — тому будь-який SELECT,
-        ''' переданий у Map(reader), ОБОВ'ЯЗКОВО має містити ці два стовпці, інакше
+        ''' Map() читає Latitude/Longitude/ViewCount безумовно (reader.GetOrdinal/GetInt32) — тому
+        ''' будь-який SELECT, переданий у Map(reader), ОБОВ'ЯЗКОВО має містити ці стовпці, інакше
         ''' IndexOutOfRangeException. Стосується й інших inline-запитів нижче
         ''' (GetPendingForModeration/GetPendingById/GetApprovedById/GetForMessaging/
-        ''' GetAllForAdmin/GetByIdAny/SearchApproved), що дублюють цей самий список колонок.
+        ''' GetAllForAdmin/GetByIdAny/SearchApproved/SearchApprovedForMap), що дублюють цей самий
+        ''' список колонок — так само Favorite.vb: GetByUser (та сама збірка App_Code).
         ''' </summary>
         Private Const SelectBase As String =
             "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-            "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt " &
+            "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount " &
             "FROM Services s JOIN Categories c ON c.CategoryId = s.CategoryId "
 
         ''' <summary>Усі оголошення постачальника, найновіші зверху.</summary>
@@ -255,7 +270,7 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, " &
                     "u.FullName AS ProviderName, u.Email AS ProviderEmail " &
                     "FROM Services s " &
                     "JOIN Categories c ON c.CategoryId = s.CategoryId " &
@@ -280,7 +295,7 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, " &
                     "u.FullName AS ProviderName, u.Email AS ProviderEmail " &
                     "FROM Services s " &
                     "JOIN Categories c ON c.CategoryId = s.CategoryId " &
@@ -343,6 +358,32 @@ Namespace SumyPortal
             End Using
         End Sub
 
+        ' --- Статистика для постачальника (п.17, наступна фіча понад MVP, 2026-09-12) ---
+
+        ''' <summary>+1 до лічильника переглядів. Викликається з ServiceDetails.aspx.vb лише при
+        ''' не-постбек завантаженні (кожен F5/перехід — новий перегляд); власні перегляди
+        ''' постачальника теж рахуються (рішення користувача — не фільтруємо).</summary>
+        Public Shared Sub IncrementViewCount(serviceId As Integer)
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand("UPDATE Services SET ViewCount = ViewCount + 1 WHERE ServiceId = @ServiceId;", conn)
+                    cmd.Parameters.AddWithValue("@ServiceId", serviceId)
+                    cmd.ExecuteNonQuery()
+                End Using
+            End Using
+        End Sub
+
+        ''' <summary>Кількість унікальних споживачів, що написали по цьому оголошенню (MyServices.aspx,
+        ''' статистика) — рахується "на льоту" з Messages, окремого лічильника в БД не заведено.</summary>
+        Public Shared Function GetConversationCount(serviceId As Integer) As Integer
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand(
+                    "SELECT COUNT(DISTINCT ConsumerId) FROM Messages WHERE ServiceId = @ServiceId;", conn)
+                    cmd.Parameters.AddWithValue("@ServiceId", serviceId)
+                    Return Convert.ToInt32(cmd.ExecuteScalar())
+                End Using
+            End Using
+        End Function
+
         ' --- Каталог і пошук (споживач, ТЗ п.4.4) ---
 
         ''' <summary>Опубліковане оголошення за Id — для картки. Nothing, якщо не існує або не Approved.</summary>
@@ -350,7 +391,7 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, " &
                     "u.FullName AS ProviderName, u.Email AS ProviderEmail " &
                     "FROM Services s " &
                     "JOIN Categories c ON c.CategoryId = s.CategoryId " &
@@ -375,7 +416,7 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, " &
                     "u.FullName AS ProviderName, u.Email AS ProviderEmail " &
                     "FROM Services s " &
                     "JOIN Categories c ON c.CategoryId = s.CategoryId " &
@@ -444,7 +485,7 @@ Namespace SumyPortal
 
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount " &
                     "FROM Services s JOIN Categories c ON c.CategoryId = s.CategoryId " & whereSql2 &
                     "ORDER BY s.CreatedAt DESC LIMIT @PageSize OFFSET @Offset;", conn)
                     cmd.Parameters.AddRange(selectParams.ToArray())
@@ -478,7 +519,7 @@ Namespace SumyPortal
 
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount " &
                     "FROM Services s JOIN Categories c ON c.CategoryId = s.CategoryId " & whereSql &
                     "ORDER BY s.CreatedAt DESC;", conn)
                     cmd.Parameters.AddRange(parameters.ToArray())
@@ -503,7 +544,7 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, " &
                     "u.FullName AS ProviderName, u.Email AS ProviderEmail " &
                     "FROM Services s " &
                     "JOIN Categories c ON c.CategoryId = s.CategoryId " &
@@ -527,7 +568,7 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, " &
                     "u.FullName AS ProviderName, u.Email AS ProviderEmail " &
                     "FROM Services s " &
                     "JOIN Categories c ON c.CategoryId = s.CategoryId " &

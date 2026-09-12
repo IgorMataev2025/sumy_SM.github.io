@@ -163,6 +163,11 @@
   <data name="MyServices_Unpublish" xml:space="preserve"><value>Зняти з публікації</value></data>
   <data name="MyServices_Msg_Submitted" xml:space="preserve"><value>Оголошення подано на модерацію.</value></data>
   <data name="MyServices_Msg_Unpublished" xml:space="preserve"><value>Оголошення знято з публікації.</value></data>
+  <data name="MyServices_Stats_Views" xml:space="preserve"><value>Перегляди: {0}</value></data>
+  <data name="MyServices_Stats_Conversations" xml:space="preserve"><value>Розмови: {0}</value></data>
+  <data name="MyServices_Stats_Favorites" xml:space="preserve"><value>Вподобання: {0}</value></data>
+  <data name="MyServices_Stats_ReviewsRated" xml:space="preserve"><value>Відгуки: ★ {0:0.0} ({1})</value></data>
+  <data name="MyServices_Stats_ReviewsNone" xml:space="preserve"><value>Відгуки: немає</value></data>
 
   <data name="Favorites_Empty_Prefix" xml:space="preserve"><value>Ви ще не додали жодного оголошення в обране — знайдіть цікаве в</value></data>
   <data name="Favorites_Empty_CatalogLink" xml:space="preserve"><value>каталозі</value></data>

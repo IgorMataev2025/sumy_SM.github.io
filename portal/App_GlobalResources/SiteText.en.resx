@@ -163,6 +163,11 @@
   <data name="MyServices_Unpublish" xml:space="preserve"><value>Unpublish</value></data>
   <data name="MyServices_Msg_Submitted" xml:space="preserve"><value>The listing has been submitted for moderation.</value></data>
   <data name="MyServices_Msg_Unpublished" xml:space="preserve"><value>The listing has been unpublished.</value></data>
+  <data name="MyServices_Stats_Views" xml:space="preserve"><value>Views: {0}</value></data>
+  <data name="MyServices_Stats_Conversations" xml:space="preserve"><value>Conversations: {0}</value></data>
+  <data name="MyServices_Stats_Favorites" xml:space="preserve"><value>Favorites: {0}</value></data>
+  <data name="MyServices_Stats_ReviewsRated" xml:space="preserve"><value>Reviews: ★ {0:0.0} ({1})</value></data>
+  <data name="MyServices_Stats_ReviewsNone" xml:space="preserve"><value>Reviews: none</value></data>
 
   <data name="Favorites_Empty_Prefix" xml:space="preserve"><value>You haven't added any listings to favorites yet — find something interesting in the</value></data>
   <data name="Favorites_Empty_CatalogLink" xml:space="preserve"><value>catalog</value></data>

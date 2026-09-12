@@ -34,6 +34,17 @@ Namespace SumyPortal
             End Using
         End Sub
 
+        ''' <summary>Скільки разів це оголошення вподобали (MyServices.aspx, статистика для
+        ''' постачальника, п.17) — незалежно від того, чи вподобане досі опубліковане.</summary>
+        Public Shared Function GetCount(serviceId As Integer) As Integer
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand("SELECT COUNT(*) FROM Favorites WHERE ServiceId = @ServiceId;", conn)
+                    cmd.Parameters.AddWithValue("@ServiceId", serviceId)
+                    Return Convert.ToInt32(cmd.ExecuteScalar())
+                End Using
+            End Using
+        End Function
+
         Public Shared Sub Remove(userId As Integer, serviceId As Integer)
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
@@ -53,7 +64,7 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount " &
                     "FROM Favorites f " &
                     "JOIN Services s ON s.ServiceId = f.ServiceId " &
                     "JOIN Categories c ON c.CategoryId = s.CategoryId " &

@@ -13,7 +13,7 @@
         <asp:Literal runat="server" Text="<%$ Resources:SiteText, MyServices_Empty %>" />
     </asp:Panel>
 
-    <asp:Repeater ID="rptServices" runat="server" OnItemCommand="rptServices_ItemCommand">
+    <asp:Repeater ID="rptServices" runat="server" OnItemCommand="rptServices_ItemCommand" OnItemDataBound="rptServices_ItemDataBound">
         <ItemTemplate>
             <div class="service-card status-<%#: CType(Container.DataItem, SumyPortal.Service).Status.ToLowerInvariant() %>">
                 <div class="service-card-header">
@@ -21,6 +21,11 @@
                     <span class="status-badge"><%#: CType(Container.DataItem, SumyPortal.Service).StatusLabel %></span>
                 </div>
                 <p class="service-category"><%#: CType(Container.DataItem, SumyPortal.Service).CategoryName %></p>
+
+                <!-- Статистика для постачальника (п.17, наступна фіча понад MVP, 2026-09-12) —
+                     текст формується в rptServices_ItemDataBound (MyServices.aspx.vb), а не тут,
+                     бо потребує форматування decimal/умовного "немає відгуків". -->
+                <p class="service-category"><asp:Literal ID="statsLiteral" runat="server" /></p>
 
                 <asp:Literal runat="server" Visible='<%#: Not String.IsNullOrEmpty(CType(Container.DataItem, SumyPortal.Service).RejectReason) %>'
                     Text='<%#: Resources.SiteText.MyServices_RejectReasonPrefix & CType(Container.DataItem, SumyPortal.Service).RejectReason %>' />

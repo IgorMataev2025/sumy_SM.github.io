@@ -34,6 +34,12 @@ Namespace SumyPortal
                 Return
             End If
 
+            ' Статистика для постачальника (п.17, наступна фіча понад MVP, 2026-09-12) —
+            ' +1 до лічильника переглядів при кожному не-постбек завантаженні (IsPostBack
+            ' перевірено на самому початку Page_Load вище); власні перегляди постачальника
+            ' теж рахуються, свідомо не фільтруємо.
+            Service.IncrementViewCount(svc.ServiceId)
+
             ' Server.HtmlEncode — сторінка публічна (доступна анонімам, Web.config),
             ' а Title/Description/ProviderName/Phone — вільний текст постачальника
             ' (той самий прийом, що вже в ServiceContract.aspx.vb).
