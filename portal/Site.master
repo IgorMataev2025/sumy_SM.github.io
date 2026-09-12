@@ -4,6 +4,15 @@
 <head runat="server">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Базове SEO (п.21, наступна фіча понад MVP, 2026-09-12) — властивість
+         MetaDescription (Site.master.vb) дозволяє кожній сторінці задати свій опис;
+         за замовчуванням лишається загальний опис порталу. Тег нижче — стандартний
+         серверний HtmlMeta-контрол ASP.NET (не голий HTML-тег), саме тому Id й
+         властивість Content доступні з code-behind; той самий підхід, що вже title
+         через ContentPlaceHolder нижче, тільки тут значення — атрибут, а не текст
+         між тегами, тому ContentPlaceHolder не підійшов би. -->
+    <meta name="description" runat="server" id="metaDescriptionTag"
+        content="Портал послуг Safina — оголошення побутових послуг, медицини, освіти та комунальних послуг у Сумах та області." />
     <title><asp:ContentPlaceHolder ID="TitleContent" runat="server">Портал послуг Safina</asp:ContentPlaceHolder></title>
     <link rel="stylesheet" href="~/css/site.css" runat="server" />
     <asp:ContentPlaceHolder ID="HeadContent" runat="server" />

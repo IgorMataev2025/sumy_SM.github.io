@@ -1,4 +1,5 @@
 <%@ Page Title="" Language="VB" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="LegalGuide.aspx.vb" Inherits="SumyPortal.LegalGuide" %>
+<%@ MasterType VirtualPath="~/Site.master" %>
 <asp:Content ID="TitleContent" ContentPlaceHolderID="TitleContent" runat="server">
     Юридична довідка — Портал послуг Safina
 </asp:Content>

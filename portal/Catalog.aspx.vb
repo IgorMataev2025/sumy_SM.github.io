@@ -27,6 +27,12 @@ Namespace SumyPortal
         End Property
 
         Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
+            ' Базове SEO (п.21, наступна фіча понад MVP, 2026-09-12) — свій опис замість
+            ' загального з Site.master; на кожному запиті (не лише Not IsPostBack), бо
+            ' постбек (пошук/пагінація) лишається тим самим документом для пошуковика.
+            Master.MetaDescription = "Каталог послуг у Сумах та області — побутові послуги, " &
+                "медицина, освіта, комунальні послуги. Фільтр за категорією, районом і ціною."
+
             If Not IsPostBack Then
                 BindFilterOptions()
                 PreselectCategoryFromQueryString()

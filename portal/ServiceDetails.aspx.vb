@@ -57,6 +57,14 @@ Namespace SumyPortal
             priceLiteral.Text = If(svc.Price.HasValue, svc.Price.Value.ToString("0.## грн"), Resources.SiteText.Price_Negotiable)
             descriptionLiteral.Text = Server.HtmlEncode(svc.Description)
             providerNameLiteral.Text = Server.HtmlEncode(svc.ProviderName)
+
+            ' Базове SEO (п.21, наступна фіча понад MVP, 2026-09-12) — унікальний опис
+            ' для кожної картки оголошення (найцінніше для SEO, на відміну від
+            ' однакового загального опису на решті сторінок); ~155 символів — типова
+            ' довжина, яку показує Google в результатах пошуку, довше просто обріже сам.
+            Master.MetaDescription = Server.HtmlEncode(If(String.IsNullOrWhiteSpace(svc.Description),
+                svc.Title & " — " & svc.CategoryName & " у Сумах та області. Портал послуг Safina.",
+                Truncate(svc.Description, 155)))
             ' Публічна галерея на акаунті постачальника (Profile.aspx?providerId=X) —
             ' доступна будь-кому, включно з анонімами (постановка робочої тестової версії, 2026-09-12).
             providerGalleryLink.NavigateUrl = ResolveUrl("~/Profile.aspx?providerId=" & svc.ProviderId)
@@ -173,6 +181,17 @@ Namespace SumyPortal
 
             Response.Redirect(Request.RawUrl, True)
         End Sub
+
+        ''' <summary>Обрізає текст до заданої довжини на межі слова (не посеред слова) —
+        ''' для meta description (п.21, наступна фіча понад MVP, 2026-09-12). Якщо текст і
+        ''' так коротший — повертає без змін, без "…" в кінці.</summary>
+        Private Function Truncate(text As String, maxLength As Integer) As String
+            If text.Length <= maxLength Then Return text
+            Dim cut = text.Substring(0, maxLength)
+            Dim lastSpace = cut.LastIndexOf(" "c)
+            If lastSpace > 0 Then cut = cut.Substring(0, lastSpace)
+            Return cut.TrimEnd() & "…"
+        End Function
 
         ''' <summary>Відміна іменника "відгук" за кількістю. Українська: 1/2-4/5+ з винятком
         ''' 11-14 (гл.63 ЦК тут ні до чого, це просто мова). Англійська (багатомовність,

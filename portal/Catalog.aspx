@@ -1,4 +1,5 @@
 <%@ Page Title="" Language="VB" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="Catalog.aspx.vb" Inherits="SumyPortal.Catalog" %>
+<%@ MasterType VirtualPath="~/Site.master" %>
 <asp:Content ID="TitleContent" ContentPlaceHolderID="TitleContent" runat="server">
     Каталог послуг — Портал послуг Safina
 </asp:Content>

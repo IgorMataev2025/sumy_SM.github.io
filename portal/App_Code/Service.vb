@@ -432,6 +432,27 @@ Namespace SumyPortal
             Return result
         End Function
 
+        ''' <summary>Мінімальний список опублікованих оголошень для Sitemap.ashx (п.21,
+        ''' наступна фіча понад MVP — базове SEO, 2026-09-12) — лише ServiceId/ApprovedAt,
+        ''' навмисно свій вузький SELECT замість Map(reader): нічого іншого тут не треба,
+        ''' і це уникає звички дописувати нове поле в усі 9+ місць, де Map(reader)
+        ''' використовується (той самий "грабельний" список колонок, що вже для
+        ''' Latitude/Longitude/ViewCount, п.13/п.17) — коли потрібні лише 1-2 стовпці,
+        ''' простіше й безпечніше написати вузький запит, ніж тягнути повний SelectBase.</summary>
+        Public Shared Function GetApprovedForSitemap() As List(Of KeyValuePair(Of Integer, DateTime))
+            Dim result As New List(Of KeyValuePair(Of Integer, DateTime))
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand("SELECT ServiceId, ApprovedAt FROM Services WHERE Status = 'Approved';", conn)
+                    Using reader = cmd.ExecuteReader()
+                        While reader.Read()
+                            result.Add(New KeyValuePair(Of Integer, DateTime)(reader.GetInt32("ServiceId"), reader.GetDateTime("ApprovedAt")))
+                        End While
+                    End Using
+                End Using
+            End Using
+            Return result
+        End Function
+
         ' --- Каталог і пошук (споживач, ТЗ п.4.4) ---
 
         ''' <summary>Опубліковане оголошення за Id — для картки. Nothing, якщо не існує або не Approved.</summary>

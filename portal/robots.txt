@@ -1,0 +1,19 @@
+User-agent: *
+Disallow: /Admin
+Disallow: /Login.aspx
+Disallow: /Register.aspx
+Disallow: /RegisterConsumer.aspx
+Disallow: /RegisterProvider.aspx
+Disallow: /ForgotPassword.aspx
+Disallow: /ResetPassword.aspx
+Disallow: /ConfirmEmail.aspx
+Disallow: /Profile.aspx
+Disallow: /MyServices.aspx
+Disallow: /ServiceEdit.aspx
+Disallow: /Messages.aspx
+Disallow: /MessageThread.aspx
+Disallow: /Favorites.aspx
+Disallow: /SetLanguage.ashx
+Disallow: /DonationCallback.aspx
+
+Sitemap: https://igormataev-001-site1.etempurl.com/Sitemap.ashx
