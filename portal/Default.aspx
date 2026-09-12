@@ -4,19 +4,16 @@
 </asp:Content>
 <asp:Content ID="MainContent" ContentPlaceHolderID="MainContent" runat="server">
     <section class="hero">
-        <h1>Портал послуг міста та області Суми</h1>
+        <h1><asp:Literal runat="server" Text="<%$ Resources:SiteText, Home_HeroTitle %>" /></h1>
         <p>
-            Постачальники розміщують інформацію про свої послуги, а мешканці —
-            знаходять і користуються нею. Каталог і картки оголошень відкриті
-            для перегляду без реєстрації; вхід потрібен лише для дій —
-            зв'язатись з постачальником, лишити відгук або власне оголошення.
+            <asp:Literal runat="server" Text="<%$ Resources:SiteText, Home_HeroText %>" />
         </p>
     </section>
 
     <section class="categories">
-        <h2>Категорії послуг</h2>
+        <h2><asp:Literal runat="server" Text="<%$ Resources:SiteText, Home_CategoriesHeading %>" /></h2>
         <asp:Panel ID="dbErrorPanel" runat="server" Visible="false" CssClass="stub-note">
-            Тимчасово немає з'єднання з базою даних. Спробуйте оновити сторінку пізніше.
+            <asp:Literal runat="server" Text="<%$ Resources:SiteText, Home_DbError %>" />
         </asp:Panel>
         <asp:Repeater ID="rptCategories" runat="server">
             <ItemTemplate>

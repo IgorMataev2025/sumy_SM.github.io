@@ -11,6 +11,14 @@ Namespace SumyPortal
         Protected Property LatitudeForScript As String
         Protected Property LongitudeForScript As String
 
+        ''' <summary>Багатомовність (постановка робочої тестової версії, 2026-09-12) —
+        ''' офіційна точка ASP.NET Web Forms для програмної культури, до того як
+        ''' вона "застигне" на задекларованому в Web.config значенні (uk-UA).</summary>
+        Protected Overrides Sub InitializeCulture()
+            LocalizationHelper.ApplyCulture(Me)
+            MyBase.InitializeCulture()
+        End Sub
+
         Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
             If IsPostBack Then Return
 
@@ -32,14 +40,14 @@ Namespace SumyPortal
             titleLiteral.Text = Server.HtmlEncode(svc.Title)
             headingLiteral.Text = Server.HtmlEncode(svc.Title)
             categoryLiteral.Text = Server.HtmlEncode(svc.CategoryName)
-            priceLiteral.Text = If(svc.Price.HasValue, svc.Price.Value.ToString("0.## грн"), "Ціна за домовленістю")
+            priceLiteral.Text = If(svc.Price.HasValue, svc.Price.Value.ToString("0.## грн"), Resources.SiteText.Price_Negotiable)
             descriptionLiteral.Text = Server.HtmlEncode(svc.Description)
             providerNameLiteral.Text = Server.HtmlEncode(svc.ProviderName)
             ' Публічна галерея на акаунті постачальника (Profile.aspx?providerId=X) —
             ' доступна будь-кому, включно з анонімами (постановка робочої тестової версії, 2026-09-12).
             providerGalleryLink.NavigateUrl = ResolveUrl("~/Profile.aspx?providerId=" & svc.ProviderId)
             phoneLiteral.Text = Server.HtmlEncode(svc.Phone)
-            districtLiteral.Text = Server.HtmlEncode(If(String.IsNullOrEmpty(svc.District), "не вказано", svc.District))
+            districtLiteral.Text = Server.HtmlEncode(If(String.IsNullOrEmpty(svc.District), Resources.SiteText.Details_NotSpecified, svc.District))
 
             ' Геолокація (постановка робочої тестової версії, 2026-09-12) — лише інформативна
             ' мітка, не замінює District. Панель/скрипт рендеряться лише коли координати є.
@@ -70,7 +78,7 @@ Namespace SumyPortal
             btnToggleFavorite.Visible = (currentUser IsNot Nothing)
             If currentUser IsNot Nothing Then
                 Dim isFavorite = Favorite.IsFavorite(currentUser.UserId, svc.ServiceId)
-                btnToggleFavorite.Text = If(isFavorite, "★ Прибрати з обраного", "☆ Додати в обране")
+                btnToggleFavorite.Text = If(isFavorite, Resources.SiteText.Details_Favorite_Remove, Resources.SiteText.Details_Favorite_Add)
             End If
 
             ' Повідомлення постачальнику (п.10 уточненої постановки) — MVP-спрощення:
@@ -108,11 +116,21 @@ Namespace SumyPortal
             Review.GetSummary(serviceId, average, count)
             ratingSummaryLiteral.Text = If(average.HasValue,
                 String.Format("★ {0:0.0} ({1} {2})", average.Value, count, PluralizeReviews(count)),
-                "Ще немає відгуків")
+                Resources.SiteText.Reviews_Summary_None)
         End Sub
 
-        ''' <summary>Українська відміна іменника "відгук" за кількістю (1/2-4/5+, з винятком 11-14).</summary>
-        Private Shared Function PluralizeReviews(count As Integer) As String
+        ''' <summary>Відміна іменника "відгук" за кількістю. Українська: 1/2-4/5+ з винятком
+        ''' 11-14 (гл.63 ЦК тут ні до чого, це просто мова). Англійська (багатомовність,
+        ''' постановка робочої тестової версії, 2026-09-12): проста однина/множина.</summary>
+        Private Function PluralizeReviews(count As Integer) As String
+            ' Не порівнювати рядок UICulture напряму з "en" — сетер Page.UICulture
+            ' нормалізує нейтральну культуру "en" у конкретну "en-US" (CultureInfo.
+            ' CreateSpecificCulture), тому TwoLetterISOLanguageName надійніший
+            ' (знайдено живим тестом — "1 review" показувало українське "відгук").
+            If CultureInfo.CurrentUICulture.TwoLetterISOLanguageName = LocalizationHelper.EnglishCulture Then
+                Return If(count = 1, Resources.SiteText.Review_Singular, Resources.SiteText.Review_Plural)
+            End If
+
             Dim mod100 = count Mod 100
             If mod100 >= 11 AndAlso mod100 <= 14 Then Return "відгуків"
             Select Case count Mod 10

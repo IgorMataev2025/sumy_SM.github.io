@@ -11,24 +11,31 @@
 <body>
     <form id="mainForm" runat="server">
         <header class="site-header">
-            <a class="site-logo" href="~/Default.aspx" runat="server">Портал послуг</a>
+            <a class="site-logo" href="~/Default.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, SiteLogo %>" /></a>
             <nav class="site-nav">
-                <a href="~/Default.aspx" runat="server">Головна</a>
-                <a href="~/Catalog.aspx" runat="server">Каталог</a>
-                <a href="~/LegalGuide.aspx" runat="server">Юридична довідка</a>
-                <a href="~/Donate.aspx" runat="server">Підтримати проєкт</a>
+                <a href="~/Default.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Home %>" /></a>
+                <a href="~/Catalog.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Catalog %>" /></a>
+                <a href="~/LegalGuide.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_LegalGuide %>" /></a>
+                <a href="~/Donate.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Donate %>" /></a>
                 <asp:PlaceHolder ID="anonNav" runat="server">
-                    <a href="~/Login.aspx" runat="server">Вхід</a>
-                    <a href="~/Register.aspx" runat="server">Реєстрація</a>
+                    <a href="~/Login.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Login %>" /></a>
+                    <a href="~/Register.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Register %>" /></a>
                 </asp:PlaceHolder>
                 <asp:PlaceHolder ID="userNav" runat="server" Visible="false">
-                    <asp:HyperLink ID="myServicesLink" runat="server" NavigateUrl="~/MyServices.aspx" Visible="false">Мої оголошення</asp:HyperLink>
-                    <a href="~/Favorites.aspx" runat="server">Обране</a>
-                    <a href="~/Messages.aspx" runat="server">Повідомлення</a>
-                    <a href="~/Profile.aspx" runat="server">Профіль</a>
+                    <asp:HyperLink ID="myServicesLink" runat="server" NavigateUrl="~/MyServices.aspx" Visible="false" Text="<%$ Resources:SiteText, Nav_MyServices %>" />
+                    <a href="~/Favorites.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Favorites %>" /></a>
+                    <a href="~/Messages.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Messages %>" /></a>
+                    <a href="~/Profile.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Profile %>" /></a>
                     <span class="site-user"><asp:Literal ID="userNameLiteral" runat="server" /></span>
-                    <a href="~/Logout.aspx" runat="server">Вихід</a>
+                    <a href="~/Logout.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Logout %>" /></a>
                 </asp:PlaceHolder>
+                <!-- Перемикач мови (постановка робочої тестової версії, 2026-09-12) — лише для
+                     публічних сторінок (Default/Catalog/ServiceDetails), решта лишається
+                     українською незалежно від cookie (свідоме обмеження обсягу). -->
+                <span class="lang-switch">
+                    <a href="~/SetLanguage.ashx?lang=uk" runat="server">UA</a> /
+                    <a href="~/SetLanguage.ashx?lang=en" runat="server">EN</a>
+                </span>
             </nav>
         </header>
 
@@ -37,7 +44,7 @@
         </main>
 
         <footer class="site-footer">
-            <p>&copy; <%: DateTime.Now.Year %> Портал послуг Safina · <a href="~/PrivacyPolicy.aspx" runat="server">Політика конфіденційності</a></p>
+            <p>&copy; <%: DateTime.Now.Year %> Портал послуг Safina · <a href="~/PrivacyPolicy.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Footer_PrivacyPolicy %>" /></a></p>
         </footer>
     </form>
 </body>

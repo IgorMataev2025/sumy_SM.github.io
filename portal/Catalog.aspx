@@ -3,37 +3,37 @@
     Каталог послуг — Портал послуг Safina
 </asp:Content>
 <asp:Content ID="MainContent" ContentPlaceHolderID="MainContent" runat="server">
-    <h1>Каталог послуг</h1>
+    <h1><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Heading %>" /></h1>
 
     <asp:Panel ID="filterPanel" runat="server" CssClass="filter-panel">
         <div class="filter-row">
             <div class="form-row">
-                <label for="<%= ddlCategory.ClientID %>">Категорія</label>
+                <label for="<%= ddlCategory.ClientID %>"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Label_Category %>" /></label>
                 <asp:DropDownList ID="ddlCategory" runat="server" DataTextField="Name" DataValueField="CategoryId" />
             </div>
             <div class="form-row">
-                <label for="<%= ddlDistrict.ClientID %>">Район</label>
+                <label for="<%= ddlDistrict.ClientID %>"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Label_District %>" /></label>
                 <asp:DropDownList ID="ddlDistrict" runat="server" />
             </div>
             <div class="form-row">
-                <label for="<%= txtKeyword.ClientID %>">Ключове слово</label>
-                <asp:TextBox ID="txtKeyword" runat="server" placeholder="напр. ремонт" />
+                <label for="<%= txtKeyword.ClientID %>"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Label_Keyword %>" /></label>
+                <asp:TextBox ID="txtKeyword" runat="server" placeholder="<%$ Resources:SiteText, Catalog_Keyword_Placeholder %>" />
             </div>
         </div>
         <div class="filter-row">
             <div class="form-row">
-                <label for="<%= txtMinPrice.ClientID %>">Ціна від</label>
+                <label for="<%= txtMinPrice.ClientID %>"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Label_MinPrice %>" /></label>
                 <asp:TextBox ID="txtMinPrice" runat="server" MaxLength="10" />
-                <asp:RegularExpressionValidator runat="server" ControlToValidate="txtMinPrice" ErrorMessage="Число" ValidationExpression="^\d+(\.\d{1,2})?$" Display="Dynamic" CssClass="field-error" />
+                <asp:RegularExpressionValidator runat="server" ControlToValidate="txtMinPrice" ErrorMessage="<%$ Resources:SiteText, Catalog_Validator_Number %>" ValidationExpression="^\d+(\.\d{1,2})?$" Display="Dynamic" CssClass="field-error" />
             </div>
             <div class="form-row">
-                <label for="<%= txtMaxPrice.ClientID %>">Ціна до</label>
+                <label for="<%= txtMaxPrice.ClientID %>"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Label_MaxPrice %>" /></label>
                 <asp:TextBox ID="txtMaxPrice" runat="server" MaxLength="10" />
-                <asp:RegularExpressionValidator runat="server" ControlToValidate="txtMaxPrice" ErrorMessage="Число" ValidationExpression="^\d+(\.\d{1,2})?$" Display="Dynamic" CssClass="field-error" />
+                <asp:RegularExpressionValidator runat="server" ControlToValidate="txtMaxPrice" ErrorMessage="<%$ Resources:SiteText, Catalog_Validator_Number %>" ValidationExpression="^\d+(\.\d{1,2})?$" Display="Dynamic" CssClass="field-error" />
             </div>
             <div class="form-row filter-actions">
-                <asp:Button ID="btnSearch" runat="server" Text="Знайти" OnClick="btnSearch_Click" CssClass="btn-primary" />
-                <asp:Button ID="btnReset" runat="server" Text="Скинути" OnClick="btnReset_Click" CausesValidation="false" CssClass="btn-secondary" />
+                <asp:Button ID="btnSearch" runat="server" Text="<%$ Resources:SiteText, Catalog_Btn_Search %>" OnClick="btnSearch_Click" CssClass="btn-primary" />
+                <asp:Button ID="btnReset" runat="server" Text="<%$ Resources:SiteText, Catalog_Btn_Reset %>" OnClick="btnReset_Click" CausesValidation="false" CssClass="btn-secondary" />
             </div>
         </div>
     </asp:Panel>
@@ -41,7 +41,7 @@
     <asp:Label ID="pageInfoLiteral" runat="server" CssClass="page-info" />
 
     <asp:Panel ID="emptyPanel" runat="server" Visible="false" CssClass="stub-note">
-        За заданими критеріями нічого не знайдено.
+        <asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Empty %>" />
     </asp:Panel>
 
     <div class="catalog-grid">
@@ -51,7 +51,7 @@
                     <div class="catalog-thumb">
                         <asp:Image runat="server" Visible='<%#: Not String.IsNullOrEmpty(CType(Container.DataItem, SumyPortal.Service).ThumbnailUrl) %>'
                             ImageUrl='<%#: If(String.IsNullOrEmpty(CType(Container.DataItem, SumyPortal.Service).ThumbnailUrl), "", ResolveUrl(CType(Container.DataItem, SumyPortal.Service).ThumbnailUrl)) %>' AlternateText="" />
-                        <span class="catalog-thumb-placeholder" runat="server" visible='<%#: String.IsNullOrEmpty(CType(Container.DataItem, SumyPortal.Service).ThumbnailUrl) %>'>Фото немає</span>
+                        <span class="catalog-thumb-placeholder" runat="server" visible='<%#: String.IsNullOrEmpty(CType(Container.DataItem, SumyPortal.Service).ThumbnailUrl) %>'><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Photo_Placeholder %>" /></span>
                     </div>
                     <div class="catalog-card-body">
                         <h3><%#: CType(Container.DataItem, SumyPortal.Service).Title %></h3>
@@ -60,7 +60,7 @@
                             <%#: If(String.IsNullOrEmpty(CType(Container.DataItem, SumyPortal.Service).District), "", " · " & CType(Container.DataItem, SumyPortal.Service).District) %>
                         </p>
                         <p class="catalog-price">
-                            <%#: If(CType(Container.DataItem, SumyPortal.Service).Price.HasValue, CType(Container.DataItem, SumyPortal.Service).Price.Value.ToString("0.## грн"), "Ціна за домовленістю") %>
+                            <%#: If(CType(Container.DataItem, SumyPortal.Service).Price.HasValue, CType(Container.DataItem, SumyPortal.Service).Price.Value.ToString("0.## грн"), Resources.SiteText.Price_Negotiable) %>
                         </p>
                     </div>
                 </a>
@@ -69,7 +69,7 @@
     </div>
 
     <div class="pagination">
-        <asp:LinkButton ID="lnkPrev" runat="server" OnClick="lnkPrev_Click" CausesValidation="false">← Попередня</asp:LinkButton>
-        <asp:LinkButton ID="lnkNext" runat="server" OnClick="lnkNext_Click" CausesValidation="false">Наступна →</asp:LinkButton>
+        <asp:LinkButton ID="lnkPrev" runat="server" OnClick="lnkPrev_Click" CausesValidation="false" Text="<%$ Resources:SiteText, Catalog_Pagination_Prev %>" />
+        <asp:LinkButton ID="lnkNext" runat="server" OnClick="lnkNext_Click" CausesValidation="false" Text="<%$ Resources:SiteText, Catalog_Pagination_Next %>" />
     </div>
 </asp:Content>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="SiteLogo" xml:space="preserve"><value>Портал послуг</value></data>
+  <data name="Nav_Home" xml:space="preserve"><value>Головна</value></data>
+  <data name="Nav_Catalog" xml:space="preserve"><value>Каталог</value></data>
+  <data name="Nav_LegalGuide" xml:space="preserve"><value>Юридична довідка</value></data>
+  <data name="Nav_Donate" xml:space="preserve"><value>Підтримати проєкт</value></data>
+  <data name="Nav_Login" xml:space="preserve"><value>Вхід</value></data>
+  <data name="Nav_Register" xml:space="preserve"><value>Реєстрація</value></data>
+  <data name="Nav_MyServices" xml:space="preserve"><value>Мої оголошення</value></data>
+  <data name="Nav_Favorites" xml:space="preserve"><value>Обране</value></data>
+  <data name="Nav_Messages" xml:space="preserve"><value>Повідомлення</value></data>
+  <data name="Nav_Profile" xml:space="preserve"><value>Профіль</value></data>
+  <data name="Nav_Logout" xml:space="preserve"><value>Вихід</value></data>
+  <data name="Footer_PrivacyPolicy" xml:space="preserve"><value>Політика конфіденційності</value></data>
+
+  <data name="Home_HeroTitle" xml:space="preserve"><value>Портал послуг міста та області Суми</value></data>
+  <data name="Home_HeroText" xml:space="preserve"><value>Постачальники розміщують інформацію про свої послуги, а мешканці — знаходять і користуються нею. Каталог і картки оголошень відкриті для перегляду без реєстрації; вхід потрібен лише для дій — зв'язатись з постачальником, лишити відгук або власне оголошення.</value></data>
+  <data name="Home_CategoriesHeading" xml:space="preserve"><value>Категорії послуг</value></data>
+  <data name="Home_DbError" xml:space="preserve"><value>Тимчасово немає з'єднання з базою даних. Спробуйте оновити сторінку пізніше.</value></data>
+
+  <data name="Catalog_Heading" xml:space="preserve"><value>Каталог послуг</value></data>
+  <data name="Catalog_Label_Category" xml:space="preserve"><value>Категорія</value></data>
+  <data name="Catalog_Label_District" xml:space="preserve"><value>Район</value></data>
+  <data name="Catalog_Label_Keyword" xml:space="preserve"><value>Ключове слово</value></data>
+  <data name="Catalog_Keyword_Placeholder" xml:space="preserve"><value>напр. ремонт</value></data>
+  <data name="Catalog_Label_MinPrice" xml:space="preserve"><value>Ціна від</value></data>
+  <data name="Catalog_Label_MaxPrice" xml:space="preserve"><value>Ціна до</value></data>
+  <data name="Catalog_Validator_Number" xml:space="preserve"><value>Число</value></data>
+  <data name="Catalog_Btn_Search" xml:space="preserve"><value>Знайти</value></data>
+  <data name="Catalog_Btn_Reset" xml:space="preserve"><value>Скинути</value></data>
+  <data name="Catalog_Empty" xml:space="preserve"><value>За заданими критеріями нічого не знайдено.</value></data>
+  <data name="Catalog_Photo_Placeholder" xml:space="preserve"><value>Фото немає</value></data>
+  <data name="Catalog_Pagination_Prev" xml:space="preserve"><value>← Попередня</value></data>
+  <data name="Catalog_Pagination_Next" xml:space="preserve"><value>Наступна →</value></data>
+  <data name="Catalog_AllCategories" xml:space="preserve"><value>Всі категорії</value></data>
+  <data name="Catalog_AllDistricts" xml:space="preserve"><value>Всі райони</value></data>
+  <data name="Catalog_PageInfo" xml:space="preserve"><value>Знайдено: {0}. Сторінка {1} з {2}.</value></data>
+
+  <data name="Price_Negotiable" xml:space="preserve"><value>Ціна за домовленістю</value></data>
+
+  <data name="Details_BackToCatalog" xml:space="preserve"><value>← До каталогу</value></data>
+  <data name="Details_NotFound" xml:space="preserve"><value>Оголошення не знайдено — можливо, його зняли з публікації.</value></data>
+  <data name="Details_ContactsHeading" xml:space="preserve"><value>Контакти постачальника</value></data>
+  <data name="Details_GalleryLink" xml:space="preserve"><value>Галерея постачальника</value></data>
+  <data name="Details_PhoneLabel" xml:space="preserve"><value>Телефон:</value></data>
+  <data name="Details_AnonContact_Prefix" xml:space="preserve"><value>Щоб побачити телефон постачальника, </value></data>
+  <data name="Details_AnonContact_Login" xml:space="preserve"><value>увійдіть</value></data>
+  <data name="Details_AnonContact_Or" xml:space="preserve"><value> або </value></data>
+  <data name="Details_AnonContact_Register" xml:space="preserve"><value>зареєструйтесь</value></data>
+  <data name="Details_DistrictLabel" xml:space="preserve"><value>Район:</value></data>
+  <data name="Details_MapHeading" xml:space="preserve"><value>Розташування на карті</value></data>
+  <data name="Details_ContractLink" xml:space="preserve"><value>Сформувати договір</value></data>
+  <data name="Details_ReviewsHeading" xml:space="preserve"><value>Рейтинг та відгуки</value></data>
+  <data name="Details_NoReviewsPanel" xml:space="preserve"><value>Відгуків ще немає.</value></data>
+  <data name="Details_AlreadyReviewed" xml:space="preserve"><value>Ви вже залишили відгук на це оголошення.</value></data>
+  <data name="Details_LeaveReviewHeading" xml:space="preserve"><value>Залишити відгук</value></data>
+  <data name="Details_RatingLabel" xml:space="preserve"><value>Оцінка</value></data>
+  <data name="Details_RatingChoose" xml:space="preserve"><value>Оберіть оцінку</value></data>
+  <data name="Details_CommentLabel" xml:space="preserve"><value>Коментар (необов'язково)</value></data>
+  <data name="Details_BtnSubmitReview" xml:space="preserve"><value>Залишити відгук</value></data>
+  <data name="Details_MessageLink" xml:space="preserve"><value>Написати постачальнику</value></data>
+  <data name="Details_NotSpecified" xml:space="preserve"><value>не вказано</value></data>
+  <data name="Details_Favorite_Remove" xml:space="preserve"><value>★ Прибрати з обраного</value></data>
+  <data name="Details_Favorite_Add" xml:space="preserve"><value>☆ Додати в обране</value></data>
+  <data name="Reviews_Summary_None" xml:space="preserve"><value>Ще немає відгуків</value></data>
+  <data name="Review_Singular" xml:space="preserve"><value>відгук</value></data>
+  <data name="Review_Plural" xml:space="preserve"><value>відгуків</value></data>
+</root>

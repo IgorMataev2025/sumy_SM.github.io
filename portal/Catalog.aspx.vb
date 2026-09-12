@@ -8,6 +8,14 @@ Namespace SumyPortal
 
         Private Const PageSize As Integer = 12
 
+        ''' <summary>Багатомовність (постановка робочої тестової версії, 2026-09-12) —
+        ''' офіційна точка ASP.NET Web Forms для програмної культури, до того як
+        ''' вона "застигне" на задекларованому в Web.config значенні (uk-UA).</summary>
+        Protected Overrides Sub InitializeCulture()
+            LocalizationHelper.ApplyCulture(Me)
+            MyBase.InitializeCulture()
+        End Sub
+
         Private Property CurrentPage As Integer
             Get
                 Return If(ViewState("CurrentPage"), 1)
@@ -37,7 +45,7 @@ Namespace SumyPortal
 
         Private Sub BindFilterOptions()
             ddlCategory.Items.Clear()
-            ddlCategory.Items.Add(New ListItem("Всі категорії", "0"))
+            ddlCategory.Items.Add(New ListItem(Resources.SiteText.Catalog_AllCategories, "0"))
             For Each cat In ServiceCategory.GetActiveCategories()
                 ddlCategory.Items.Add(New ListItem(cat.Name, cat.CategoryId.ToString()))
             Next
@@ -45,7 +53,7 @@ Namespace SumyPortal
             ' Фіксований довідник районів (п.5 уточненої постановки), а не
             ' лише ті, де вже є оголошення — щоб фільтр завжди показував усі
             ' офіційні райони.
-            SumyDistricts.Populate(ddlDistrict, "Всі райони")
+            SumyDistricts.Populate(ddlDistrict, Resources.SiteText.Catalog_AllDistricts)
         End Sub
 
         Private Sub BindResults()
@@ -81,7 +89,7 @@ Namespace SumyPortal
             emptyPanel.Visible = (items.Count = 0)
 
             Dim totalPages = Math.Max(1, CInt(Math.Ceiling(total / CDbl(PageSize))))
-            pageInfoLiteral.Text = String.Format("Знайдено: {0}. Сторінка {1} з {2}.", total, CurrentPage, totalPages)
+            pageInfoLiteral.Text = String.Format(Resources.SiteText.Catalog_PageInfo, total, CurrentPage, totalPages)
             lnkPrev.Enabled = (CurrentPage > 1)
             lnkNext.Enabled = (CurrentPage < totalPages)
         End Sub

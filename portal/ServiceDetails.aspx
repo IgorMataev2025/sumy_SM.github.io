@@ -10,10 +10,10 @@
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 </asp:Content>
 <asp:Content ID="MainContent" ContentPlaceHolderID="MainContent" runat="server">
-    <p><a href="Catalog.aspx">← До каталогу</a></p>
+    <p><a href="Catalog.aspx"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_BackToCatalog %>" /></a></p>
 
     <asp:Panel ID="notFoundPanel" runat="server" Visible="false" CssClass="stub-note">
-        Оголошення не знайдено — можливо, його зняли з публікації.
+        <asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_NotFound %>" />
     </asp:Panel>
 
     <asp:Panel ID="detailsPanel" runat="server" CssClass="service-details">
@@ -33,19 +33,18 @@
         <p><asp:Literal ID="descriptionLiteral" runat="server" /></p>
 
         <div class="contact-box">
-            <h2>Контакти постачальника</h2>
+            <h2><asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_ContactsHeading %>" /></h2>
             <p><asp:Literal ID="providerNameLiteral" runat="server" /></p>
-            <p><asp:HyperLink ID="providerGalleryLink" runat="server" CssClass="btn-secondary">Галерея постачальника</asp:HyperLink></p>
+            <p><asp:HyperLink ID="providerGalleryLink" runat="server" CssClass="btn-secondary" Text="<%$ Resources:SiteText, Details_GalleryLink %>" /></p>
             <asp:PlaceHolder ID="phoneHolder" runat="server">
-                <p>Телефон: <asp:Literal ID="phoneLiteral" runat="server" /></p>
+                <p><asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_PhoneLabel %>" /> <asp:Literal ID="phoneLiteral" runat="server" /></p>
             </asp:PlaceHolder>
             <asp:Panel ID="anonContactPanel" runat="server" Visible="false" CssClass="stub-note">
-                Щоб побачити телефон постачальника, <a href="Login.aspx">увійдіть</a>
-                або <a href="Register.aspx">зареєструйтесь</a>.
+                <asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_AnonContact_Prefix %>" /><a href="Login.aspx"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_AnonContact_Login %>" /></a><asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_AnonContact_Or %>" /><a href="Register.aspx"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_AnonContact_Register %>" /></a>.
             </asp:Panel>
-            <p>Район: <asp:Literal ID="districtLiteral" runat="server" /></p>
+            <p><asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_DistrictLabel %>" /> <asp:Literal ID="districtLiteral" runat="server" /></p>
             <asp:Panel ID="mapPanel" runat="server" Visible="false">
-                <p><b>Розташування на карті</b></p>
+                <p><b><asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_MapHeading %>" /></b></p>
                 <div id="detailsMap" style="height:250px; border-radius:8px;"></div>
                 <!-- Скрипт усередині mapPanel навмисно — Visible="false" (немає мітки) не рендерить
                      дітей узагалі, тож detailsMap у DOM не буде, а координати нема чим підставити. -->
@@ -60,16 +59,16 @@
                     })();
                 </script>
             </asp:Panel>
-            <p><asp:HyperLink ID="contractLink" runat="server" CssClass="btn-primary" Visible="false">Сформувати договір</asp:HyperLink></p>
+            <p><asp:HyperLink ID="contractLink" runat="server" CssClass="btn-primary" Visible="false" Text="<%$ Resources:SiteText, Details_ContractLink %>" /></p>
             <p>
                 <asp:Button ID="btnToggleFavorite" runat="server" Visible="false" CausesValidation="false"
                     OnClick="btnToggleFavorite_Click" CssClass="btn-secondary" />
-                <asp:HyperLink ID="messageLink" runat="server" CssClass="btn-secondary" Visible="false">Написати постачальнику</asp:HyperLink>
+                <asp:HyperLink ID="messageLink" runat="server" CssClass="btn-secondary" Visible="false" Text="<%$ Resources:SiteText, Details_MessageLink %>" />
             </p>
         </div>
 
         <div class="reviews-section">
-            <h2>Рейтинг та відгуки</h2>
+            <h2><asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_ReviewsHeading %>" /></h2>
             <p class="rating-summary"><asp:Literal ID="ratingSummaryLiteral" runat="server" /></p>
 
             <asp:Repeater ID="rptReviews" runat="server">
@@ -87,35 +86,35 @@
             </asp:Repeater>
 
             <asp:Panel ID="noReviewsPanel" runat="server" Visible="false" CssClass="stub-note">
-                Відгуків ще немає.
+                <asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_NoReviewsPanel %>" />
             </asp:Panel>
 
             <asp:Panel ID="alreadyReviewedPanel" runat="server" Visible="false" CssClass="stub-note">
-                Ви вже залишили відгук на це оголошення.
+                <asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_AlreadyReviewed %>" />
             </asp:Panel>
 
             <asp:Panel ID="reviewFormPanel" runat="server" Visible="false" CssClass="auth-form">
-                <h3>Залишити відгук</h3>
+                <h3><asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_LeaveReviewHeading %>" /></h3>
                 <asp:ValidationSummary ID="reviewValidationSummary" runat="server" CssClass="form-error" DisplayMode="BulletList" />
                 <asp:Label ID="reviewErrorLabel" runat="server" CssClass="form-error" Visible="false" />
                 <div class="form-row">
-                    <label for="<%= ddlRating.ClientID %>">Оцінка</label>
+                    <label for="<%= ddlRating.ClientID %>"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_RatingLabel %>" /></label>
                     <asp:DropDownList ID="ddlRating" runat="server">
-                        <asp:ListItem Text="Оберіть оцінку" Value="" />
+                        <asp:ListItem Text="<%$ Resources:SiteText, Details_RatingChoose %>" Value="" />
                         <asp:ListItem Text="★★★★★ (5)" Value="5" />
                         <asp:ListItem Text="★★★★☆ (4)" Value="4" />
                         <asp:ListItem Text="★★★☆☆ (3)" Value="3" />
                         <asp:ListItem Text="★★☆☆☆ (2)" Value="2" />
                         <asp:ListItem Text="★☆☆☆☆ (1)" Value="1" />
                     </asp:DropDownList>
-                    <asp:RequiredFieldValidator runat="server" ControlToValidate="ddlRating" ErrorMessage="Оберіть оцінку" Display="Dynamic" CssClass="field-error" />
+                    <asp:RequiredFieldValidator runat="server" ControlToValidate="ddlRating" ErrorMessage="<%$ Resources:SiteText, Details_RatingChoose %>" Display="Dynamic" CssClass="field-error" />
                 </div>
                 <div class="form-row">
-                    <label for="<%= txtComment.ClientID %>">Коментар (необов'язково)</label>
+                    <label for="<%= txtComment.ClientID %>"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_CommentLabel %>" /></label>
                     <asp:TextBox ID="txtComment" runat="server" TextMode="MultiLine" Rows="3" MaxLength="1000" />
                 </div>
                 <div class="form-row">
-                    <asp:Button ID="btnSubmitReview" runat="server" Text="Залишити відгук" OnClick="btnSubmitReview_Click" CssClass="btn-primary" />
+                    <asp:Button ID="btnSubmitReview" runat="server" Text="<%$ Resources:SiteText, Details_BtnSubmitReview %>" OnClick="btnSubmitReview_Click" CssClass="btn-primary" />
                 </div>
             </asp:Panel>
         </div>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="SiteLogo" xml:space="preserve"><value>Services Portal</value></data>
+  <data name="Nav_Home" xml:space="preserve"><value>Home</value></data>
+  <data name="Nav_Catalog" xml:space="preserve"><value>Catalog</value></data>
+  <data name="Nav_LegalGuide" xml:space="preserve"><value>Legal Guide</value></data>
+  <data name="Nav_Donate" xml:space="preserve"><value>Support the Project</value></data>
+  <data name="Nav_Login" xml:space="preserve"><value>Log In</value></data>
+  <data name="Nav_Register" xml:space="preserve"><value>Register</value></data>
+  <data name="Nav_MyServices" xml:space="preserve"><value>My Listings</value></data>
+  <data name="Nav_Favorites" xml:space="preserve"><value>Favorites</value></data>
+  <data name="Nav_Messages" xml:space="preserve"><value>Messages</value></data>
+  <data name="Nav_Profile" xml:space="preserve"><value>Profile</value></data>
+  <data name="Nav_Logout" xml:space="preserve"><value>Log Out</value></data>
+  <data name="Footer_PrivacyPolicy" xml:space="preserve"><value>Privacy Policy</value></data>
+
+  <data name="Home_HeroTitle" xml:space="preserve"><value>Services Portal for Sumy City and Region</value></data>
+  <data name="Home_HeroText" xml:space="preserve"><value>Providers post information about their services, and residents find and use them. The catalog and listing pages are open for browsing without registration; signing in is needed only for actions — contacting a provider, leaving a review, or posting your own listing.</value></data>
+  <data name="Home_CategoriesHeading" xml:space="preserve"><value>Service Categories</value></data>
+  <data name="Home_DbError" xml:space="preserve"><value>Temporarily unable to connect to the database. Please try refreshing the page later.</value></data>
+
+  <data name="Catalog_Heading" xml:space="preserve"><value>Service Catalog</value></data>
+  <data name="Catalog_Label_Category" xml:space="preserve"><value>Category</value></data>
+  <data name="Catalog_Label_District" xml:space="preserve"><value>District</value></data>
+  <data name="Catalog_Label_Keyword" xml:space="preserve"><value>Keyword</value></data>
+  <data name="Catalog_Keyword_Placeholder" xml:space="preserve"><value>e.g. repair</value></data>
+  <data name="Catalog_Label_MinPrice" xml:space="preserve"><value>Price from</value></data>
+  <data name="Catalog_Label_MaxPrice" xml:space="preserve"><value>Price to</value></data>
+  <data name="Catalog_Validator_Number" xml:space="preserve"><value>Number</value></data>
+  <data name="Catalog_Btn_Search" xml:space="preserve"><value>Search</value></data>
+  <data name="Catalog_Btn_Reset" xml:space="preserve"><value>Reset</value></data>
+  <data name="Catalog_Empty" xml:space="preserve"><value>No results found for the given criteria.</value></data>
+  <data name="Catalog_Photo_Placeholder" xml:space="preserve"><value>No photo</value></data>
+  <data name="Catalog_Pagination_Prev" xml:space="preserve"><value>← Previous</value></data>
+  <data name="Catalog_Pagination_Next" xml:space="preserve"><value>Next →</value></data>
+  <data name="Catalog_AllCategories" xml:space="preserve"><value>All Categories</value></data>
+  <data name="Catalog_AllDistricts" xml:space="preserve"><value>All Districts</value></data>
+  <data name="Catalog_PageInfo" xml:space="preserve"><value>Found: {0}. Page {1} of {2}.</value></data>
+
+  <data name="Price_Negotiable" xml:space="preserve"><value>Price negotiable</value></data>
+
+  <data name="Details_BackToCatalog" xml:space="preserve"><value>← Back to catalog</value></data>
+  <data name="Details_NotFound" xml:space="preserve"><value>Listing not found — it may have been unpublished.</value></data>
+  <data name="Details_ContactsHeading" xml:space="preserve"><value>Provider Contacts</value></data>
+  <data name="Details_GalleryLink" xml:space="preserve"><value>Provider Gallery</value></data>
+  <data name="Details_PhoneLabel" xml:space="preserve"><value>Phone:</value></data>
+  <data name="Details_AnonContact_Prefix" xml:space="preserve"><value>To see the provider's phone number, </value></data>
+  <data name="Details_AnonContact_Login" xml:space="preserve"><value>log in</value></data>
+  <data name="Details_AnonContact_Or" xml:space="preserve"><value> or </value></data>
+  <data name="Details_AnonContact_Register" xml:space="preserve"><value>register</value></data>
+  <data name="Details_DistrictLabel" xml:space="preserve"><value>District:</value></data>
+  <data name="Details_MapHeading" xml:space="preserve"><value>Location on Map</value></data>
+  <data name="Details_ContractLink" xml:space="preserve"><value>Generate Contract</value></data>
+  <data name="Details_ReviewsHeading" xml:space="preserve"><value>Rating &amp; Reviews</value></data>
+  <data name="Details_NoReviewsPanel" xml:space="preserve"><value>No reviews yet.</value></data>
+  <data name="Details_AlreadyReviewed" xml:space="preserve"><value>You have already left a review for this listing.</value></data>
+  <data name="Details_LeaveReviewHeading" xml:space="preserve"><value>Leave a Review</value></data>
+  <data name="Details_RatingLabel" xml:space="preserve"><value>Rating</value></data>
+  <data name="Details_RatingChoose" xml:space="preserve"><value>Choose a rating</value></data>
+  <data name="Details_CommentLabel" xml:space="preserve"><value>Comment (optional)</value></data>
+  <data name="Details_BtnSubmitReview" xml:space="preserve"><value>Submit Review</value></data>
+  <data name="Details_MessageLink" xml:space="preserve"><value>Message Provider</value></data>
+  <data name="Details_NotSpecified" xml:space="preserve"><value>not specified</value></data>
+  <data name="Details_Favorite_Remove" xml:space="preserve"><value>★ Remove from Favorites</value></data>
+  <data name="Details_Favorite_Add" xml:space="preserve"><value>☆ Add to Favorites</value></data>
+  <data name="Reviews_Summary_None" xml:space="preserve"><value>No reviews yet</value></data>
+  <data name="Review_Singular" xml:space="preserve"><value>review</value></data>
+  <data name="Review_Plural" xml:space="preserve"><value>reviews</value></data>
+</root>

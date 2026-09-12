@@ -49,6 +49,18 @@ body {
     color: var(--color-primary);
 }
 
+/* Перемикач мови (постановка робочої тестової версії, 2026-09-12) — трохи
+   менший і приглушений за звичайні пункти меню, щоб не перетягувати увагу. */
+.lang-switch {
+    margin-left: 1.25rem;
+    font-size: 0.85rem;
+    color: var(--color-muted);
+}
+
+.lang-switch a {
+    margin-left: 0.3rem;
+}
+
 .site-content {
     max-width: 960px;
     margin: 0 auto;
