@@ -49,6 +49,7 @@
   <data name="Catalog_AllCategories" xml:space="preserve"><value>All Categories</value></data>
   <data name="Catalog_AllDistricts" xml:space="preserve"><value>All Districts</value></data>
   <data name="Catalog_PageInfo" xml:space="preserve"><value>Found: {0}. Page {1} of {2}.</value></data>
+  <data name="Catalog_VerifiedBadge" xml:space="preserve"><value>✓ Verified</value></data>
   <data name="Catalog_View_List" xml:space="preserve"><value>List</value></data>
   <data name="Catalog_View_Map" xml:space="preserve"><value>Map</value></data>
   <data name="Catalog_Map_Empty" xml:space="preserve"><value>None of the filtered listings have a map marker.</value></data>
@@ -86,6 +87,7 @@
   <data name="Details_ProviderReplyHeading" xml:space="preserve"><value>Provider's reply:</value></data>
   <data name="Details_ProviderReplyLabel" xml:space="preserve"><value>Your reply (visible to everyone)</value></data>
   <data name="Details_ProviderReplyBtn" xml:space="preserve"><value>Save Reply</value></data>
+  <data name="Details_VerifiedBadge" xml:space="preserve"><value>✓ Verified by admin</value></data>
 
   <data name="District_NotSpecified" xml:space="preserve"><value>Not specified</value></data>
 

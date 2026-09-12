@@ -445,6 +445,19 @@ fieldset.form-row {
     margin-top: 1.5rem;
 }
 
+/* Позначка "Перевірено адміном" (Catalog.aspx/ServiceDetails.aspx, п.22, наступна
+   фіча понад MVP, 2026-09-12) — додатковий сигнал довіри, не статус. */
+.verified-badge {
+    display: inline-block;
+    background: #e6f4ea;
+    color: var(--color-primary-dark);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    margin-bottom: 0.35rem;
+}
+
 /* Перемикач Список/Карта (Catalog.aspx, карта каталогу — продовження геолокації,
    п.13, постановка робочої тестової версії, 2026-09-12). */
 .catalog-view-toggle {

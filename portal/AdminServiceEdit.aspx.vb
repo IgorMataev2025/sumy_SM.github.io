@@ -66,6 +66,7 @@ Namespace SumyPortal
                 ddlStatus.SelectedValue = svc.Status
                 txtRejectReason.Text = svc.RejectReason
                 rejectReasonPanel.Visible = (svc.Status = "Rejected")
+                chkVerified.Checked = svc.IsVerified
 
                 BindPhotos(svc.ServiceId)
                 BindReviews(svc.ServiceId)
@@ -130,7 +131,7 @@ Namespace SumyPortal
                 Return
             End If
 
-            Dim updated = Service.AdminUpdate(svc.ServiceId, categoryId, title, description, price, district, phone, latitude, longitude, status, rejectReason)
+            Dim updated = Service.AdminUpdate(svc.ServiceId, categoryId, title, description, price, district, phone, latitude, longitude, status, rejectReason, chkVerified.Checked)
             If Not updated Then
                 ShowError("Не вдалося зберегти оголошення.")
                 Return

@@ -77,6 +77,17 @@
             <asp:TextBox ID="txtRejectReason" runat="server" MaxLength="500" />
         </asp:Panel>
 
+        <!-- Позначка "Перевірено адміном" (п.22, наступна фіча понад MVP, 2026-09-12) —
+             НЕ заміняє статус/модерацію вище, додатковий сигнал довіри на розсуд адміна;
+             публічно видима (Catalog.aspx/ServiceDetails.aspx) лише разом зі статусом
+             "Опубліковано". -->
+        <div class="form-row">
+            <label>
+                <asp:CheckBox ID="chkVerified" runat="server" />
+                Перевірено адміном (додатковий сигнал довіри — не заміняє статус вище)
+            </label>
+        </div>
+
         <asp:Panel ID="existingPhotosPanel" runat="server" Visible="false" CssClass="form-row">
             <label>Наявні фото</label>
             <asp:Repeater ID="rptPhotos" runat="server">

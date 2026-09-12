@@ -54,6 +54,7 @@ Namespace SumyPortal
             titleLiteral.Text = Server.HtmlEncode(svc.Title)
             headingLiteral.Text = Server.HtmlEncode(svc.Title)
             categoryLiteral.Text = Server.HtmlEncode(svc.CategoryName)
+            verifiedBadge.Visible = svc.IsVerified
             priceLiteral.Text = If(svc.Price.HasValue, svc.Price.Value.ToString("0.## грн"), Resources.SiteText.Price_Negotiable)
             descriptionLiteral.Text = Server.HtmlEncode(svc.Description)
             providerNameLiteral.Text = Server.HtmlEncode(svc.ProviderName)

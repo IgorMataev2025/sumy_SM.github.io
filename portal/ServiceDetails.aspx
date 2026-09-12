@@ -19,6 +19,10 @@
 
     <asp:Panel ID="detailsPanel" runat="server" CssClass="service-details">
         <h1><asp:Literal ID="headingLiteral" runat="server" /></h1>
+        <!-- Позначка "Перевірено адміном" (п.22, наступна фіча понад MVP, 2026-09-12) —
+             додатковий сигнал довіри, не заміняє факт публікації. -->
+        <asp:Label ID="verifiedBadge" runat="server" CssClass="verified-badge" Visible="false"
+            Text="<%$ Resources:SiteText, Details_VerifiedBadge %>" />
         <p class="service-category"><asp:Literal ID="categoryLiteral" runat="server" /></p>
 
         <div class="catalog-grid photo-gallery">

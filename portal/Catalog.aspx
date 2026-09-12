@@ -76,6 +76,11 @@
                         </div>
                         <div class="catalog-card-body">
                             <h3><%#: CType(Container.DataItem, SumyPortal.Service).Title %></h3>
+                            <!-- Позначка "Перевірено адміном" (п.22, наступна фіча понад MVP,
+                                 2026-09-12) — додатковий сигнал довіри, не заміняє статус. -->
+                            <asp:Label runat="server" CssClass="verified-badge"
+                                Visible='<%#: CType(Container.DataItem, SumyPortal.Service).IsVerified %>'
+                                Text="<%$ Resources:SiteText, Catalog_VerifiedBadge %>" />
                             <p class="service-category">
                                 <%#: CType(Container.DataItem, SumyPortal.Service).CategoryName %>
                                 <%#: If(String.IsNullOrEmpty(CType(Container.DataItem, SumyPortal.Service).District), "", " · " & CType(Container.DataItem, SumyPortal.Service).District) %>

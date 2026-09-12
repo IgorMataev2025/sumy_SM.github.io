@@ -36,6 +36,12 @@ Namespace SumyPortal
         ''' включно з переглядами самого власника (свідомо не фільтруємо).</summary>
         Public Property ViewCount As Integer
 
+        ''' <summary>Позначка "Перевірено адміном" (п.22, наступна фіча понад MVP, 2026-09-12) —
+        ''' НЕ заміняє звичайну модерацію (Status), а додатковий сигнал довіри, який адмін
+        ''' виставляє на власний розсуд (AdminServiceEdit.aspx). Публічно видима (Catalog.aspx/
+        ''' ServiceDetails.aspx) лише разом зі Status = Approved.</summary>
+        Public Property IsVerified As Boolean
+
         ''' <summary>Заповнюється лише для черги модерації і картки оголошення — контакти постачальника.</summary>
         Public Property ProviderName As String
         Public Property ProviderEmail As String
@@ -80,21 +86,25 @@ Namespace SumyPortal
                 .Status = reader.GetString("Status"),
                 .RejectReason = If(reader.IsDBNull(reader.GetOrdinal("RejectReason")), Nothing, reader.GetString("RejectReason")),
                 .CreatedAt = reader.GetDateTime("CreatedAt"),
-                .ViewCount = reader.GetInt32("ViewCount")
+                .ViewCount = reader.GetInt32("ViewCount"),
+                .IsVerified = reader.GetBoolean("IsVerified")
             }
         End Function
 
         ''' <summary>
-        ''' Map() читає Latitude/Longitude/ViewCount безумовно (reader.GetOrdinal/GetInt32) — тому
-        ''' будь-який SELECT, переданий у Map(reader), ОБОВ'ЯЗКОВО має містити ці стовпці, інакше
-        ''' IndexOutOfRangeException. Стосується й інших inline-запитів нижче
-        ''' (GetPendingForModeration/GetPendingById/GetApprovedById/GetForMessaging/
-        ''' GetAllForAdmin/GetByIdAny/SearchApproved/SearchApprovedForMap), що дублюють цей самий
-        ''' список колонок — так само Favorite.vb: GetByUser (та сама збірка App_Code).
+        ''' Map() читає Latitude/Longitude/ViewCount/IsVerified безумовно (reader.GetOrdinal/
+        ''' GetInt32/GetBoolean) — тому будь-який SELECT, переданий у Map(reader), ОБОВ'ЯЗКОВО
+        ''' має містити ці стовпці, інакше IndexOutOfRangeException. Стосується й інших
+        ''' inline-запитів нижче (GetPendingForModeration/GetPendingById/GetApprovedById/
+        ''' GetForMessaging/GetAllForAdmin/GetByIdAny/SearchApproved/SearchApprovedForMap), що
+        ''' дублюють цей самий список колонок — так само Favorite.vb: GetByUser (та сама збірка
+        ''' App_Code). GetApprovedForSitemap — виняток: свідомо вузький SELECT лише ServiceId/
+        ''' ApprovedAt, Map(reader) там не використовується.
         ''' </summary>
         Private Const SelectBase As String =
             "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-            "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount " &
+            "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, " &
+            "s.ViewCount, s.IsVerified " &
             "FROM Services s JOIN Categories c ON c.CategoryId = s.CategoryId "
 
         ''' <summary>Усі оголошення постачальника, найновіші зверху.</summary>
@@ -270,7 +280,7 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified, " &
                     "u.FullName AS ProviderName, u.Email AS ProviderEmail " &
                     "FROM Services s " &
                     "JOIN Categories c ON c.CategoryId = s.CategoryId " &
@@ -295,7 +305,7 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified, " &
                     "u.FullName AS ProviderName, u.Email AS ProviderEmail " &
                     "FROM Services s " &
                     "JOIN Categories c ON c.CategoryId = s.CategoryId " &
@@ -460,7 +470,7 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified, " &
                     "u.FullName AS ProviderName, u.Email AS ProviderEmail " &
                     "FROM Services s " &
                     "JOIN Categories c ON c.CategoryId = s.CategoryId " &
@@ -485,7 +495,7 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified, " &
                     "u.FullName AS ProviderName, u.Email AS ProviderEmail " &
                     "FROM Services s " &
                     "JOIN Categories c ON c.CategoryId = s.CategoryId " &
@@ -554,7 +564,7 @@ Namespace SumyPortal
 
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified " &
                     "FROM Services s JOIN Categories c ON c.CategoryId = s.CategoryId " & whereSql2 &
                     "ORDER BY s.CreatedAt DESC LIMIT @PageSize OFFSET @Offset;", conn)
                     cmd.Parameters.AddRange(selectParams.ToArray())
@@ -588,7 +598,7 @@ Namespace SumyPortal
 
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified " &
                     "FROM Services s JOIN Categories c ON c.CategoryId = s.CategoryId " & whereSql &
                     "ORDER BY s.CreatedAt DESC;", conn)
                     cmd.Parameters.AddRange(parameters.ToArray())
@@ -613,7 +623,7 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified, " &
                     "u.FullName AS ProviderName, u.Email AS ProviderEmail " &
                     "FROM Services s " &
                     "JOIN Categories c ON c.CategoryId = s.CategoryId " &
@@ -637,7 +647,7 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified, " &
                     "u.FullName AS ProviderName, u.Email AS ProviderEmail " &
                     "FROM Services s " &
                     "JOIN Categories c ON c.CategoryId = s.CategoryId " &
@@ -660,12 +670,12 @@ Namespace SumyPortal
         Public Shared Function AdminUpdate(serviceId As Integer, categoryId As Integer, title As String, description As String,
                                             price As Decimal?, district As String, phone As String,
                                             latitude As Decimal?, longitude As Decimal?,
-                                            status As String, rejectReason As String) As Boolean
+                                            status As String, rejectReason As String, isVerified As Boolean) As Boolean
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "UPDATE Services SET CategoryId = @CategoryId, Title = @Title, Description = @Description, " &
                     "Price = @Price, District = @District, Phone = @Phone, Latitude = @Latitude, Longitude = @Longitude, " &
-                    "Status = @Status, RejectReason = @RejectReason " &
+                    "Status = @Status, RejectReason = @RejectReason, IsVerified = @IsVerified " &
                     "WHERE ServiceId = @ServiceId;", conn)
                     cmd.Parameters.AddWithValue("@ServiceId", serviceId)
                     cmd.Parameters.AddWithValue("@CategoryId", categoryId)
@@ -678,6 +688,7 @@ Namespace SumyPortal
                     cmd.Parameters.AddWithValue("@Longitude", If(longitude.HasValue, CObj(longitude.Value), DBNull.Value))
                     cmd.Parameters.AddWithValue("@Status", status)
                     cmd.Parameters.AddWithValue("@RejectReason", If(String.IsNullOrWhiteSpace(rejectReason), DBNull.Value, CObj(rejectReason)))
+                    cmd.Parameters.AddWithValue("@IsVerified", isVerified)
                     Return cmd.ExecuteNonQuery() > 0
                 End Using
             End Using
