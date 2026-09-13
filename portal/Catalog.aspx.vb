@@ -35,10 +35,22 @@ Namespace SumyPortal
 
             If Not IsPostBack Then
                 BindFilterOptions()
+                BindKeywordSuggestions()
                 PreselectCategoryFromQueryString()
                 CurrentPage = 1
                 BindResults()
             End If
+        End Sub
+
+        ''' <summary>Автопідказки в пошуку (п.26, наступна фіча понад MVP, 2026-09-12) —
+        ''' наповнює &lt;datalist&gt; (Catalog.aspx) до 50 унікальних назв опублікованих
+        ''' оголошень для нативного браузерного автокомпліту поля "Ключове слово".
+        ''' Лише на першому завантаженні (Not IsPostBack) — той самий список підказок не
+        ''' залежить від поточних фільтрів/сторінки, перебудовувати на кожному постбеку
+        ''' не потрібно.</summary>
+        Private Sub BindKeywordSuggestions()
+            rptKeywordSuggestions.DataSource = Service.GetDistinctApprovedTitles(50)
+            rptKeywordSuggestions.DataBind()
         End Sub
 
         ''' <summary>Перехід із карток категорій на головній (Default.aspx?...→Catalog.aspx?categoryId=X).</summary>

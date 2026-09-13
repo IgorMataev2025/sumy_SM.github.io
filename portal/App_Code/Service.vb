@@ -463,6 +463,30 @@ Namespace SumyPortal
             Return result
         End Function
 
+        ''' <summary>Автопідказки в пошуку (п.26, наступна фіча понад MVP, 2026-09-12) —
+        ''' до limit унікальних назв опублікованих оголошень (за алфавітом) для HTML5
+        ''' &lt;datalist&gt; на полі "Ключове слово" (Catalog.aspx) — нативний браузерний
+        ''' автокомпліт, без JS-бібліотек і AJAX. Той самий принцип вузького SELECT, що
+        ''' GetApprovedForSitemap (п.21). ORDER BY навмисно за Title, а не CreatedAt —
+        ''' MySQL 8 забороняє `SELECT DISTINCT col1 ... ORDER BY col2`, коли col2 не в
+        ''' SELECT-списку (ERROR 3065, впіймано живим тестом до деплою).</summary>
+        Public Shared Function GetDistinctApprovedTitles(limit As Integer) As List(Of String)
+            Dim result As New List(Of String)
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand(
+                    "SELECT DISTINCT s.Title FROM Services s " &
+                    "WHERE s.Status = 'Approved' ORDER BY s.Title LIMIT @Limit;", conn)
+                    cmd.Parameters.AddWithValue("@Limit", limit)
+                    Using reader = cmd.ExecuteReader()
+                        While reader.Read()
+                            result.Add(reader.GetString("Title"))
+                        End While
+                    End Using
+                End Using
+            End Using
+            Return result
+        End Function
+
         ''' <summary>Схожі оголошення (п.24, наступна фіча понад MVP, 2026-09-12) — інші
         ''' Approved-оголошення тієї ж категорії, крім самого поточного, найновіші перші,
         ''' без фолбеку на інші категорії/райони (свідоме MVP-спрощення). Той самий принцип

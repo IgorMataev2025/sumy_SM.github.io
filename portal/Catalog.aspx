@@ -27,7 +27,16 @@
             </div>
             <div class="form-row">
                 <label for="<%= txtKeyword.ClientID %>"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Label_Keyword %>" /></label>
-                <asp:TextBox ID="txtKeyword" runat="server" placeholder="<%$ Resources:SiteText, Catalog_Keyword_Placeholder %>" />
+                <!-- Автопідказки в пошуку (п.26, наступна фіча понад MVP, 2026-09-12) — нативний
+                     HTML5 datalist, без JS-бібліотек/AJAX; список підказок нижче (keywordSuggestions). -->
+                <asp:TextBox ID="txtKeyword" runat="server" placeholder="<%$ Resources:SiteText, Catalog_Keyword_Placeholder %>" list="keywordSuggestions" />
+                <datalist id="keywordSuggestions">
+                    <asp:Repeater ID="rptKeywordSuggestions" runat="server">
+                        <ItemTemplate>
+                            <option value='<%#: Container.DataItem %>' />
+                        </ItemTemplate>
+                    </asp:Repeater>
+                </datalist>
             </div>
         </div>
         <div class="filter-row">
