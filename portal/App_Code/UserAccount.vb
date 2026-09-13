@@ -1,5 +1,6 @@
 Imports System
 Imports System.Collections.Generic
+Imports System.Configuration
 Imports MySql.Data.MySqlClient
 
 Namespace SumyPortal
@@ -188,40 +189,102 @@ Namespace SumyPortal
         ''' Перевіряє логін/пароль. errorMessage пояснює причину відмови українською
         ''' (невірні дані / заблоковано / email не підтверджено).
         ''' </summary>
+        ''' <summary>Захист від перебору паролів (наступна фіча понад MVP, обрано
+        ''' автономно циклом /loop, 2026-09-13) — після `LoginMaxFailedAttempts`
+        ''' (Web.config, за замовчуванням 5) невдалих поспіль спроб акаунт
+        ''' тимчасово блокується на `LoginLockoutMinutes` (за замовчуванням 15) хв.
+        ''' Блокування перевіряється ДО звірки пароля (не витрачаємо спробу-перевірку
+        ''' навіть на правильний пароль, поки блокування не спливло) і повідомляє
+        ''' користувача прямо (на відміну від "невірний email або пароль" — тут
+        ''' акаунт точно існує й це вже не питання розкриття факту реєстрації).
+        ''' Успішний вхід одразу скидає лічильник.</summary>
         Public Shared Function ValidateLogin(email As String, password As String, ByRef errorMessage As String) As UserAccount
+            Dim maxAttempts As Integer
+            If Not Integer.TryParse(ConfigurationManager.AppSettings("LoginMaxFailedAttempts"), maxAttempts) Then maxAttempts = 5
+            Dim lockoutMinutes As Integer
+            If Not Integer.TryParse(ConfigurationManager.AppSettings("LoginLockoutMinutes"), lockoutMinutes) Then lockoutMinutes = 15
+
             Using conn = DbHelper.GetConnection()
+                Dim userId As Integer = 0
+                Dim failedAttempts As Integer = 0
+                Dim lockedUntil As DateTime? = Nothing
+                Dim storedHash As String = Nothing
+                Dim account As UserAccount = Nothing
+                Dim found As Boolean = False
+
+                ' Reader закривається (кінець Using) ДО будь-яких наступних команд
+                ' на цьому ж conn нижче — MySqlConnector не підтримує паралельний
+                ' reader+command на одному з'єднанні (той самий принцип, що й усюди
+                ' в проєкті: спершу SELECT повністю, потім окремий UPDATE).
                 Using cmd As New MySqlCommand(
-                    "SELECT " & SelectColumns & ", PasswordHash FROM Users WHERE Email = @Email;", conn)
+                    "SELECT " & SelectColumns & ", PasswordHash, FailedLoginAttempts, LockedUntil FROM Users WHERE Email = @Email;", conn)
                     cmd.Parameters.AddWithValue("@Email", email)
                     Using reader = cmd.ExecuteReader()
-                        If Not reader.Read() Then
-                            errorMessage = "Невірний email або пароль."
-                            Return Nothing
+                        If reader.Read() Then
+                            found = True
+                            userId = reader.GetInt32("UserId")
+                            storedHash = reader.GetString("PasswordHash")
+                            failedAttempts = reader.GetInt32("FailedLoginAttempts")
+                            lockedUntil = If(reader.IsDBNull(reader.GetOrdinal("LockedUntil")), CType(Nothing, DateTime?), reader.GetDateTime("LockedUntil"))
+                            account = Map(reader)
                         End If
-
-                        Dim storedHash = reader.GetString("PasswordHash")
-                        If Not PasswordHasher.Verify(password, storedHash) Then
-                            errorMessage = "Невірний email або пароль."
-                            Return Nothing
-                        End If
-
-                        Dim account = Map(reader)
-
-                        If Not account.IsActive Then
-                            errorMessage = "Обліковий запис заблоковано адміністратором."
-                            Return Nothing
-                        End If
-                        If Not account.EmailConfirmed Then
-                            errorMessage = "Email ще не підтверджено. Перевірте посилання, надіслане при реєстрації."
-                            Return Nothing
-                        End If
-
-                        errorMessage = Nothing
-                        Return account
                     End Using
                 End Using
+
+                If Not found Then
+                    errorMessage = "Невірний email або пароль."
+                    Return Nothing
+                End If
+
+                If lockedUntil.HasValue AndAlso lockedUntil.Value > DateTime.UtcNow Then
+                    Dim minutesLeft = Math.Max(1, CInt(Math.Ceiling((lockedUntil.Value - DateTime.UtcNow).TotalMinutes)))
+                    errorMessage = String.Format("Забагато невдалих спроб входу. Спробуйте ще раз через {0} хв.", minutesLeft)
+                    Return Nothing
+                End If
+
+                If Not PasswordHasher.Verify(password, storedHash) Then
+                    RegisterFailedLogin(conn, userId, failedAttempts + 1, maxAttempts, lockoutMinutes)
+                    errorMessage = "Невірний email або пароль."
+                    Return Nothing
+                End If
+
+                If failedAttempts > 0 OrElse lockedUntil.HasValue Then
+                    ResetFailedLogin(conn, userId)
+                End If
+
+                If Not account.IsActive Then
+                    errorMessage = "Обліковий запис заблоковано адміністратором."
+                    Return Nothing
+                End If
+                If Not account.EmailConfirmed Then
+                    errorMessage = "Email ще не підтверджено. Перевірте посилання, надіслане при реєстрації."
+                    Return Nothing
+                End If
+
+                errorMessage = Nothing
+                Return account
             End Using
         End Function
+
+        Private Shared Sub RegisterFailedLogin(conn As MySqlConnection, userId As Integer, newCount As Integer, maxAttempts As Integer, lockoutMinutes As Integer)
+            Dim shouldLock = (newCount >= maxAttempts)
+            Dim sql = If(shouldLock,
+                "UPDATE Users SET FailedLoginAttempts = @Count, LockedUntil = DATE_ADD(UTC_TIMESTAMP(), INTERVAL @LockoutMinutes MINUTE) WHERE UserId = @UserId;",
+                "UPDATE Users SET FailedLoginAttempts = @Count WHERE UserId = @UserId;")
+            Using cmd As New MySqlCommand(sql, conn)
+                cmd.Parameters.AddWithValue("@Count", newCount)
+                cmd.Parameters.AddWithValue("@UserId", userId)
+                If shouldLock Then cmd.Parameters.AddWithValue("@LockoutMinutes", lockoutMinutes)
+                cmd.ExecuteNonQuery()
+            End Using
+        End Sub
+
+        Private Shared Sub ResetFailedLogin(conn As MySqlConnection, userId As Integer)
+            Using cmd As New MySqlCommand("UPDATE Users SET FailedLoginAttempts = 0, LockedUntil = NULL WHERE UserId = @UserId;", conn)
+                cmd.Parameters.AddWithValue("@UserId", userId)
+                cmd.ExecuteNonQuery()
+            End Using
+        End Sub
 
         Public Shared Function ConfirmEmail(token As String) As Boolean
             Using conn = DbHelper.GetConnection()
@@ -321,7 +384,8 @@ Namespace SumyPortal
 
                 Using updateCmd As New MySqlCommand(
                     "UPDATE Users SET PasswordHash = @Hash, PasswordResetToken = NULL, " &
-                    "PasswordResetExpires = NULL WHERE PasswordResetToken = @Token;", conn)
+                    "PasswordResetExpires = NULL, FailedLoginAttempts = 0, LockedUntil = NULL " &
+                    "WHERE PasswordResetToken = @Token;", conn)
                     updateCmd.Parameters.AddWithValue("@Hash", PasswordHasher.Hash(newPassword))
                     updateCmd.Parameters.AddWithValue("@Token", token)
                     Return updateCmd.ExecuteNonQuery() > 0
