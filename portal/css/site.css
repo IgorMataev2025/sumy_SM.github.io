@@ -465,6 +465,21 @@ fieldset.form-row {
     margin-top: 1.5rem;
 }
 
+/* Лічильник непрочитаних повідомлень (Site.master нав-посилання "Повідомлення" +
+   Messages.aspx, наступна фіча понад MVP, обрано автономно циклом /loop,
+   2026-09-13) — суцільний контрастний колір (не пастельний, як verified/new-badge),
+   бо це не сигнал довіри, а привід звернути увагу. */
+.unread-badge {
+    display: inline-block;
+    background: #d93025;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.05rem 0.45rem;
+    border-radius: 999px;
+    margin-left: 0.3rem;
+}
+
 /* Позначка "Перевірено адміном" (Catalog.aspx/ServiceDetails.aspx, п.22, наступна
    фіча понад MVP, 2026-09-12) — додатковий сигнал довіри, не статус. */
 .verified-badge {

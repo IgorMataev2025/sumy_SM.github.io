@@ -33,6 +33,18 @@ Namespace SumyPortal
 
                 Dim account = UserAccount.FindByEmail(Page.User.Identity.Name)
                 myServicesLink.Visible = (account IsNot Nothing AndAlso account.UserType = "Provider")
+
+                ' Лічильник непрочитаних повідомлень (наступна фіча понад MVP, обрано
+                ' автономно циклом /loop, 2026-09-13) — один легкий COUNT-запит на
+                ' кожне завантаження сторінки залогіненим користувачем (індексовано,
+                ' той самий принцип, що вже AdminDashboard.aspx рахує лічильники плиток).
+                If account IsNot Nothing Then
+                    Dim unreadCount = DialogMessage.GetUnreadCountForUser(account.UserId)
+                    If unreadCount > 0 Then
+                        navUnreadBadge.Visible = True
+                        navUnreadBadge.InnerText = unreadCount.ToString()
+                    End If
+                End If
             End If
         End Sub
 

@@ -12,6 +12,11 @@ Namespace SumyPortal
         Public Property OtherPartyName As String
         Public Property LastBody As String
         Public Property LastSentAt As DateTime
+
+        ''' <summary>Лічильник непрочитаних (наступна фіча понад MVP, обрано автономно
+        ''' циклом /loop, 2026-09-13) — повідомлення від іншої сторони, новіші за
+        ''' MessageReadStatus.LastReadMessageId цього користувача в цій розмові.</summary>
+        Public Property UnreadCount As Integer
     End Class
 
     ''' <summary>
@@ -119,10 +124,21 @@ Namespace SumyPortal
             Return result
         End Function
 
+        ''' <summary>Непрочитані цим користувачем повідомлення саме цієї розмови — той самий
+        ''' підзапит підставляється в обидва QuerySummaries нижче (наступна фіча понад MVP,
+        ''' обрано автономно циклом /loop, 2026-09-13). MessageReadStatus може не мати рядка
+        ''' для цієї пари (розмову ще ніколи не відкривали) — COALESCE(...,0) тоді означає
+        ''' "усе від інших непрочитане".</summary>
+        Private Const UnreadCountSubquery As String =
+            "(SELECT COUNT(*) FROM Messages m2 WHERE m2.ServiceId = x.ServiceId AND m2.ConsumerId = x.ConsumerId " &
+            "AND m2.SenderId <> @UserId AND m2.MessageId > COALESCE(" &
+            "(SELECT r.LastReadMessageId FROM MessageReadStatus r WHERE r.ServiceId = x.ServiceId AND r.ConsumerId = x.ConsumerId AND r.UserId = @UserId), 0)) AS UnreadCount "
+
         ''' <summary>Розмови споживача — по одній на кожне оголошення, з якого він написав.</summary>
         Public Shared Function GetConversationsForConsumer(consumerId As Integer) As List(Of ConversationSummary)
             Return QuerySummaries(
-                "SELECT x.ServiceId, s.Title AS ServiceTitle, x.ConsumerId, p.FullName AS OtherPartyName, x.Body AS LastBody, x.SentAt AS LastSentAt " &
+                "SELECT x.ServiceId, s.Title AS ServiceTitle, x.ConsumerId, p.FullName AS OtherPartyName, x.Body AS LastBody, x.SentAt AS LastSentAt, " &
+                UnreadCountSubquery &
                 "FROM (SELECT m.ServiceId, m.ConsumerId, m.Body, m.SentAt, " &
                 "ROW_NUMBER() OVER (PARTITION BY m.ServiceId, m.ConsumerId ORDER BY m.SentAt DESC) AS rn " &
                 "FROM Messages m WHERE m.ConsumerId = @UserId) x " &
@@ -134,7 +150,8 @@ Namespace SumyPortal
         ''' <summary>Розмови постачальника — по одній на кожну пару (оголошення, споживач), що йому писали.</summary>
         Public Shared Function GetConversationsForProvider(providerId As Integer) As List(Of ConversationSummary)
             Return QuerySummaries(
-                "SELECT x.ServiceId, s.Title AS ServiceTitle, x.ConsumerId, c.FullName AS OtherPartyName, x.Body AS LastBody, x.SentAt AS LastSentAt " &
+                "SELECT x.ServiceId, s.Title AS ServiceTitle, x.ConsumerId, c.FullName AS OtherPartyName, x.Body AS LastBody, x.SentAt AS LastSentAt, " &
+                UnreadCountSubquery &
                 "FROM (SELECT m.ServiceId, m.ConsumerId, m.Body, m.SentAt, " &
                 "ROW_NUMBER() OVER (PARTITION BY m.ServiceId, m.ConsumerId ORDER BY m.SentAt DESC) AS rn " &
                 "FROM Messages m JOIN Services s2 ON s2.ServiceId = m.ServiceId WHERE s2.ProviderId = @UserId) x " &
@@ -156,13 +173,56 @@ Namespace SumyPortal
                                 .ConsumerId = reader.GetInt32("ConsumerId"),
                                 .OtherPartyName = reader.GetString("OtherPartyName"),
                                 .LastBody = reader.GetString("LastBody"),
-                                .LastSentAt = reader.GetDateTime("LastSentAt")
+                                .LastSentAt = reader.GetDateTime("LastSentAt"),
+                                .UnreadCount = reader.GetInt32("UnreadCount")
                             })
                         End While
                     End Using
                 End Using
             End Using
             Return result
+        End Function
+
+        ''' <summary>Позначає розмову прочитаною цим користувачем "до" останнього наявного
+        ''' повідомлення на момент виклику (наступна фіча понад MVP, обрано автономно циклом
+        ''' /loop, 2026-09-13) — викликається з MessageThread.aspx.vb при кожному не-постбек
+        ''' відкритті розмови. INSERT ... ON DUPLICATE KEY UPDATE — один запит замість
+        ''' SELECT-потім-INSERT/UPDATE (той самий принцип, що Review.Add: INSERT IGNORE).
+        ''' Якщо повідомлень ще немає (щойно відкрита порожня розмова) — LastReadMessageId
+        ''' лишається 0, що безпечно (COALESCE у UnreadCountSubquery і так дає 0 за замовчуванням).</summary>
+        Public Shared Sub MarkThreadAsRead(serviceId As Integer, consumerId As Integer, userId As Integer)
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand(
+                    "INSERT INTO MessageReadStatus (ServiceId, ConsumerId, UserId, LastReadMessageId) " &
+                    "SELECT @ServiceId, @ConsumerId, @UserId, COALESCE(MAX(MessageId), 0) FROM Messages " &
+                    "WHERE ServiceId = @ServiceId AND ConsumerId = @ConsumerId " &
+                    "ON DUPLICATE KEY UPDATE LastReadMessageId = VALUES(LastReadMessageId);", conn)
+                    cmd.Parameters.AddWithValue("@ServiceId", serviceId)
+                    cmd.Parameters.AddWithValue("@ConsumerId", consumerId)
+                    cmd.Parameters.AddWithValue("@UserId", userId)
+                    cmd.ExecuteNonQuery()
+                End Using
+            End Using
+        End Sub
+
+        ''' <summary>Загальний лічильник непрочитаних повідомлень користувача (наступна фіча
+        ''' понад MVP, обрано автономно циклом /loop, 2026-09-13) — по всіх розмовах одразу
+        ''' (і як споживача, і як постачальника — той самий OR, що вже CallSignal.vb/
+        ''' MessageThread.aspx.vb для перевірки участі), для бейджа "Повідомлення (N)" у
+        ''' Site.master. LEFT JOIN — розмову ще могли жодного разу не відкривати.</summary>
+        Public Shared Function GetUnreadCountForUser(userId As Integer) As Integer
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand(
+                    "SELECT COUNT(*) FROM Messages m " &
+                    "JOIN Services s ON s.ServiceId = m.ServiceId " &
+                    "LEFT JOIN MessageReadStatus r ON r.ServiceId = m.ServiceId AND r.ConsumerId = m.ConsumerId AND r.UserId = @UserId " &
+                    "WHERE (m.ConsumerId = @UserId OR s.ProviderId = @UserId) " &
+                    "AND m.SenderId <> @UserId " &
+                    "AND m.MessageId > COALESCE(r.LastReadMessageId, 0);", conn)
+                    cmd.Parameters.AddWithValue("@UserId", userId)
+                    Return Convert.ToInt32(cmd.ExecuteScalar())
+                End Using
+            End Using
         End Function
 
     End Class

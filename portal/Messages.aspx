@@ -12,7 +12,14 @@
     <asp:Repeater ID="rptConversations" runat="server">
         <ItemTemplate>
             <a class="category-card" href='<%#: ResolveUrl("~/MessageThread.aspx?serviceId=" & CType(Container.DataItem, SumyPortal.ConversationSummary).ServiceId & "&consumerId=" & CType(Container.DataItem, SumyPortal.ConversationSummary).ConsumerId) %>'>
-                <h3><%#: CType(Container.DataItem, SumyPortal.ConversationSummary).ServiceTitle %> — <%#: CType(Container.DataItem, SumyPortal.ConversationSummary).OtherPartyName %></h3>
+                <h3>
+                    <%#: CType(Container.DataItem, SumyPortal.ConversationSummary).ServiceTitle %> — <%#: CType(Container.DataItem, SumyPortal.ConversationSummary).OtherPartyName %>
+                    <!-- Лічильник непрочитаних (наступна фіча понад MVP, обрано автономно
+                         циклом /loop, 2026-09-13) — видно лише коли є хоч одне непрочитане. -->
+                    <span class="unread-badge" runat="server" visible='<%#: CType(Container.DataItem, SumyPortal.ConversationSummary).UnreadCount > 0 %>'>
+                        <%#: CType(Container.DataItem, SumyPortal.ConversationSummary).UnreadCount %>
+                    </span>
+                </h3>
                 <p><%#: CType(Container.DataItem, SumyPortal.ConversationSummary).LastBody %></p>
                 <p class="service-category"><%#: CType(Container.DataItem, SumyPortal.ConversationSummary).LastSentAt.ToString("dd.MM.yyyy HH:mm") %></p>
             </a>

@@ -33,7 +33,12 @@
                 <asp:PlaceHolder ID="userNav" runat="server" Visible="false">
                     <asp:HyperLink ID="myServicesLink" runat="server" NavigateUrl="~/MyServices.aspx" Visible="false" Text="<%$ Resources:SiteText, Nav_MyServices %>" />
                     <a href="~/Favorites.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Favorites %>" /></a>
-                    <a href="~/Messages.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Messages %>" /></a>
+                    <a href="~/Messages.aspx" runat="server">
+                        <asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Messages %>" />
+                        <!-- Лічильник непрочитаних (наступна фіча понад MVP, обрано автономно
+                             циклом /loop, 2026-09-13) — видно лише коли > 0 (Site.master.vb). -->
+                        <span id="navUnreadBadge" runat="server" visible="false" class="unread-badge"></span>
+                    </a>
                     <a href="~/Profile.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Profile %>" /></a>
                     <span class="site-user"><asp:Literal ID="userNameLiteral" runat="server" /></span>
                     <a href="~/Logout.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Logout %>" /></a>

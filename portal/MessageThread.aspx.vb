@@ -58,6 +58,11 @@ Namespace SumyPortal
 
             If Not IsPostBack Then
                 BindThread()
+
+                ' Лічильник непрочитаних (наступна фіча понад MVP, обрано автономно циклом
+                ' /loop, 2026-09-13) — відкриття розмови позначає всі наявні повідомлення
+                ' прочитаними для ЦЬОГО користувача (не для співрозмовника).
+                DialogMessage.MarkThreadAsRead(_serviceId, _consumerId, CurrentUserId)
             End If
         End Sub
 
