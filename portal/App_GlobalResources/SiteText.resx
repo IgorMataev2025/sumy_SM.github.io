@@ -97,6 +97,18 @@
   <data name="Details_VerifiedBadge" xml:space="preserve"><value>✓ Перевірено адміном</value></data>
   <data name="Details_NewBadge" xml:space="preserve"><value>Новинка</value></data>
 
+  <data name="Details_ReportSummary" xml:space="preserve"><value>Поскаржитись на оголошення</value></data>
+  <data name="Details_ReportThanks" xml:space="preserve"><value>Дякуємо, скаргу надіслано адміністратору.</value></data>
+  <data name="Details_ReportReasonLabel" xml:space="preserve"><value>Причина</value></data>
+  <data name="Details_ReportReasonChoose" xml:space="preserve"><value>Оберіть причину</value></data>
+  <data name="Details_ReportReason_FalseInfo" xml:space="preserve"><value>Неправдива інформація</value></data>
+  <data name="Details_ReportReason_Fraud" xml:space="preserve"><value>Шахрайство / обман</value></data>
+  <data name="Details_ReportReason_Prohibited" xml:space="preserve"><value>Заборонений контент</value></data>
+  <data name="Details_ReportReason_Duplicate" xml:space="preserve"><value>Дублікат оголошення</value></data>
+  <data name="Details_ReportReason_Other" xml:space="preserve"><value>Інше</value></data>
+  <data name="Details_ReportCommentLabel" xml:space="preserve"><value>Коментар (необов'язково)</value></data>
+  <data name="Details_ReportSubmitBtn" xml:space="preserve"><value>Надіслати скаргу</value></data>
+
   <data name="District_NotSpecified" xml:space="preserve"><value>Не вказано</value></data>
 
   <data name="Login_Heading" xml:space="preserve"><value>Вхід</value></data>

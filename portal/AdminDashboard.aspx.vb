@@ -20,6 +20,11 @@ Namespace SumyPortal
 
                 totalServicesCountLiteral.Text = Service.GetAllForAdmin().Count.ToString() & " оголошень усіх статусів — прямий CRUD."
 
+                Dim openReportsCount = ServiceReport.GetOpen().Count
+                reportsCountLiteral.Text = If(openReportsCount = 0,
+                    "Відкритих скарг немає.",
+                    openReportsCount.ToString() & " відкрита(их) скарга(и) від відвідувачів.")
+
                 categoryCountLiteral.Text = ServiceCategory.GetAllCategories().Count.ToString() & " категорій (активних і деактивованих)."
 
                 userCountLiteral.Text = UserAccount.GetAll().Count.ToString() & " зареєстрованих користувачів."

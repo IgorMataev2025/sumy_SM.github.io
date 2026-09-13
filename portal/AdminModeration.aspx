@@ -7,6 +7,7 @@
     <p class="stub-note">
         <a href="~/AdminDashboard.aspx" runat="server">← Адмін-панель</a> ·
         <a href="~/AdminServices.aspx" runat="server">Усі оголошення</a> ·
+        <a href="~/AdminReports.aspx" runat="server">Скарги</a> ·
         <a href="~/AdminCategories.aspx" runat="server">Категорії</a> ·
         <a href="~/AdminUsers.aspx" runat="server">Користувачі</a> ·
         <a href="~/AdminLog.aspx" runat="server">Журнал дій</a>

@@ -109,6 +109,21 @@ CREATE TABLE IF NOT EXISTS Reviews (
     UNIQUE KEY UQ_Reviews_Service_Consumer (ServiceId, ConsumerId)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+-- Скарги на оголошення (наступна фіча понад MVP, migration_014_service_reports.sql).
+CREATE TABLE IF NOT EXISTS ServiceReports (
+    ReportId        INT AUTO_INCREMENT PRIMARY KEY,
+    ServiceId       INT NOT NULL,
+    ReporterEmail   VARCHAR(255) NULL,
+    Reason          VARCHAR(50) NOT NULL,
+    Comment         VARCHAR(1000) NULL,
+    Status          ENUM('Open','Reviewed') NOT NULL DEFAULT 'Open',
+    CreatedAt       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ReviewedAt      DATETIME NULL,
+    ReviewedBy      INT NULL,
+    CONSTRAINT FK_ServiceReports_Service FOREIGN KEY (ServiceId) REFERENCES Services(ServiceId) ON DELETE CASCADE,
+    CONSTRAINT FK_ServiceReports_ReviewedBy FOREIGN KEY (ReviewedBy) REFERENCES Users(UserId)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 -- Категорії MVP (ТЗ, розділ 3) — початкове наповнення довідника.
 INSERT INTO Categories (Name, Description, ParentId, IsActive)
 SELECT * FROM (SELECT

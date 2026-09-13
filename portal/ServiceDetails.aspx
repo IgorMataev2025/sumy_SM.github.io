@@ -74,6 +74,41 @@
                     OnClick="btnToggleFavorite_Click" CssClass="btn-secondary" />
                 <asp:HyperLink ID="messageLink" runat="server" CssClass="btn-secondary" Visible="false" Text="<%$ Resources:SiteText, Details_MessageLink %>" />
             </p>
+
+            <!-- Скарга на оголошення (наступна фіча понад MVP, обрано автономно циклом /loop,
+                 2026-09-13) — доступна будь-кому, включно з анонімом (сторінка й так відкрита
+                 для USER, п.12). <details>/<summary> — нативний HTML5-згорток без JS/CSS-бібліотек,
+                 той самий принцип, що вже <datalist> для автопідказок (п.26). -->
+            <details class="report-details">
+                <summary><asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_ReportSummary %>" /></summary>
+                <asp:Panel ID="reportThanksPanel" runat="server" Visible="false" CssClass="stub-note">
+                    <asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_ReportThanks %>" />
+                </asp:Panel>
+                <asp:Panel ID="reportFormPanel" runat="server" CssClass="form-row">
+                    <asp:ValidationSummary ID="reportValidationSummary" runat="server" ValidationGroup="ReportForm" CssClass="form-error" DisplayMode="BulletList" />
+                    <div class="form-row">
+                        <label for="<%= ddlReportReason.ClientID %>"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_ReportReasonLabel %>" /></label>
+                        <asp:DropDownList ID="ddlReportReason" runat="server">
+                            <asp:ListItem Text="<%$ Resources:SiteText, Details_ReportReasonChoose %>" Value="" />
+                            <asp:ListItem Text="<%$ Resources:SiteText, Details_ReportReason_FalseInfo %>" Value="FalseInfo" />
+                            <asp:ListItem Text="<%$ Resources:SiteText, Details_ReportReason_Fraud %>" Value="Fraud" />
+                            <asp:ListItem Text="<%$ Resources:SiteText, Details_ReportReason_Prohibited %>" Value="Prohibited" />
+                            <asp:ListItem Text="<%$ Resources:SiteText, Details_ReportReason_Duplicate %>" Value="Duplicate" />
+                            <asp:ListItem Text="<%$ Resources:SiteText, Details_ReportReason_Other %>" Value="Other" />
+                        </asp:DropDownList>
+                        <asp:RequiredFieldValidator runat="server" ControlToValidate="ddlReportReason" ValidationGroup="ReportForm"
+                            ErrorMessage="<%$ Resources:SiteText, Details_ReportReasonChoose %>" Display="Dynamic" CssClass="field-error" />
+                    </div>
+                    <div class="form-row">
+                        <label for="<%= txtReportComment.ClientID %>"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_ReportCommentLabel %>" /></label>
+                        <asp:TextBox ID="txtReportComment" runat="server" TextMode="MultiLine" Rows="2" MaxLength="1000" />
+                    </div>
+                    <div class="form-row">
+                        <asp:Button ID="btnSubmitReport" runat="server" ValidationGroup="ReportForm"
+                            Text="<%$ Resources:SiteText, Details_ReportSubmitBtn %>" OnClick="btnSubmitReport_Click" CssClass="btn-secondary" />
+                    </div>
+                </asp:Panel>
+            </details>
         </div>
 
         <!-- Схожі оголошення (п.24, наступна фіча понад MVP, 2026-09-12) — та сама верстка

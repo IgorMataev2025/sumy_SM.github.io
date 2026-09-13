@@ -18,6 +18,10 @@
             <h3>Усі оголошення</h3>
             <p><asp:Literal ID="totalServicesCountLiteral" runat="server" /></p>
         </a>
+        <a class="category-card" href="~/AdminReports.aspx" runat="server">
+            <h3>Скарги на оголошення</h3>
+            <p><asp:Literal ID="reportsCountLiteral" runat="server" /></p>
+        </a>
         <a class="category-card" href="~/AdminCategories.aspx" runat="server">
             <h3>Категорії послуг</h3>
             <p><asp:Literal ID="categoryCountLiteral" runat="server" /></p>

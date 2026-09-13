@@ -119,6 +119,15 @@ Namespace SumyPortal
                 messageLink.NavigateUrl = ResolveUrl("~/MessageThread.aspx?serviceId=" & svc.ServiceId & "&consumerId=" & currentUser.UserId)
             End If
 
+            ' Скарга на оголошення (наступна фіча понад MVP, обрано автономно циклом /loop,
+            ' 2026-09-13) — після успішного надсилання Response.Redirect-ить на себе з
+            ' query-прапорцем ?reported=1 (той самий принцип, що вподобане/відгук: простіше,
+            ' ніж вести два шляхи заповнення полів), тут лише показуємо подяку й ховаємо форму.
+            If Request.QueryString("reported") = "1" Then
+                reportThanksPanel.Visible = True
+                reportFormPanel.Visible = False
+            End If
+
             _isReviewsOwnerView = (currentUser IsNot Nothing AndAlso currentUser.UserId = svc.ProviderId)
             LoadReviews(svc.ServiceId)
             LoadSimilar(svc)
@@ -262,6 +271,31 @@ Namespace SumyPortal
             Review.Add(serviceId, currentUser.UserId, rating, txtComment.Text)
 
             Response.Redirect(Request.RawUrl, True)
+        End Sub
+
+        ''' <summary>
+        ''' Скарга на оголошення (наступна фіча понад MVP, обрано автономно циклом /loop,
+        ''' 2026-09-13) — доступна й анонімам (ReporterEmail лишається Nothing), той самий
+        ''' Response.Redirect-на-себе прийом, що btnToggleFavorite_Click/btnSubmitReview_Click.
+        ''' Окрема ValidationGroup "ReportForm" (розмітка) — щоб не вимагати заповнення полів
+        ''' форми відгуку при відправці цієї форми, і навпаки.
+        ''' </summary>
+        Protected Sub btnSubmitReport_Click(sender As Object, e As EventArgs)
+            If Not Page.IsValid Then Return
+
+            Dim serviceId As Integer
+            If Not Integer.TryParse(Request.QueryString("id"), serviceId) Then Return
+
+            Dim reason = ddlReportReason.SelectedValue
+            If String.IsNullOrWhiteSpace(reason) Then Return
+
+            Dim currentUser = UserAccount.FindByEmail(Page.User.Identity.Name)
+            Dim reporterEmail = If(currentUser IsNot Nothing, currentUser.Email, Nothing)
+
+            ServiceReport.Add(serviceId, reporterEmail, reason, txtReportComment.Text)
+
+            Dim separator = If(Request.RawUrl.Contains("?"), "&", "?")
+            Response.Redirect(Request.RawUrl & separator & "reported=1", True)
         End Sub
 
         ''' <summary>

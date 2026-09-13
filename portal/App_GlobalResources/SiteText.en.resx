@@ -97,6 +97,18 @@
   <data name="Details_VerifiedBadge" xml:space="preserve"><value>✓ Verified by admin</value></data>
   <data name="Details_NewBadge" xml:space="preserve"><value>New</value></data>
 
+  <data name="Details_ReportSummary" xml:space="preserve"><value>Report this listing</value></data>
+  <data name="Details_ReportThanks" xml:space="preserve"><value>Thank you, your report has been sent to the administrator.</value></data>
+  <data name="Details_ReportReasonLabel" xml:space="preserve"><value>Reason</value></data>
+  <data name="Details_ReportReasonChoose" xml:space="preserve"><value>Choose a reason</value></data>
+  <data name="Details_ReportReason_FalseInfo" xml:space="preserve"><value>False information</value></data>
+  <data name="Details_ReportReason_Fraud" xml:space="preserve"><value>Fraud / scam</value></data>
+  <data name="Details_ReportReason_Prohibited" xml:space="preserve"><value>Prohibited content</value></data>
+  <data name="Details_ReportReason_Duplicate" xml:space="preserve"><value>Duplicate listing</value></data>
+  <data name="Details_ReportReason_Other" xml:space="preserve"><value>Other</value></data>
+  <data name="Details_ReportCommentLabel" xml:space="preserve"><value>Comment (optional)</value></data>
+  <data name="Details_ReportSubmitBtn" xml:space="preserve"><value>Send report</value></data>
+
   <data name="District_NotSpecified" xml:space="preserve"><value>Not specified</value></data>
 
   <data name="Login_Heading" xml:space="preserve"><value>Log In</value></data>

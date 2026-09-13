@@ -587,6 +587,23 @@ fieldset.form-row {
     margin-top: 2rem;
 }
 
+/* Скарга на оголошення (ServiceDetails.aspx, наступна фіча понад MVP, обрано
+   автономно циклом /loop, 2026-09-13) — нативний <details>/<summary>, без JS. */
+.report-details {
+    margin-top: 1rem;
+    max-width: 400px;
+}
+
+.report-details summary {
+    cursor: pointer;
+    color: var(--color-primary-dark);
+    font-weight: 600;
+}
+
+.report-details .form-row {
+    margin-top: 0.75rem;
+}
+
 /* Рейтинги/відгуки (ServiceDetails.aspx, п.9 уточненої постановки) */
 .reviews-section {
     margin-top: 2rem;
