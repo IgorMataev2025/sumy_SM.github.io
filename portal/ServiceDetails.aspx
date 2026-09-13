@@ -23,6 +23,10 @@
              додатковий сигнал довіри, не заміняє факт публікації. -->
         <asp:Label ID="verifiedBadge" runat="server" CssClass="verified-badge" Visible="false"
             Text="<%$ Resources:SiteText, Details_VerifiedBadge %>" />
+        <!-- Бейдж "Новинка" (наступна фіча понад MVP, 2026-09-13) — CreatedAt не старіший
+             за NewServiceDays (Web.config), той самий поріг, що на Catalog.aspx. -->
+        <asp:Label ID="newBadge" runat="server" CssClass="new-badge" Visible="false"
+            Text="<%$ Resources:SiteText, Details_NewBadge %>" />
         <p class="service-category"><asp:Literal ID="categoryLiteral" runat="server" /></p>
 
         <div class="catalog-grid photo-gallery">

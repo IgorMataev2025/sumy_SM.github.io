@@ -103,6 +103,11 @@
                             <asp:Label runat="server" CssClass="verified-badge"
                                 Visible='<%#: CType(Container.DataItem, SumyPortal.Service).IsVerified %>'
                                 Text="<%$ Resources:SiteText, Catalog_VerifiedBadge %>" />
+                            <!-- Бейдж "Новинка" (наступна фіча понад MVP, 2026-09-13) — CreatedAt
+                                 не старіший за NewServiceThreshold (Web.config NewServiceDays). -->
+                            <asp:Label runat="server" CssClass="new-badge"
+                                Visible='<%#: CType(Container.DataItem, SumyPortal.Service).CreatedAt >= NewServiceThreshold %>'
+                                Text="<%$ Resources:SiteText, Catalog_NewBadge %>" />
                             <p class="service-category">
                                 <%#: CType(Container.DataItem, SumyPortal.Service).CategoryName %>
                                 <%#: If(String.IsNullOrEmpty(CType(Container.DataItem, SumyPortal.Service).District), "", " · " & CType(Container.DataItem, SumyPortal.Service).District) %>

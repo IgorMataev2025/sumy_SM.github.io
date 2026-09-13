@@ -1,4 +1,5 @@
 Imports System
+Imports System.Configuration
 Imports System.Globalization
 Imports System.Text
 
@@ -24,6 +25,18 @@ Namespace SumyPortal
             Set(value As Integer)
                 ViewState("CurrentPage") = value
             End Set
+        End Property
+
+        ''' <summary>Бейдж "Новинка" (наступна фіча понад MVP, 2026-09-13) — межа за
+        ''' CreatedAt (той самий стовпець, що сортування "спочатку нові", п.23; без нової
+        ''' міграції БД). Той самий прийом Web.config appSettings, що StaleServiceDays/
+        ''' DigestIntervalDays (Global.asax.vb).</summary>
+        Protected ReadOnly Property NewServiceThreshold As DateTime
+            Get
+                Dim days As Integer
+                If Not Integer.TryParse(ConfigurationManager.AppSettings("NewServiceDays"), days) Then days = 7
+                Return DateTime.UtcNow.AddDays(-days)
+            End Get
         End Property
 
         Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load

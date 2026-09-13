@@ -54,6 +54,7 @@
   <data name="Catalog_AllCategories" xml:space="preserve"><value>Всі категорії</value></data>
   <data name="Catalog_AllDistricts" xml:space="preserve"><value>Всі райони</value></data>
   <data name="Catalog_PageInfo" xml:space="preserve"><value>Знайдено: {0}. Сторінка {1} з {2}.</value></data>
+  <data name="Catalog_NewBadge" xml:space="preserve"><value>Новинка</value></data>
   <data name="Catalog_VerifiedBadge" xml:space="preserve"><value>✓ Перевірено</value></data>
   <data name="Catalog_View_List" xml:space="preserve"><value>Список</value></data>
   <data name="Catalog_View_Map" xml:space="preserve"><value>Карта</value></data>
@@ -94,6 +95,7 @@
   <data name="Details_ProviderReplyLabel" xml:space="preserve"><value>Ваша відповідь (видно всім відвідувачам)</value></data>
   <data name="Details_ProviderReplyBtn" xml:space="preserve"><value>Зберегти відповідь</value></data>
   <data name="Details_VerifiedBadge" xml:space="preserve"><value>✓ Перевірено адміном</value></data>
+  <data name="Details_NewBadge" xml:space="preserve"><value>Новинка</value></data>
 
   <data name="District_NotSpecified" xml:space="preserve"><value>Не вказано</value></data>
 

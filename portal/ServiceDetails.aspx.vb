@@ -1,4 +1,5 @@
 Imports System
+Imports System.Configuration
 Imports System.Globalization
 
 Namespace SumyPortal
@@ -55,6 +56,12 @@ Namespace SumyPortal
             headingLiteral.Text = Server.HtmlEncode(svc.Title)
             categoryLiteral.Text = Server.HtmlEncode(svc.CategoryName)
             verifiedBadge.Visible = svc.IsVerified
+
+            ' Бейдж "Новинка" (наступна фіча понад MVP, 2026-09-13) — той самий поріг
+            ' (Web.config NewServiceDays), що на Catalog.aspx.
+            Dim newDays As Integer
+            If Not Integer.TryParse(ConfigurationManager.AppSettings("NewServiceDays"), newDays) Then newDays = 7
+            newBadge.Visible = (svc.CreatedAt >= DateTime.UtcNow.AddDays(-newDays))
             priceLiteral.Text = If(svc.Price.HasValue, svc.Price.Value.ToString("0.## грн"), Resources.SiteText.Price_Negotiable)
             descriptionLiteral.Text = Server.HtmlEncode(svc.Description)
             providerNameLiteral.Text = Server.HtmlEncode(svc.ProviderName)

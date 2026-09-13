@@ -458,6 +458,21 @@ fieldset.form-row {
     margin-bottom: 0.35rem;
 }
 
+/* Бейдж "Новинка" (Catalog.aspx/ServiceDetails.aspx, наступна фіча понад MVP,
+   2026-09-13) — окремий колір від .verified-badge, щоб не плутати два різні сигнали
+   (щойно опубліковане vs перевірене адміном); можуть показуватись обидва одночасно. */
+.new-badge {
+    display: inline-block;
+    background: #fff4e0;
+    color: #8a5a00;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    margin-bottom: 0.35rem;
+    margin-left: 0.35rem;
+}
+
 /* Перемикач Список/Карта (Catalog.aspx, карта каталогу — продовження геолокації,
    п.13, постановка робочої тестової версії, 2026-09-12). */
 .catalog-view-toggle {
