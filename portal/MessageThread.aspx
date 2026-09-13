@@ -12,21 +12,75 @@
     <asp:Panel ID="threadPanel" runat="server">
         <h1><asp:Literal ID="headingLiteral" runat="server" /></h1>
 
-        <asp:Repeater ID="rptMessages" runat="server">
-            <ItemTemplate>
-                <div class='<%#: "service-card " & If(CType(Container.DataItem, SumyPortal.DialogMessage).SenderId = CurrentUserId, "status-approved", "status-draft") %>'>
-                    <p class="service-category">
-                        <b><%#: CType(Container.DataItem, SumyPortal.DialogMessage).SenderName %></b> ·
-                        <%#: CType(Container.DataItem, SumyPortal.DialogMessage).SentAt.ToString("dd.MM.yyyy HH:mm") %>
-                    </p>
-                    <p class="message-body"><%#: CType(Container.DataItem, SumyPortal.DialogMessage).Body %></p>
-                </div>
-            </ItemTemplate>
-        </asp:Repeater>
+        <asp:HiddenField ID="hidLastMessageId" runat="server" />
+
+        <div id="messagesContainer">
+            <asp:Repeater ID="rptMessages" runat="server">
+                <ItemTemplate>
+                    <div class='<%#: "service-card " & If(CType(Container.DataItem, SumyPortal.DialogMessage).SenderId = CurrentUserId, "status-approved", "status-draft") %>'>
+                        <p class="service-category">
+                            <b><%#: CType(Container.DataItem, SumyPortal.DialogMessage).SenderName %></b> ·
+                            <%#: CType(Container.DataItem, SumyPortal.DialogMessage).SentAt.ToString("dd.MM.yyyy HH:mm") %>
+                        </p>
+                        <p class="message-body"><%#: CType(Container.DataItem, SumyPortal.DialogMessage).Body %></p>
+                    </div>
+                </ItemTemplate>
+            </asp:Repeater>
+        </div>
 
         <asp:Panel ID="noMessagesPanel" runat="server" Visible="false" CssClass="stub-note">
             <asp:Literal runat="server" Text="<%$ Resources:SiteText, MessageThread_NoMessages %>" />
         </asp:Panel>
+
+        <!-- "Жива" переписка (наступна фіча понад MVP, обрано автономно циклом /loop,
+             2026-09-13) — простий AJAX-polling (MessagesPoll.ashx) кожні 5с, без
+             WebSocket/SignalR (shared-хостинг навряд чи довгостроково підтримає постійні
+             з'єднання, той самий принцип, що "poor man's cron" у Global.asax, п.20/п.25).
+             Надсилання лишається звичайним постбеком (без змін) — живе лише отримання
+             нових повідомлень від співрозмовника без перезавантаження сторінки. -->
+        <script>
+            (function () {
+                var serviceId = <%= Request.QueryString("serviceId") %>;
+                var consumerId = <%= Request.QueryString("consumerId") %>;
+                var currentUserId = <%= CurrentUserId %>;
+                var hidField = document.getElementById('<%= hidLastMessageId.ClientID %>');
+                var container = document.getElementById('messagesContainer');
+                var noMessagesPanel = document.getElementById('<%= noMessagesPanel.ClientID %>');
+                var pollCount = 0;
+                var maxPolls = 360; // ~30 хв при інтервалі 5с — не тримати з'єднання весь день відкритої вкладки
+
+                function escapeHtml(text) {
+                    var div = document.createElement('div');
+                    div.textContent = text;
+                    return div.innerHTML;
+                }
+
+                function poll() {
+                    pollCount++;
+                    if (pollCount > maxPolls) { clearInterval(timerId); return; }
+                    if (document.hidden) return;
+
+                    fetch('MessagesPoll.ashx?serviceId=' + serviceId + '&consumerId=' + consumerId + '&afterId=' + (hidField.value || '0'))
+                        .then(function (r) { return r.json(); })
+                        .then(function (messages) {
+                            if (messages.length === 0) return;
+                            if (noMessagesPanel) noMessagesPanel.style.display = 'none';
+
+                            messages.forEach(function (m) {
+                                var bubble = document.createElement('div');
+                                bubble.className = 'service-card ' + (m.senderId === currentUserId ? 'status-approved' : 'status-draft');
+                                bubble.innerHTML = '<p class="service-category"><b>' + escapeHtml(m.senderName) + '</b> · ' + escapeHtml(m.sentAt) + '</p>' +
+                                    '<p class="message-body">' + escapeHtml(m.body) + '</p>';
+                                container.appendChild(bubble);
+                                hidField.value = m.messageId;
+                            });
+                        })
+                        .catch(function () { /* тихо ігноруємо мережеву помилку — наступний polling спробує знову */ });
+                }
+
+                var timerId = setInterval(poll, 5000);
+            })();
+        </script>
 
         <asp:Panel ID="replyFormPanel" runat="server" CssClass="auth-form">
             <asp:Label ID="errorLabel" runat="server" CssClass="form-error" Visible="false" />

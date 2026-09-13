@@ -67,6 +67,14 @@ Namespace SumyPortal
             rptMessages.DataBind()
             noMessagesPanel.Visible = (thread.Count = 0)
 
+            ' "Жива" переписка (наступна фіча понад MVP, обрано автономно циклом /loop,
+            ' 2026-09-13) — hidLastMessageId.Value навмисно через HiddenField, а не звичайне
+            ' поле класу: значення так само доступне JS (розмітка), а на постбеках, де
+            ' BindThread НЕ викликається (напр. btnSend_Click повертає без Redirect при
+            ' порожньому тексті), лишається тим самим, що вже прийшло у формі POST —
+            ' звичайне поле довелось би окремо тримати у ViewState.
+            hidLastMessageId.Value = If(thread.Count > 0, thread(thread.Count - 1).MessageId.ToString(), "0")
+
             ' Структурована заявка — лише коли розмова ще порожня і пише сам споживач
             ' (не постачальник, що першим би "відповідав" у ще не початій розмові —
             ' теоретично неможливо, бо кнопка на ServiceDetails.aspx і так лише для

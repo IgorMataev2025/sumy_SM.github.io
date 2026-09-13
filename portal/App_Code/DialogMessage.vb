@@ -82,6 +82,43 @@ Namespace SumyPortal
             Return result
         End Function
 
+        ''' <summary>Нові повідомлення розмови після заданого MessageId (найстаріші зверху) —
+        ''' для "живої" переписки (наступна фіча понад MVP, обрано автономно циклом /loop,
+        ''' 2026-09-13): MessagesPoll.ashx періодично питає лише те, чого клієнт ще не бачив,
+        ''' замість перезавантаження всієї сторінки. Простий AJAX-polling, без WebSocket/
+        ''' SignalR — той самий підхід, що вже "poor man's cron" у Global.asax (п.20/п.25):
+        ''' shared-хостинг (SmarterASP.NET) навряд чи довгостроково підтримає постійні
+        ''' з'єднання. Той самий IX_Messages_Thread (ServiceId, ConsumerId, SentAt) індекс
+        ''' застосовний і тут — фільтр за ServiceId/ConsumerId залишається селективним.</summary>
+        Public Shared Function GetThreadAfter(serviceId As Integer, consumerId As Integer, afterId As Integer) As List(Of DialogMessage)
+            Dim result As New List(Of DialogMessage)
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand(
+                    "SELECT m.MessageId, m.ServiceId, m.ConsumerId, m.SenderId, u.FullName AS SenderName, m.Body, m.SentAt " &
+                    "FROM Messages m JOIN Users u ON u.UserId = m.SenderId " &
+                    "WHERE m.ServiceId = @ServiceId AND m.ConsumerId = @ConsumerId AND m.MessageId > @AfterId " &
+                    "ORDER BY m.MessageId ASC;", conn)
+                    cmd.Parameters.AddWithValue("@ServiceId", serviceId)
+                    cmd.Parameters.AddWithValue("@ConsumerId", consumerId)
+                    cmd.Parameters.AddWithValue("@AfterId", afterId)
+                    Using reader = cmd.ExecuteReader()
+                        While reader.Read()
+                            result.Add(New DialogMessage With {
+                                .MessageId = reader.GetInt32("MessageId"),
+                                .ServiceId = reader.GetInt32("ServiceId"),
+                                .ConsumerId = reader.GetInt32("ConsumerId"),
+                                .SenderId = reader.GetInt32("SenderId"),
+                                .SenderName = reader.GetString("SenderName"),
+                                .Body = reader.GetString("Body"),
+                                .SentAt = reader.GetDateTime("SentAt")
+                            })
+                        End While
+                    End Using
+                End Using
+            End Using
+            Return result
+        End Function
+
         ''' <summary>Розмови споживача — по одній на кожне оголошення, з якого він написав.</summary>
         Public Shared Function GetConversationsForConsumer(consumerId As Integer) As List(Of ConversationSummary)
             Return QuerySummaries(
