@@ -23,6 +23,14 @@ Namespace SumyPortal
         End Sub
 
         Protected Sub btnRegister_Click(sender As Object, e As EventArgs)
+            ' Honeypot проти спам-ботів (наступна фіча понад MVP, обрано автономно
+            ' циклом /loop, 2026-09-13) — той самий прийом, що RegisterConsumer.aspx.vb.
+            If Not String.IsNullOrEmpty(txtWebsite.Text) Then
+                formPanel.Visible = False
+                successPanel.Visible = True
+                Return
+            End If
+
             If Not Page.IsValid Then Return
 
             ' Згода на обробку персональних даних (п.4 уточненої постановки) —

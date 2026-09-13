@@ -210,6 +210,17 @@ fieldset.form-row {
     font-size: 0.85rem;
 }
 
+/* Honeypot-поле проти спам-ботів (RegisterConsumer/RegisterProvider.aspx,
+   ServiceDetails.aspx — форма скарги; наступна фіча понад MVP, обрано
+   автономно циклом /loop, 2026-09-13) — position:absolute за межі екрана
+   (не display:none/visibility:hidden — деякі боти саме їх і перевіряють
+   першими), реальний відвідувач фізично не побачить і не заповнить. */
+.hp-field {
+    position: absolute;
+    left: -9999px;
+    top: -9999px;
+}
+
 .form-error {
     color: #b3261e;
     background: #fdecea;

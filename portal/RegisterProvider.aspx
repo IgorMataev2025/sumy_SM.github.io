@@ -78,6 +78,14 @@
             </label>
         </div>
 
+        <!-- Honeypot проти спам-ботів (наступна фіча понад MVP, обрано автономно
+             циклом /loop, 2026-09-13) — невидиме людині поле (.hp-field, css/site.css);
+             справжній відвідувач ніколи його не заповнить, перевірка в btnRegister_Click. -->
+        <div class="hp-field" aria-hidden="true">
+            <label for="<%= txtWebsite.ClientID %>">Залиште це поле порожнім</label>
+            <asp:TextBox ID="txtWebsite" runat="server" TabIndex="-1" autocomplete="off" />
+        </div>
+
         <div class="form-row">
             <asp:Button ID="btnRegister" runat="server" Text="<%$ Resources:SiteText, Register_Btn_Submit %>" OnClick="btnRegister_Click" CssClass="btn-primary" />
         </div>

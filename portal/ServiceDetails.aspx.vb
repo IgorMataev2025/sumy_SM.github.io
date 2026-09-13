@@ -281,10 +281,20 @@ Namespace SumyPortal
         ''' форми відгуку при відправці цієї форми, і навпаки.
         ''' </summary>
         Protected Sub btnSubmitReport_Click(sender As Object, e As EventArgs)
-            If Not Page.IsValid Then Return
-
             Dim serviceId As Integer
             If Not Integer.TryParse(Request.QueryString("id"), serviceId) Then Return
+
+            Dim separator = If(Request.RawUrl.Contains("?"), "&", "?")
+
+            ' Honeypot проти спам-ботів (наступна фіча понад MVP, обрано автономно
+            ' циклом /loop, 2026-09-13) — форма анонімна й публічна; вдаємо успіх
+            ' (той самий редірект, що й реальна відправка), нічого не зберігаючи.
+            If Not String.IsNullOrEmpty(txtReportWebsite.Text) Then
+                Response.Redirect(Request.RawUrl & separator & "reported=1", True)
+                Return
+            End If
+
+            If Not Page.IsValid Then Return
 
             Dim reason = ddlReportReason.SelectedValue
             If String.IsNullOrWhiteSpace(reason) Then Return
@@ -294,7 +304,6 @@ Namespace SumyPortal
 
             ServiceReport.Add(serviceId, reporterEmail, reason, txtReportComment.Text)
 
-            Dim separator = If(Request.RawUrl.Contains("?"), "&", "?")
             Response.Redirect(Request.RawUrl & separator & "reported=1", True)
         End Sub
 

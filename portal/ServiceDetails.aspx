@@ -103,6 +103,13 @@
                         <label for="<%= txtReportComment.ClientID %>"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_ReportCommentLabel %>" /></label>
                         <asp:TextBox ID="txtReportComment" runat="server" TextMode="MultiLine" Rows="2" MaxLength="1000" />
                     </div>
+                    <!-- Honeypot проти спам-ботів (наступна фіча понад MVP, обрано автономно
+                         циклом /loop, 2026-09-13) — форма скарги анонімна й публічна, той
+                         самий прийом, що RegisterConsumer/Provider.aspx. -->
+                    <div class="hp-field" aria-hidden="true">
+                        <label for="<%= txtReportWebsite.ClientID %>">Залиште це поле порожнім</label>
+                        <asp:TextBox ID="txtReportWebsite" runat="server" TabIndex="-1" autocomplete="off" />
+                    </div>
                     <div class="form-row">
                         <asp:Button ID="btnSubmitReport" runat="server" ValidationGroup="ReportForm"
                             Text="<%$ Resources:SiteText, Details_ReportSubmitBtn %>" OnClick="btnSubmitReport_Click" CssClass="btn-secondary" />
