@@ -278,6 +278,26 @@ fieldset.form-row {
     white-space: pre-line;
 }
 
+/* Відеодзвінок (MessageThread.aspx, наступна фіча понад MVP, обрано користувачем,
+   2026-09-13) — WebRTC P2P, лише розмітка/лейаут тут, стан show/hide керує сам JS. */
+.video-call-section {
+    margin: 1rem 0;
+}
+
+.video-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0.5rem 0;
+}
+
+.video-grid video {
+    width: 100%;
+    max-width: 320px;
+    background: #000;
+    border-radius: 8px;
+}
+
 .status-badge {
     font-size: 0.8rem;
     color: var(--color-muted);

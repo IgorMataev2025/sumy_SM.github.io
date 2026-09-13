@@ -277,4 +277,15 @@
   <data name="MessageThread_Err_EmptyBody" xml:space="preserve"><value>Enter a message.</value></data>
   <data name="MessageThread_DesiredDatePrefix" xml:space="preserve"><value>Desired date/time: </value></data>
   <data name="MessageThread_AddressPrefix" xml:space="preserve"><value>Address: </value></data>
+
+  <data name="MessageThread_Call_Start" xml:space="preserve"><value>📹 Video call</value></data>
+  <data name="MessageThread_Call_Incoming" xml:space="preserve"><value>Incoming video call…</value></data>
+  <data name="MessageThread_Call_Accept" xml:space="preserve"><value>Accept</value></data>
+  <data name="MessageThread_Call_Reject" xml:space="preserve"><value>Decline</value></data>
+  <data name="MessageThread_Call_Hangup" xml:space="preserve"><value>End call</value></data>
+  <data name="MessageThread_Call_Status_Calling" xml:space="preserve"><value>Calling…</value></data>
+  <data name="MessageThread_Call_Status_Connecting" xml:space="preserve"><value>Connecting…</value></data>
+  <data name="MessageThread_Call_Status_Connected" xml:space="preserve"><value>In call</value></data>
+  <data name="MessageThread_Call_Err_Media" xml:space="preserve"><value>Camera/microphone access denied.</value></data>
+  <data name="MessageThread_Call_Err_Unsupported" xml:space="preserve"><value>Your browser does not support video calls.</value></data>
 </root>

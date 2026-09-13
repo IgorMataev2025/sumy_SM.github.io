@@ -12,6 +12,33 @@
     <asp:Panel ID="threadPanel" runat="server">
         <h1><asp:Literal ID="headingLiteral" runat="server" /></h1>
 
+        <!-- Відеодзвінок (наступна фіча понад MVP, обрано користувачем, 2026-09-13) —
+             WebRTC P2P (браузер↔браузер, лише сигналізація через CallSignal.ashx,
+             сама аудіо/відео-доріжка сюди не потрапляє). ВАЖЛИВО: надсилання звичайного
+             текстового повідомлення нижче — постбек з повним перезавантаженням
+             сторінки (Response.Redirect), що обірве активний дзвінок — свідоме
+             MVP-обмеження, не вирішується в цій фічі (переведення всієї відправки на
+             AJAX — окрема більша задача). TURN-сервер не підключено (лише безкоштовний
+             публічний STUN) — з'єднання може не встановитись за складним NAT/файрволом. -->
+        <div class="video-call-section">
+            <button type="button" id="btnStartCall" class="btn-secondary"><asp:Literal runat="server" Text="<%$ Resources:SiteText, MessageThread_Call_Start %>" /></button>
+
+            <div id="incomingCallBanner" class="stub-note" style="display:none;">
+                <asp:Literal runat="server" Text="<%$ Resources:SiteText, MessageThread_Call_Incoming %>" />
+                <button type="button" id="btnAcceptCall" class="btn-primary"><asp:Literal runat="server" Text="<%$ Resources:SiteText, MessageThread_Call_Accept %>" /></button>
+                <button type="button" id="btnRejectCall" class="btn-secondary"><asp:Literal runat="server" Text="<%$ Resources:SiteText, MessageThread_Call_Reject %>" /></button>
+            </div>
+
+            <div id="videoCallPanel" style="display:none;">
+                <p id="callStatusText" class="stub-note"></p>
+                <div class="video-grid">
+                    <video id="localVideo" autoplay playsinline muted></video>
+                    <video id="remoteVideo" autoplay playsinline></video>
+                </div>
+                <button type="button" id="btnHangup" class="btn-secondary"><asp:Literal runat="server" Text="<%$ Resources:SiteText, MessageThread_Call_Hangup %>" /></button>
+            </div>
+        </div>
+
         <asp:HiddenField ID="hidLastMessageId" runat="server" />
 
         <div id="messagesContainer">
@@ -79,6 +106,185 @@
                 }
 
                 var timerId = setInterval(poll, 5000);
+            })();
+        </script>
+
+        <!-- WebRTC відеодзвінок (наступна фіча понад MVP, обрано користувачем, 2026-09-13).
+             Сигналізація (offer/answer/ICE) — AJAX-polling кожні 3с (CallSignal.ashx),
+             той самий принцип без WebSocket, що вже жива переписка вище. Лише публічний
+             STUN (Google) — без TURN, тому з'єднання може не встановитись за складним
+             NAT/корпоративним фаєрволом (свідоме обмеження MVP, немає платної
+             інфраструктури під TURN). -->
+        <script>
+            (function () {
+                var serviceId = <%= Request.QueryString("serviceId") %>;
+                var consumerId = <%= Request.QueryString("consumerId") %>;
+
+                var iceServers = [
+                    { urls: 'stun:stun.l.google.com:19302' },
+                    { urls: 'stun:stun1.l.google.com:19302' }
+                ];
+
+                var btnStartCall = document.getElementById('btnStartCall');
+                var incomingCallBanner = document.getElementById('incomingCallBanner');
+                var btnAcceptCall = document.getElementById('btnAcceptCall');
+                var btnRejectCall = document.getElementById('btnRejectCall');
+                var videoCallPanel = document.getElementById('videoCallPanel');
+                var callStatusText = document.getElementById('callStatusText');
+                var localVideo = document.getElementById('localVideo');
+                var remoteVideo = document.getElementById('remoteVideo');
+                var btnHangup = document.getElementById('btnHangup');
+
+                var pc = null;
+                var localStream = null;
+                var pendingOffer = null;
+                var pendingIce = [];
+                var lastSignalId = 0;
+
+                function setStatus(text) { callStatusText.textContent = text; }
+                function showCallPanel(visible) { videoCallPanel.style.display = visible ? 'block' : 'none'; btnStartCall.style.display = visible ? 'none' : 'inline-block'; }
+                function showIncomingBanner(visible) { incomingCallBanner.style.display = visible ? 'block' : 'none'; }
+
+                function sendSignal(signalType, payload) {
+                    var body = new URLSearchParams();
+                    body.append('serviceId', serviceId);
+                    body.append('consumerId', consumerId);
+                    body.append('signalType', signalType);
+                    body.append('payload', payload || '');
+                    fetch('CallSignal.ashx', { method: 'POST', body: body }).catch(function () { });
+                }
+
+                function createPeerConnection() {
+                    var conn = new RTCPeerConnection({ iceServers: iceServers });
+                    conn.onicecandidate = function (e) {
+                        if (e.candidate) sendSignal('ice-candidate', JSON.stringify(e.candidate));
+                    };
+                    conn.ontrack = function (e) {
+                        remoteVideo.srcObject = e.streams[0];
+                        setStatus('<%= Resources.SiteText.MessageThread_Call_Status_Connected %>');
+                    };
+                    conn.onconnectionstatechange = function () {
+                        if (conn.connectionState === 'failed' || conn.connectionState === 'disconnected') {
+                            endCall(false);
+                        }
+                    };
+                    return conn;
+                }
+
+                function flushPendingIce() {
+                    pendingIce.forEach(function (c) { pc.addIceCandidate(new RTCIceCandidate(c)).catch(function () { }); });
+                    pendingIce = [];
+                }
+
+                function startCall() {
+                    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(function (stream) {
+                        localStream = stream;
+                        localVideo.srcObject = stream;
+                        pc = createPeerConnection();
+                        stream.getTracks().forEach(function (t) { pc.addTrack(t, stream); });
+                        showCallPanel(true);
+                        setStatus('<%= Resources.SiteText.MessageThread_Call_Status_Calling %>');
+                        return pc.createOffer();
+                    }).then(function (offer) {
+                        return pc.setLocalDescription(offer).then(function () { return offer; });
+                    }).then(function (offer) {
+                        sendSignal('offer', JSON.stringify(offer));
+                    }).catch(function (err) {
+                        alert('<%= Resources.SiteText.MessageThread_Call_Err_Media %>' + (err && err.message ? ' (' + err.message + ')' : ''));
+                    });
+                }
+
+                function acceptCall() {
+                    showIncomingBanner(false);
+                    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(function (stream) {
+                        localStream = stream;
+                        localVideo.srcObject = stream;
+                        pc = createPeerConnection();
+                        stream.getTracks().forEach(function (t) { pc.addTrack(t, stream); });
+                        return pc.setRemoteDescription(new RTCSessionDescription(pendingOffer));
+                    }).then(function () {
+                        showCallPanel(true);
+                        setStatus('<%= Resources.SiteText.MessageThread_Call_Status_Connecting %>');
+                        return pc.createAnswer();
+                    }).then(function (answer) {
+                        return pc.setLocalDescription(answer).then(function () { return answer; });
+                    }).then(function (answer) {
+                        sendSignal('answer', JSON.stringify(answer));
+                        flushPendingIce();
+                    }).catch(function (err) {
+                        alert('<%= Resources.SiteText.MessageThread_Call_Err_Media %>' + (err && err.message ? ' (' + err.message + ')' : ''));
+                        sendSignal('hangup', '');
+                    });
+                }
+
+                function rejectCall() {
+                    showIncomingBanner(false);
+                    pendingOffer = null;
+                    sendSignal('hangup', '');
+                }
+
+                function endCall(notifyOther) {
+                    if (notifyOther) sendSignal('hangup', '');
+                    if (pc) { pc.close(); pc = null; }
+                    if (localStream) { localStream.getTracks().forEach(function (t) { t.stop(); }); localStream = null; }
+                    localVideo.srcObject = null;
+                    remoteVideo.srcObject = null;
+                    showCallPanel(false);
+                    showIncomingBanner(false);
+                    pendingOffer = null;
+                    pendingIce = [];
+                }
+
+                function handleIncomingOffer(signal) {
+                    if (pc) return; // вже в дзвінку — ігноруємо повторний offer
+                    pendingOffer = JSON.parse(signal.payload);
+                    showIncomingBanner(true);
+                }
+
+                function handleAnswer(signal) {
+                    if (!pc) return;
+                    pc.setRemoteDescription(new RTCSessionDescription(JSON.parse(signal.payload))).then(function () {
+                        setStatus('<%= Resources.SiteText.MessageThread_Call_Status_Connecting %>');
+                        flushPendingIce();
+                    }).catch(function () { });
+                }
+
+                function handleIceCandidate(signal) {
+                    var candidate = JSON.parse(signal.payload);
+                    if (pc && pc.remoteDescription && pc.remoteDescription.type) {
+                        pc.addIceCandidate(new RTCIceCandidate(candidate)).catch(function () { });
+                    } else {
+                        pendingIce.push(candidate);
+                    }
+                }
+
+                function pollSignals() {
+                    if (document.hidden) return;
+                    fetch('CallSignal.ashx?serviceId=' + serviceId + '&consumerId=' + consumerId + '&afterId=' + lastSignalId)
+                        .then(function (r) { return r.json(); })
+                        .then(function (signals) {
+                            signals.forEach(function (s) {
+                                lastSignalId = s.signalId;
+                                if (s.signalType === 'offer') handleIncomingOffer(s);
+                                else if (s.signalType === 'answer') handleAnswer(s);
+                                else if (s.signalType === 'ice-candidate') handleIceCandidate(s);
+                                else if (s.signalType === 'hangup') endCall(false);
+                            });
+                        })
+                        .catch(function () { });
+                }
+
+                btnStartCall.addEventListener('click', startCall);
+                btnAcceptCall.addEventListener('click', acceptCall);
+                btnRejectCall.addEventListener('click', rejectCall);
+                btnHangup.addEventListener('click', function () { endCall(true); });
+
+                if (typeof RTCPeerConnection === 'undefined' || !navigator.mediaDevices) {
+                    btnStartCall.disabled = true;
+                    btnStartCall.title = '<%= Resources.SiteText.MessageThread_Call_Err_Unsupported %>';
+                } else {
+                    setInterval(pollSignals, 3000);
+                }
             })();
         </script>
 

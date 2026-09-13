@@ -277,4 +277,15 @@
   <data name="MessageThread_Err_EmptyBody" xml:space="preserve"><value>Введіть текст повідомлення.</value></data>
   <data name="MessageThread_DesiredDatePrefix" xml:space="preserve"><value>Бажана дата/час: </value></data>
   <data name="MessageThread_AddressPrefix" xml:space="preserve"><value>Адреса: </value></data>
+
+  <data name="MessageThread_Call_Start" xml:space="preserve"><value>📹 Відеодзвінок</value></data>
+  <data name="MessageThread_Call_Incoming" xml:space="preserve"><value>Вхідний відеодзвінок…</value></data>
+  <data name="MessageThread_Call_Accept" xml:space="preserve"><value>Прийняти</value></data>
+  <data name="MessageThread_Call_Reject" xml:space="preserve"><value>Відхилити</value></data>
+  <data name="MessageThread_Call_Hangup" xml:space="preserve"><value>Завершити дзвінок</value></data>
+  <data name="MessageThread_Call_Status_Calling" xml:space="preserve"><value>Дзвонимо…</value></data>
+  <data name="MessageThread_Call_Status_Connecting" xml:space="preserve"><value>З'єднання…</value></data>
+  <data name="MessageThread_Call_Status_Connected" xml:space="preserve"><value>У розмові</value></data>
+  <data name="MessageThread_Call_Err_Media" xml:space="preserve"><value>Немає доступу до камери/мікрофона.</value></data>
+  <data name="MessageThread_Call_Err_Unsupported" xml:space="preserve"><value>Ваш браузер не підтримує відеодзвінки.</value></data>
 </root>

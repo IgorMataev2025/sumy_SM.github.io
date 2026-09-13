@@ -124,6 +124,21 @@ CREATE TABLE IF NOT EXISTS ServiceReports (
     CONSTRAINT FK_ServiceReports_ReviewedBy FOREIGN KEY (ReviewedBy) REFERENCES Users(UserId)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+-- Сигналізація відеодзвінків (наступна фіча понад MVP, migration_015_video_call_signals.sql).
+CREATE TABLE IF NOT EXISTS VideoCallSignals (
+    SignalId    INT AUTO_INCREMENT PRIMARY KEY,
+    ServiceId   INT NOT NULL,
+    ConsumerId  INT NOT NULL,
+    SenderId    INT NOT NULL,
+    SignalType  ENUM('offer','answer','ice-candidate','hangup') NOT NULL,
+    Payload     TEXT NOT NULL,
+    CreatedAt   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT FK_VideoCallSignals_Service FOREIGN KEY (ServiceId) REFERENCES Services(ServiceId) ON DELETE CASCADE,
+    CONSTRAINT FK_VideoCallSignals_Consumer FOREIGN KEY (ConsumerId) REFERENCES Users(UserId) ON DELETE CASCADE,
+    CONSTRAINT FK_VideoCallSignals_Sender FOREIGN KEY (SenderId) REFERENCES Users(UserId) ON DELETE CASCADE,
+    INDEX IX_VideoCallSignals_Thread (ServiceId, ConsumerId, SignalId)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 -- Категорії MVP (ТЗ, розділ 3) — початкове наповнення довідника.
 INSERT INTO Categories (Name, Description, ParentId, IsActive)
 SELECT * FROM (SELECT
