@@ -14,7 +14,7 @@
     <meta name="description" runat="server" id="metaDescriptionTag"
         content="Портал послуг Safina — оголошення побутових послуг, медицини, освіти та комунальних послуг у Сумах та області." />
     <title><asp:ContentPlaceHolder ID="TitleContent" runat="server">Портал послуг Safina</asp:ContentPlaceHolder></title>
-    <link rel="stylesheet" href="~/css/site.css" runat="server" />
+    <link rel="stylesheet" href="~/css/site.css" runat="server" id="cssLink" />
     <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
 </head>
 <body>

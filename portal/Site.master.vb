@@ -1,4 +1,5 @@
 Imports System
+Imports System.IO
 
 Namespace SumyPortal
 
@@ -24,7 +25,21 @@ Namespace SumyPortal
             End Set
         End Property
 
+        ''' <summary>Кеш-бастинг для site.css (2026-09-14) — IIS роздає статику з
+        ''' Cache-Control: max-age=31536000 (рік), тому вже відкриті у відвідувача
+        ''' версії CSS/JS кешуються браузером надовго; кожен наступний CSS-фікс без
+        ''' цього був би невидимий для того самого відвідувача аж до explicit
+        ''' Ctrl+F5. Час останньої зміни файлу як query-параметр змінює URL і
+        ''' форсує повторне завантаження автоматично — без ручного номера версії,
+        ''' який довелось би не забувати піднімати при кожному деплої CSS.</summary>
         Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
+            Dim cssVersion As String = "0"
+            Try
+                cssVersion = File.GetLastWriteTimeUtc(Server.MapPath("~/css/site.css")).Ticks.ToString()
+            Catch
+            End Try
+            cssLink.Href = ResolveUrl("~/css/site.css") & "?v=" & cssVersion
+
             Dim isAuthenticated = Page.User.Identity.IsAuthenticated
             anonNav.Visible = Not isAuthenticated
             userNav.Visible = isAuthenticated
