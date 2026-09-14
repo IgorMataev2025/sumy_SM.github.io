@@ -43,6 +43,7 @@ Namespace SumyPortal
             Dim isAuthenticated = Page.User.Identity.IsAuthenticated
             anonNav.Visible = Not isAuthenticated
             userNav.Visible = isAuthenticated
+            userEmailNav.Visible = isAuthenticated
             If isAuthenticated Then
                 userNameLiteral.Text = Server.HtmlEncode(Page.User.Identity.Name)
 

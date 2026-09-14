@@ -20,7 +20,18 @@
 <body>
     <form id="mainForm" runat="server">
         <header class="site-header">
-            <a class="site-logo" href="~/Default.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, SiteLogo %>" /></a>
+            <div class="site-brand">
+                <a class="site-logo" href="~/Default.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, SiteLogo %>" /></a>
+                <!-- Email залогіненого користувача (перенесено ближче до логотипу, 2026-09-14) —
+                     на довгому меню (Мої оголошення/Обране/Повідомлення/Профіль/Вихід) email
+                     опинявся в самому кінці рядка, візуально відірваний від контексту "хто
+                     залогінений"; окремий PlaceHolder (не той самий userNav, що обгортає решту
+                     пунктів меню нижче) з тією самою умовою видимості, виставленою в
+                     Site.master.vb. -->
+                <asp:PlaceHolder ID="userEmailNav" runat="server" Visible="false">
+                    <span class="site-user"><asp:Literal ID="userNameLiteral" runat="server" /></span>
+                </asp:PlaceHolder>
+            </div>
             <nav class="site-nav">
                 <a href="~/Default.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Home %>" /></a>
                 <a href="~/Catalog.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Catalog %>" /></a>
@@ -40,7 +51,6 @@
                         <span id="navUnreadBadge" runat="server" visible="false" class="unread-badge"></span>
                     </a>
                     <a href="~/Profile.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Profile %>" /></a>
-                    <span class="site-user"><asp:Literal ID="userNameLiteral" runat="server" /></span>
                     <a href="~/Logout.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Logout %>" /></a>
                 </asp:PlaceHolder>
                 <!-- Перемикач мови (постановка робочої тестової версії, 2026-09-12) — лише для

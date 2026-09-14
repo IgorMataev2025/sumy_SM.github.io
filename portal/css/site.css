@@ -32,6 +32,15 @@ body {
     border-bottom: 1px solid var(--color-border);
 }
 
+/* Обгортка логотипу + email залогіненого користувача (2026-09-14) — email
+   перенесено сюди з кінця .site-nav, де на довгому меню опинявся візуально
+   відірваним від контексту "хто залогінений". */
+.site-brand {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+}
+
 .site-logo {
     font-weight: 700;
     font-size: 1.1rem;
