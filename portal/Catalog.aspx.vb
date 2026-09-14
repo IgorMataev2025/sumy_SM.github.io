@@ -122,10 +122,19 @@ Namespace SumyPortal
             rptCatalog.DataBind()
             emptyPanel.Visible = (items.Count = 0)
 
+            ' Перемикач "Таблиця" (наступна фіча понад MVP, 2026-09-14) — та сама сторінка
+            ' даних (items), що й список карток, лише інший рендер + клієнтське сортування.
+            rptCatalogTable.DataSource = items
+            rptCatalogTable.DataBind()
+            tableEmptyPanel.Visible = (items.Count = 0)
+
             Dim totalPages = Math.Max(1, CInt(Math.Ceiling(total / CDbl(PageSize))))
             pageInfoLiteral.Text = String.Format(Resources.SiteText.Catalog_PageInfo, total, CurrentPage, totalPages)
+            tablePageInfoLiteral.Text = pageInfoLiteral.Text
             lnkPrev.Enabled = (CurrentPage > 1)
             lnkNext.Enabled = (CurrentPage < totalPages)
+            lnkPrevTable.Enabled = lnkPrev.Enabled
+            lnkNextTable.Enabled = lnkNext.Enabled
 
             BindMapData(categoryId, district, keyword, minPrice, maxPrice)
         End Sub

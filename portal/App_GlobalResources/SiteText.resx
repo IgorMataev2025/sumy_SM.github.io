@@ -57,9 +57,13 @@
   <data name="Catalog_NewBadge" xml:space="preserve"><value>Новинка</value></data>
   <data name="Catalog_VerifiedBadge" xml:space="preserve"><value>✓ Перевірено</value></data>
   <data name="Catalog_View_List" xml:space="preserve"><value>Список</value></data>
+  <data name="Catalog_View_Table" xml:space="preserve"><value>Таблиця</value></data>
   <data name="Catalog_View_Map" xml:space="preserve"><value>Карта</value></data>
   <data name="Catalog_Map_Empty" xml:space="preserve"><value>Жодне з відфільтрованих оголошень не має мітки на карті.</value></data>
   <data name="Catalog_Map_DetailsLink" xml:space="preserve"><value>Детальніше</value></data>
+  <data name="Catalog_Table_Name" xml:space="preserve"><value>Назва</value></data>
+  <data name="Catalog_Table_Price" xml:space="preserve"><value>Ціна</value></data>
+  <data name="Catalog_Table_Date" xml:space="preserve"><value>Дата</value></data>
 
   <data name="Price_Negotiable" xml:space="preserve"><value>Ціна за домовленістю</value></data>
 

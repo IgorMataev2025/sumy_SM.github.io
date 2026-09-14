@@ -76,6 +76,13 @@
          фільтрів не скидають активну вкладку). -->
     <div class="catalog-view-toggle">
         <button type="button" id="btnViewList" class="btn-secondary view-toggle-btn"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_View_List %>" /></button>
+        <!-- Перемикач "Таблиця" (наступна фіча понад MVP, 2026-09-14) — той самий принцип, що
+             Список/Карта: сервер рендерить обидві панелі одразу (rptCatalog і rptCatalogTable —
+             однакові дані, BindResults), JS лише показує/ховає. Сортування по стовпцях — суто
+             клієнтське (перевпорядковує вже наявні <tr> поточної сторінки за data-атрибутами),
+             без окремого запиту на сервер; не замінює серверне "Сортування" вище (те визначає,
+             які САМЕ 12 оголошень потрапляють на сторінку). -->
+        <button type="button" id="btnViewTable" class="btn-secondary view-toggle-btn"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_View_Table %>" /></button>
         <button type="button" id="btnViewMap" class="btn-secondary view-toggle-btn"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_View_Map %>" /></button>
     </div>
     <asp:HiddenField ID="hidViewMode" runat="server" Value="list" />
@@ -127,6 +134,52 @@
         </div>
     </asp:Panel>
 
+    <asp:Panel ID="tableViewPanel" runat="server" Style="display:none;">
+        <asp:Label ID="tablePageInfoLiteral" runat="server" CssClass="page-info" />
+
+        <asp:Panel ID="tableEmptyPanel" runat="server" Visible="false" CssClass="stub-note">
+            <asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Empty %>" />
+        </asp:Panel>
+
+        <div class="catalog-table-wrap">
+            <table class="catalog-table">
+                <thead>
+                    <tr>
+                        <th data-sort="title" data-type="text"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Table_Name %>" /><span class="sort-arrow"></span></th>
+                        <th data-sort="category" data-type="text"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Label_Category %>" /><span class="sort-arrow"></span></th>
+                        <th data-sort="district" data-type="text"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Label_District %>" /><span class="sort-arrow"></span></th>
+                        <th data-sort="price" data-type="number"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Table_Price %>" /><span class="sort-arrow"></span></th>
+                        <th data-sort="date" data-type="number"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Table_Date %>" /><span class="sort-arrow"></span></th>
+                    </tr>
+                </thead>
+                <tbody id="catalogTableBody">
+                    <asp:Repeater ID="rptCatalogTable" runat="server">
+                        <ItemTemplate>
+                            <tr class="catalog-table-row"
+                                data-href='<%#: "ServiceDetails.aspx?id=" & CType(Container.DataItem, SumyPortal.Service).ServiceId %>'
+                                data-title='<%#: CType(Container.DataItem, SumyPortal.Service).Title %>'
+                                data-category='<%#: CType(Container.DataItem, SumyPortal.Service).CategoryName %>'
+                                data-district='<%#: CType(Container.DataItem, SumyPortal.Service).District %>'
+                                data-price='<%#: If(CType(Container.DataItem, SumyPortal.Service).Price.HasValue, CType(Container.DataItem, SumyPortal.Service).Price.Value.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture), "") %>'
+                                data-date='<%#: CType(Container.DataItem, SumyPortal.Service).CreatedAt.Ticks %>'>
+                                <td><%#: CType(Container.DataItem, SumyPortal.Service).Title %></td>
+                                <td><%#: CType(Container.DataItem, SumyPortal.Service).CategoryName %></td>
+                                <td><%#: If(String.IsNullOrEmpty(CType(Container.DataItem, SumyPortal.Service).District), Resources.SiteText.Details_NotSpecified, CType(Container.DataItem, SumyPortal.Service).District) %></td>
+                                <td><%#: If(CType(Container.DataItem, SumyPortal.Service).Price.HasValue, CType(Container.DataItem, SumyPortal.Service).Price.Value.ToString("0.## грн"), Resources.SiteText.Price_Negotiable) %></td>
+                                <td><%#: CType(Container.DataItem, SumyPortal.Service).CreatedAt.ToString("dd.MM.yyyy") %></td>
+                            </tr>
+                        </ItemTemplate>
+                    </asp:Repeater>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination">
+            <asp:LinkButton ID="lnkPrevTable" runat="server" OnClick="lnkPrev_Click" CausesValidation="false" Text="<%$ Resources:SiteText, Catalog_Pagination_Prev %>" />
+            <asp:LinkButton ID="lnkNextTable" runat="server" OnClick="lnkNext_Click" CausesValidation="false" Text="<%$ Resources:SiteText, Catalog_Pagination_Next %>" />
+        </div>
+    </asp:Panel>
+
     <asp:Panel ID="mapViewPanel" runat="server" Style="display:none;">
         <div id="catalogMap" style="height:500px; border-radius:8px;"></div>
         <asp:Panel ID="mapEmptyPanel" runat="server" Visible="false" CssClass="stub-note">
@@ -143,9 +196,11 @@
     <script>
         (function () {
             var listPanel = document.getElementById('<%= listViewPanel.ClientID %>');
+            var tablePanel = document.getElementById('<%= tableViewPanel.ClientID %>');
             var mapPanel = document.getElementById('<%= mapViewPanel.ClientID %>');
             var hidViewMode = document.getElementById('<%= hidViewMode.ClientID %>');
             var btnList = document.getElementById('btnViewList');
+            var btnTable = document.getElementById('btnViewTable');
             var btnMap = document.getElementById('btnViewMap');
             var detailsLinkText = <%= DetailsLinkTextForScript %>;
             var map = null;
@@ -199,25 +254,68 @@
 
             function showView(mode) {
                 hidViewMode.value = mode;
+                listPanel.style.display = (mode === 'list') ? '' : 'none';
+                tablePanel.style.display = (mode === 'table') ? '' : 'none';
+                mapPanel.style.display = (mode === 'map') ? '' : 'none';
+                btnList.classList.toggle('view-toggle-active', mode === 'list');
+                btnTable.classList.toggle('view-toggle-active', mode === 'table');
+                btnMap.classList.toggle('view-toggle-active', mode === 'map');
                 if (mode === 'map') {
-                    listPanel.style.display = 'none';
-                    mapPanel.style.display = '';
-                    btnMap.classList.add('view-toggle-active');
-                    btnList.classList.remove('view-toggle-active');
                     initMap();
                     setTimeout(function () { if (map) map.invalidateSize(); }, 0);
-                } else {
-                    listPanel.style.display = '';
-                    mapPanel.style.display = 'none';
-                    btnList.classList.add('view-toggle-active');
-                    btnMap.classList.remove('view-toggle-active');
                 }
             }
 
             btnList.addEventListener('click', function () { showView('list'); });
+            btnTable.addEventListener('click', function () { showView('table'); });
             btnMap.addEventListener('click', function () { showView('map'); });
 
-            showView(hidViewMode.value === 'map' ? 'map' : 'list');
+            showView(hidViewMode.value === 'map' ? 'map' : (hidViewMode.value === 'table' ? 'table' : 'list'));
+
+            // Сортування таблиці (наступна фіча понад MVP, 2026-09-14) — суто клієнтське,
+            // перевпорядковує вже наявні <tr> поточної сторінки за data-атрибутами рядка
+            // (без запиту на сервер). Ціна/дата без значення завжди в кінці незалежно від
+            // напрямку — той самий принцип "порожнє в кінці", що вже сортування "за ціною"
+            // на сервері (Service.vb: NULL LAST).
+            var tableBody = document.getElementById('catalogTableBody');
+            var tableHeaders = tablePanel.querySelectorAll('th[data-sort]');
+            var sortState = { column: null, dir: 1 };
+
+            function sortTableBy(column, type) {
+                var rows = Array.prototype.slice.call(tableBody.querySelectorAll('tr'));
+                var dir = (sortState.column === column) ? -sortState.dir : 1;
+                sortState = { column: column, dir: dir };
+
+                rows.sort(function (a, b) {
+                    var av = a.dataset[column] || '';
+                    var bv = b.dataset[column] || '';
+                    if (type === 'number') {
+                        var an = av === '' ? null : parseFloat(av);
+                        var bn = bv === '' ? null : parseFloat(bv);
+                        if (an === null && bn === null) return 0;
+                        if (an === null) return 1;
+                        if (bn === null) return -1;
+                        return (an - bn) * dir;
+                    }
+                    return av.localeCompare(bv, 'uk') * dir;
+                });
+
+                rows.forEach(function (row) { tableBody.appendChild(row); });
+
+                tableHeaders.forEach(function (th) {
+                    var arrow = th.querySelector('.sort-arrow');
+                    arrow.textContent = (th.dataset.sort === column) ? (dir === 1 ? ' ▲' : ' ▼') : '';
+                });
+            }
+
+            tableHeaders.forEach(function (th) {
+                th.addEventListener('click', function () { sortTableBy(th.dataset.sort, th.dataset.type); });
+            });
+
+            tableBody.addEventListener('click', function (e) {
+                var row = e.target.closest('tr[data-href]');
+                if (row) window.location = row.dataset.href;
+            });
         })();
     </script>
 </asp:Content>
