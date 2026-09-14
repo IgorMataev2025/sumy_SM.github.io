@@ -592,6 +592,29 @@ fieldset.form-row {
     background: var(--color-bg);
 }
 
+/* Специфікація (ServiceEdit.aspx/ServiceDetails.aspx, наступна фіча понад MVP,
+   реалізовано за прямим запитом користувача, 2026-09-14) — таблиця, розпарсена з
+   .xls/.xlsx (App_Code/SpecificationReader.vb), той самий базовий вигляд, що
+   .catalog-table, лише без сортування/hover-курсора (не клікабельна). Перший рядок —
+   заголовок (<th>) незалежно від того, чи файл справді мав "шапку". */
+.spec-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.spec-table th,
+.spec-table td {
+    padding: 0.4rem 0.7rem;
+    text-align: left;
+    border: 1px solid var(--color-border);
+    font-size: 0.9rem;
+}
+
+.spec-table th {
+    background: var(--color-bg);
+    font-weight: 600;
+}
+
 .service-details {
     max-width: 720px;
 }

@@ -42,6 +42,12 @@ Namespace SumyPortal
         ''' ServiceDetails.aspx) лише разом зі Status = Approved.</summary>
         Public Property IsVerified As Boolean
 
+        ''' <summary>Специфікація (наступна фіча понад MVP, реалізовано за прямим запитом
+        ''' користувача, 2026-09-14) — відносний шлях до файлу .xls/.xlsx (як ThumbnailUrl/
+        ''' ServicePhoto.FilePath: "~/Uploads/Services/{id}/..."), Nothing якщо не завантажено.
+        ''' Вміст рендериться SpecificationReader.TryReadAsHtmlTable(), не тут.</summary>
+        Public Property SpecificationFilePath As String
+
         ''' <summary>Заповнюється лише для черги модерації і картки оголошення — контакти постачальника.</summary>
         Public Property ProviderName As String
         Public Property ProviderEmail As String
@@ -87,24 +93,25 @@ Namespace SumyPortal
                 .RejectReason = If(reader.IsDBNull(reader.GetOrdinal("RejectReason")), Nothing, reader.GetString("RejectReason")),
                 .CreatedAt = reader.GetDateTime("CreatedAt"),
                 .ViewCount = reader.GetInt32("ViewCount"),
-                .IsVerified = reader.GetBoolean("IsVerified")
+                .IsVerified = reader.GetBoolean("IsVerified"),
+                .SpecificationFilePath = If(reader.IsDBNull(reader.GetOrdinal("SpecificationFilePath")), Nothing, reader.GetString("SpecificationFilePath"))
             }
         End Function
 
         ''' <summary>
-        ''' Map() читає Latitude/Longitude/ViewCount/IsVerified безумовно (reader.GetOrdinal/
-        ''' GetInt32/GetBoolean) — тому будь-який SELECT, переданий у Map(reader), ОБОВ'ЯЗКОВО
-        ''' має містити ці стовпці, інакше IndexOutOfRangeException. Стосується й інших
-        ''' inline-запитів нижче (GetPendingForModeration/GetPendingById/GetApprovedById/
-        ''' GetForMessaging/GetAllForAdmin/GetByIdAny/SearchApproved/SearchApprovedForMap), що
-        ''' дублюють цей самий список колонок — так само Favorite.vb: GetByUser (та сама збірка
-        ''' App_Code). GetApprovedForSitemap — виняток: свідомо вузький SELECT лише ServiceId/
-        ''' ApprovedAt, Map(reader) там не використовується.
+        ''' Map() читає Latitude/Longitude/ViewCount/IsVerified/SpecificationFilePath безумовно
+        ''' (reader.GetOrdinal/GetInt32/GetBoolean) — тому будь-який SELECT, переданий у
+        ''' Map(reader), ОБОВ'ЯЗКОВО має містити ці стовпці, інакше IndexOutOfRangeException.
+        ''' Стосується й інших inline-запитів нижче (GetPendingForModeration/GetPendingById/
+        ''' GetApprovedById/GetForMessaging/GetAllForAdmin/GetByIdAny/SearchApproved/
+        ''' SearchApprovedForMap), що дублюють цей самий список колонок — так само Favorite.vb:
+        ''' GetByUser (та сама збірка App_Code). GetApprovedForSitemap — виняток: свідомо
+        ''' вузький SELECT лише ServiceId/ApprovedAt, Map(reader) там не використовується.
         ''' </summary>
         Private Const SelectBase As String =
             "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
             "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, " &
-            "s.ViewCount, s.IsVerified " &
+            "s.ViewCount, s.IsVerified, s.SpecificationFilePath " &
             "FROM Services s JOIN Categories c ON c.CategoryId = s.CategoryId "
 
         ''' <summary>Усі оголошення постачальника, найновіші зверху.</summary>
@@ -272,6 +279,43 @@ Namespace SumyPortal
             End Using
         End Function
 
+        ' --- Специфікація (наступна фіча понад MVP, реалізовано за прямим запитом
+        ' користувача, 2026-09-14) — рівно 0 або 1 файл на оголошення, тому простий
+        ' стовпець Services.SpecificationFilePath, а не окрема таблиця (як ServicePhotos,
+        ' де файлів кілька). ---
+
+        ''' <summary>Поточний шлях файлу специфікації — для заміни/видалення при збереженні
+        ''' (ServiceEdit.aspx.vb: ProcessSpecificationUpload). Nothing, якщо не завантажено
+        ''' або оголошення не належить цьому постачальнику.</summary>
+        Public Shared Function GetSpecificationFilePath(serviceId As Integer, providerId As Integer) As String
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand(
+                    "SELECT SpecificationFilePath FROM Services WHERE ServiceId = @ServiceId AND ProviderId = @ProviderId;", conn)
+                    cmd.Parameters.AddWithValue("@ServiceId", serviceId)
+                    cmd.Parameters.AddWithValue("@ProviderId", providerId)
+                    Dim result = cmd.ExecuteScalar()
+                    If result Is Nothing OrElse result Is DBNull.Value Then Return Nothing
+                    Return CStr(result)
+                End Using
+            End Using
+        End Function
+
+        ''' <summary>Записує (filePath заповнено) або очищує (Nothing — після видалення позначеним
+        ''' чекбоксом) шлях файлу специфікації. Той самий принцип обмеження статусу, що Update —
+        ''' редагування лише поки Draft/Rejected. Повертає False, якщо не власник/не той статус.</summary>
+        Public Shared Function SetSpecificationFilePath(serviceId As Integer, providerId As Integer, filePath As String) As Boolean
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand(
+                    "UPDATE Services SET SpecificationFilePath = @FilePath " &
+                    "WHERE ServiceId = @ServiceId AND ProviderId = @ProviderId AND Status IN ('Draft', 'Rejected');", conn)
+                    cmd.Parameters.AddWithValue("@ServiceId", serviceId)
+                    cmd.Parameters.AddWithValue("@ProviderId", providerId)
+                    cmd.Parameters.AddWithValue("@FilePath", If(String.IsNullOrEmpty(filePath), DBNull.Value, CObj(filePath)))
+                    Return cmd.ExecuteNonQuery() > 0
+                End Using
+            End Using
+        End Function
+
         ' --- Модерація (адміністратор, ТЗ п.4.3) ---
 
         ''' <summary>Черга "на модерації", найстаріші спершу (FIFO) — з даними постачальника для контексту адміна.</summary>
@@ -280,7 +324,7 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified, " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified, s.SpecificationFilePath, " &
                     "u.FullName AS ProviderName, u.Email AS ProviderEmail " &
                     "FROM Services s " &
                     "JOIN Categories c ON c.CategoryId = s.CategoryId " &
@@ -305,7 +349,7 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified, " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified, s.SpecificationFilePath, " &
                     "u.FullName AS ProviderName, u.Email AS ProviderEmail " &
                     "FROM Services s " &
                     "JOIN Categories c ON c.CategoryId = s.CategoryId " &
@@ -565,7 +609,7 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified, " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified, s.SpecificationFilePath, " &
                     "u.FullName AS ProviderName, u.Email AS ProviderEmail " &
                     "FROM Services s " &
                     "JOIN Categories c ON c.CategoryId = s.CategoryId " &
@@ -590,7 +634,7 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified, " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified, s.SpecificationFilePath, " &
                     "u.FullName AS ProviderName, u.Email AS ProviderEmail " &
                     "FROM Services s " &
                     "JOIN Categories c ON c.CategoryId = s.CategoryId " &
@@ -676,7 +720,7 @@ Namespace SumyPortal
 
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified, s.SpecificationFilePath " &
                     "FROM Services s JOIN Categories c ON c.CategoryId = s.CategoryId " & whereSql2 &
                     BuildSortOrder(sortBy) & "LIMIT @PageSize OFFSET @Offset;", conn)
                     cmd.Parameters.AddRange(selectParams.ToArray())
@@ -710,7 +754,7 @@ Namespace SumyPortal
 
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified, s.SpecificationFilePath " &
                     "FROM Services s JOIN Categories c ON c.CategoryId = s.CategoryId " & whereSql &
                     "ORDER BY s.CreatedAt DESC;", conn)
                     cmd.Parameters.AddRange(parameters.ToArray())
@@ -735,7 +779,7 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified, " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified, s.SpecificationFilePath, " &
                     "u.FullName AS ProviderName, u.Email AS ProviderEmail " &
                     "FROM Services s " &
                     "JOIN Categories c ON c.CategoryId = s.CategoryId " &
@@ -759,7 +803,7 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified, " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified, s.SpecificationFilePath, " &
                     "u.FullName AS ProviderName, u.Email AS ProviderEmail " &
                     "FROM Services s " &
                     "JOIN Categories c ON c.CategoryId = s.CategoryId " &

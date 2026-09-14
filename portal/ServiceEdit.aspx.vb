@@ -12,6 +12,11 @@ Namespace SumyPortal
         Private Const MaxFileSizeBytes As Integer = 3 * 1024 * 1024 ' 3 МБ
         Private Shared ReadOnly AllowedExtensions As String() = {".jpg", ".jpeg", ".png", ".gif"}
 
+        ''' <summary>Специфікація (наступна фіча понад MVP, реалізовано за прямим запитом
+        ''' користувача, 2026-09-14) — рівно 0 або 1 файл, на відміну від фото (до MaxPhotos).</summary>
+        Private Const MaxSpecFileSizeBytes As Integer = 5 * 1024 * 1024 ' 5 МБ
+        Private Shared ReadOnly AllowedSpecExtensions As String() = {".xls", ".xlsx"}
+
         Private ReadOnly Property ServiceIdParam As Integer
             Get
                 Dim id As Integer
@@ -81,7 +86,25 @@ Namespace SumyPortal
                     End If
 
                     BindPhotos(svc.ServiceId)
+                    BindSpecification(svc.SpecificationFilePath)
                 End If
+            End If
+        End Sub
+
+        ''' <summary>Показує ім'я поточного файлу специфікації + чекбокс видалення, і
+        ''' розпарсований перегляд нижче (той самий SpecificationReader, що на
+        ''' ServiceDetails.aspx.vb для споживача). Нічого не показує, якщо файл не
+        ''' завантажено або його не вдалося прочитати (наприклад, пошкоджено вручну на диску).</summary>
+        Private Sub BindSpecification(specPath As String)
+            If String.IsNullOrEmpty(specPath) Then Return
+
+            currentSpecPanel.Visible = True
+            currentSpecFileName.Text = Server.HtmlEncode(Path.GetFileName(specPath))
+
+            Dim html As String = Nothing
+            If SpecificationReader.TryReadAsHtmlTable(Server.MapPath(specPath), html) Then
+                specPreviewLiteral.Text = html
+                specPreviewPanel.Visible = True
             End If
         End Sub
 
@@ -152,6 +175,16 @@ Namespace SumyPortal
             ProcessPhotoDeletions()
             ProcessPhotoUploads(serviceId)
 
+            ' На відміну від ProcessPhotoUploads (мовчки пропускає файл з невірним форматом/
+            ' розміром — фото до 5, помилка не критична), специфікація — рівно 0/1 файл: якщо
+            ' постачальник саме зараз намагався його прикріпити й помилився форматом/розміром,
+            ' Return Nothing зупиняє SaveService ДО btnSaveDraft_Click/btnSubmitModeration_Click
+            ' Response.Redirect — інакше ShowError() усередині ProcessSpecificationUpload
+            ' рендериться в тіло відповіді, яку Redirect одразу відкидає (Response.End),
+            ' і постачальник ніколи не побачить, чому файл не додався. Той самий принцип,
+            ' що вже ServiceId=0-перевірка Update() вище (ShowError + Return Nothing).
+            If Not ProcessSpecificationUpload(serviceId) Then Return Nothing
+
             Return serviceId
         End Function
 
@@ -209,6 +242,70 @@ Namespace SumyPortal
                 If File.Exists(physicalPath) Then File.Delete(physicalPath)
             Catch
                 ' Файл на диску не видалено (напр. вже відсутній) — запис у БД вже прибрано, це не критично.
+            End Try
+        End Sub
+
+        ''' <summary>Специфікація (наступна фіча понад MVP, реалізовано за прямим запитом
+        ''' користувача, 2026-09-14) — рівно 0 або 1 файл: чекбокс видалення обробляється
+        ''' першим (той самий принцип, що ProcessPhotoDeletions), потім нове завантаження
+        ''' (якщо є) заміняє старе — попередній файл прибирається з диска перед записом нового
+        ''' шляху, щоб не лишати сирітські файли в Uploads/Services/{id}/. False — постачальник
+        ''' щойно намагався прикріпити файл і помилився форматом/розміром/файл пошкоджений;
+        ''' викликач (SaveService) зупиняє збереження до Response.Redirect, інакше повідомлення
+        ''' ShowError() ніколи не дійде до браузера (Response.End у Redirect відкидає тіло
+        ''' поточної відповіді).</summary>
+        Private Function ProcessSpecificationUpload(serviceId As Integer) As Boolean
+            Dim currentPath = Service.GetSpecificationFilePath(serviceId, CurrentProvider.UserId)
+
+            If chkRemoveSpecification.Checked AndAlso Not String.IsNullOrEmpty(currentPath) Then
+                DeleteSpecificationFile(currentPath)
+                Service.SetSpecificationFilePath(serviceId, CurrentProvider.UserId, Nothing)
+                currentPath = Nothing
+            End If
+
+            If Not fileSpecification.HasFile Then Return True
+
+            Dim posted = fileSpecification.PostedFile
+            Dim ext = Path.GetExtension(posted.FileName).ToLowerInvariant()
+            If Array.IndexOf(AllowedSpecExtensions, ext) < 0 Then
+                ShowError(Resources.SiteText.ServiceEdit_Specification_Err_Format)
+                Return False
+            End If
+            If posted.ContentLength > MaxSpecFileSizeBytes Then
+                ShowError(Resources.SiteText.ServiceEdit_Specification_Err_TooLarge)
+                Return False
+            End If
+
+            If Not String.IsNullOrEmpty(currentPath) Then DeleteSpecificationFile(currentPath)
+
+            Dim fileName = Guid.NewGuid().ToString("N") & ext
+            Dim relativeDir = "~/Uploads/Services/" & serviceId & "/"
+            Dim physicalDir = Server.MapPath(relativeDir)
+            If Not Directory.Exists(physicalDir) Then Directory.CreateDirectory(physicalDir)
+            Dim relativePath = relativeDir & fileName
+            posted.SaveAs(Path.Combine(physicalDir, fileName))
+
+            ' Швидка перевірка одразу після завантаження — файл насправді пошкоджений/не Excel
+            ' (найменування .xlsx нічого не гарантує). Якщо не читається — не записуємо шлях у
+            ' БД і прибираємо файл з диска, повідомляємо постачальника одразу, а не лишаємо
+            ' його дізнаватись про це лише коли попередній перегляд мовчки не з'явиться.
+            Dim html As String = Nothing
+            If Not SpecificationReader.TryReadAsHtmlTable(Path.Combine(physicalDir, fileName), html) Then
+                DeleteSpecificationFile(relativePath)
+                ShowError(Resources.SiteText.ServiceEdit_Specification_Err_ParseFailed)
+                Return False
+            End If
+
+            Service.SetSpecificationFilePath(serviceId, CurrentProvider.UserId, relativePath)
+            Return True
+        End Function
+
+        Private Sub DeleteSpecificationFile(relativePath As String)
+            Try
+                Dim physicalPath = Server.MapPath(relativePath)
+                If File.Exists(physicalPath) Then File.Delete(physicalPath)
+            Catch
+                ' Файл на диску вже відсутній — не критично (той самий принцип, що DeletePhotoFile).
             End Try
         End Sub
 

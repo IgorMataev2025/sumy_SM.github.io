@@ -26,11 +26,35 @@
             <asp:DropDownList ID="ddlCategory" runat="server" DataTextField="Name" DataValueField="CategoryId" />
         </div>
 
-        <div class="form-row">
-            <label for="<%= txtTitle.ClientID %>"><asp:Literal runat="server" Text="<%$ Resources:SiteText, ServiceEdit_Label_Title %>" /></label>
-            <asp:TextBox ID="txtTitle" runat="server" MaxLength="255" />
-            <asp:RequiredFieldValidator runat="server" ControlToValidate="txtTitle" ErrorMessage="<%$ Resources:SiteText, ServiceEdit_Val_Title %>" Display="Dynamic" CssClass="field-error" />
+        <!-- Специфікація (наступна фіча понад MVP, реалізовано за прямим запитом користувача,
+             2026-09-14) — праворуч від "Назва" (те саме розміщення, що просив користувач),
+             .filter-row той самий клас, що на Catalog.aspx (кілька .form-row в один ряд,
+             wrap на вузьких екранах). Файл .xls/.xlsx, перегляд — окрема панель нижче
+             (specPreviewPanel), рендериться лише після Page_Load з уже наявним файлом. -->
+        <div class="filter-row">
+            <div class="form-row">
+                <label for="<%= txtTitle.ClientID %>"><asp:Literal runat="server" Text="<%$ Resources:SiteText, ServiceEdit_Label_Title %>" /></label>
+                <asp:TextBox ID="txtTitle" runat="server" MaxLength="255" />
+                <asp:RequiredFieldValidator runat="server" ControlToValidate="txtTitle" ErrorMessage="<%$ Resources:SiteText, ServiceEdit_Val_Title %>" Display="Dynamic" CssClass="field-error" />
+            </div>
+
+            <div class="form-row">
+                <label for="<%= fileSpecification.ClientID %>"><asp:Literal runat="server" Text="<%$ Resources:SiteText, ServiceEdit_Label_Specification %>" /></label>
+                <asp:FileUpload ID="fileSpecification" runat="server" />
+                <p class="stub-note"><asp:Literal runat="server" Text="<%$ Resources:SiteText, ServiceEdit_Specification_Hint %>" /></p>
+                <asp:Panel ID="currentSpecPanel" runat="server" Visible="false">
+                    <asp:Literal runat="server" Text="<%$ Resources:SiteText, ServiceEdit_Specification_Current %>" /><asp:Literal ID="currentSpecFileName" runat="server" />
+                    <label><asp:CheckBox ID="chkRemoveSpecification" runat="server" /> <asp:Literal runat="server" Text="<%$ Resources:SiteText, ServiceEdit_Specification_Remove %>" /></label>
+                </asp:Panel>
+            </div>
         </div>
+
+        <asp:Panel ID="specPreviewPanel" runat="server" Visible="false" CssClass="form-row">
+            <label><asp:Literal runat="server" Text="<%$ Resources:SiteText, ServiceEdit_Specification_Preview_Label %>" /></label>
+            <div class="catalog-table-wrap">
+                <asp:Literal ID="specPreviewLiteral" runat="server" />
+            </div>
+        </asp:Panel>
 
         <div class="form-row">
             <label for="<%= txtDescription.ClientID %>"><asp:Literal runat="server" Text="<%$ Resources:SiteText, ServiceEdit_Label_Description %>" /></label>

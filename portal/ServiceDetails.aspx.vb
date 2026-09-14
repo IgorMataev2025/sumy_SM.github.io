@@ -66,6 +66,16 @@ Namespace SumyPortal
             descriptionLiteral.Text = Server.HtmlEncode(svc.Description)
             providerNameLiteral.Text = Server.HtmlEncode(svc.ProviderName)
 
+            ' Специфікація (наступна фіча понад MVP, реалізовано за прямим запитом користувача,
+            ' 2026-09-14) — той самий SpecificationReader, що ServiceEdit.aspx.vb для постачальника.
+            If Not String.IsNullOrEmpty(svc.SpecificationFilePath) Then
+                Dim specHtml As String = Nothing
+                If SpecificationReader.TryReadAsHtmlTable(Server.MapPath(svc.SpecificationFilePath), specHtml) Then
+                    specPreviewLiteral.Text = specHtml
+                    specPreviewPanel.Visible = True
+                End If
+            End If
+
             ' Базове SEO (п.21, наступна фіча понад MVP, 2026-09-12) — унікальний опис
             ' для кожної картки оголошення (найцінніше для SEO, на відміну від
             ' однакового загального опису на решті сторінок); ~155 символів — типова

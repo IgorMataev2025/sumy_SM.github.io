@@ -69,6 +69,7 @@
 
   <data name="Details_BackToCatalog" xml:space="preserve"><value>← До каталогу</value></data>
   <data name="Details_NotFound" xml:space="preserve"><value>Оголошення не знайдено — можливо, його зняли з публікації.</value></data>
+  <data name="Details_SpecificationHeading" xml:space="preserve"><value>Специфікація</value></data>
   <data name="Details_ContactsHeading" xml:space="preserve"><value>Контакти постачальника</value></data>
   <data name="Details_GalleryLink" xml:space="preserve"><value>Галерея постачальника</value></data>
   <data name="Details_PhoneLabel" xml:space="preserve"><value>Телефон:</value></data>
@@ -266,6 +267,14 @@
   <data name="ServiceEdit_ExistingPhotos_Label" xml:space="preserve"><value>Наявні фото</value></data>
   <data name="ServiceEdit_AddPhoto_Prefix" xml:space="preserve"><value>Додати фото (до</value></data>
   <data name="ServiceEdit_AddPhoto_Suffix" xml:space="preserve"><value>шт., jpg/png/gif)</value></data>
+  <data name="ServiceEdit_Label_Specification" xml:space="preserve"><value>Специфікація</value></data>
+  <data name="ServiceEdit_Specification_Hint" xml:space="preserve"><value>Файл .xls або .xlsx — таблицю буде показано і вам, і споживачам</value></data>
+  <data name="ServiceEdit_Specification_Current" xml:space="preserve"><value>Поточний файл: </value></data>
+  <data name="ServiceEdit_Specification_Remove" xml:space="preserve"><value>Видалити</value></data>
+  <data name="ServiceEdit_Specification_Preview_Label" xml:space="preserve"><value>Попередній перегляд специфікації</value></data>
+  <data name="ServiceEdit_Specification_Err_Format" xml:space="preserve"><value>Специфікація має бути файлом .xls або .xlsx.</value></data>
+  <data name="ServiceEdit_Specification_Err_TooLarge" xml:space="preserve"><value>Файл специфікації завеликий (максимум 5 МБ).</value></data>
+  <data name="ServiceEdit_Specification_Err_ParseFailed" xml:space="preserve"><value>Файл завантажено, але не вдалося прочитати його вміст — перевірте формат.</value></data>
   <data name="ServiceEdit_Btn_SaveDraft" xml:space="preserve"><value>Зберегти як чернетку</value></data>
   <data name="ServiceEdit_Btn_SubmitModeration" xml:space="preserve"><value>Зберегти і подати на модерацію</value></data>
   <data name="ServiceEdit_Err_LockedSave" xml:space="preserve"><value>Не вдалося зберегти — оголошення вже на модерації або опубліковано.</value></data>

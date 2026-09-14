@@ -69,6 +69,7 @@
 
   <data name="Details_BackToCatalog" xml:space="preserve"><value>← Back to catalog</value></data>
   <data name="Details_NotFound" xml:space="preserve"><value>Listing not found — it may have been unpublished.</value></data>
+  <data name="Details_SpecificationHeading" xml:space="preserve"><value>Specification</value></data>
   <data name="Details_ContactsHeading" xml:space="preserve"><value>Provider Contacts</value></data>
   <data name="Details_GalleryLink" xml:space="preserve"><value>Provider Gallery</value></data>
   <data name="Details_PhoneLabel" xml:space="preserve"><value>Phone:</value></data>
@@ -266,6 +267,14 @@
   <data name="ServiceEdit_ExistingPhotos_Label" xml:space="preserve"><value>Existing Photos</value></data>
   <data name="ServiceEdit_AddPhoto_Prefix" xml:space="preserve"><value>Add photos (up to</value></data>
   <data name="ServiceEdit_AddPhoto_Suffix" xml:space="preserve"><value>photos, jpg/png/gif)</value></data>
+  <data name="ServiceEdit_Label_Specification" xml:space="preserve"><value>Specification</value></data>
+  <data name="ServiceEdit_Specification_Hint" xml:space="preserve"><value>.xls or .xlsx file — the table will be shown to you and to buyers</value></data>
+  <data name="ServiceEdit_Specification_Current" xml:space="preserve"><value>Current file: </value></data>
+  <data name="ServiceEdit_Specification_Remove" xml:space="preserve"><value>Remove</value></data>
+  <data name="ServiceEdit_Specification_Preview_Label" xml:space="preserve"><value>Specification preview</value></data>
+  <data name="ServiceEdit_Specification_Err_Format" xml:space="preserve"><value>The specification must be an .xls or .xlsx file.</value></data>
+  <data name="ServiceEdit_Specification_Err_TooLarge" xml:space="preserve"><value>The specification file is too large (5 MB max).</value></data>
+  <data name="ServiceEdit_Specification_Err_ParseFailed" xml:space="preserve"><value>The file was uploaded, but its contents could not be read — check the format.</value></data>
   <data name="ServiceEdit_Btn_SaveDraft" xml:space="preserve"><value>Save as Draft</value></data>
   <data name="ServiceEdit_Btn_SubmitModeration" xml:space="preserve"><value>Save and Submit for Moderation</value></data>
   <data name="ServiceEdit_Err_LockedSave" xml:space="preserve"><value>Failed to save — the listing is already under moderation or published.</value></data>

@@ -41,6 +41,18 @@
 
         <p><asp:Literal ID="descriptionLiteral" runat="server" /></p>
 
+        <!-- Специфікація (наступна фіча понад MVP, реалізовано за прямим запитом користувача,
+             2026-09-14) — розпарсений вміст .xls/.xlsx (App_Code/SpecificationReader.vb), не
+             сам файл на завантаження. Видима лише коли є файл І він успішно розпарсився
+             (specPreviewPanel.Visible у ServiceDetails.aspx.vb) — той самий "мовчки сховати
+             замість зламаної сторінки" принцип, що mapPanel/similarPanel вище/нижче. -->
+        <asp:Panel ID="specPreviewPanel" runat="server" Visible="false">
+            <h2><asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_SpecificationHeading %>" /></h2>
+            <div class="catalog-table-wrap">
+                <asp:Literal ID="specPreviewLiteral" runat="server" />
+            </div>
+        </asp:Panel>
+
         <div class="contact-box">
             <h2><asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_ContactsHeading %>" /></h2>
             <p><asp:Literal ID="providerNameLiteral" runat="server" /></p>
