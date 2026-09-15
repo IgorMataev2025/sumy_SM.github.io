@@ -178,6 +178,24 @@ body {
     font-size: 0.9rem;
 }
 
+/* Рядок "чекбокс + підпис" (згода/юрособа тощо) — checkbox і label лежать
+   поруч в один ряд, а не одне під одним стовпцем, як звичайні form-row. */
+.form-row.checkbox-field {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.checkbox-field input[type="checkbox"] {
+    margin-top: 0.15rem;
+    flex-shrink: 0;
+}
+
+.checkbox-field label {
+    font-weight: 400;
+    font-size: 0.95rem;
+}
+
 .form-row input[type="text"],
 .form-row input[type="email"],
 .form-row input[type="password"],

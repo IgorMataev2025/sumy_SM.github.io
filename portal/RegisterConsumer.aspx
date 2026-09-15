@@ -55,7 +55,7 @@
             <asp:DropDownList ID="ddlDistrict" runat="server" />
         </div>
 
-        <div class="form-row">
+        <div class="form-row checkbox-field">
             <asp:CheckBox ID="chkPrivacyConsent" runat="server" />
             <label for="<%= chkPrivacyConsent.ClientID %>">
                 <asp:Literal runat="server" Text="<%$ Resources:SiteText, Register_Consent_Prefix %>" /> <asp:HyperLink runat="server" NavigateUrl="~/PrivacyPolicy.aspx" Target="_blank" Text="<%$ Resources:SiteText, Register_Consent_PrivacyLink %>" />
