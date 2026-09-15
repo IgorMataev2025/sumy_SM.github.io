@@ -652,6 +652,63 @@ Namespace SumyPortal
             End Using
         End Function
 
+        ''' <summary>Один рядок "Столу замовлень" (нова консолідуюча фіча, 2026-09-15) — одна
+        ''' категорія+район+постачальник з кількістю опублікованих оголошень, що відповідають
+        ''' вільнотекстовому запиту USER. Окремий клас, а не Service, бо це вже агрегований
+        ''' рядок (COUNT), а не конкретне оголошення — той самий принцип, що DigestListing.</summary>
+        Public Class OrderBoardRow
+            Public Property CategoryId As Integer
+            Public Property CategoryName As String
+            Public Property District As String
+            Public Property ProviderId As Integer
+            Public Property ProviderName As String
+            Public Property ServiceCount As Integer
+        End Class
+
+        ''' <summary>"Стіл замовлень" (нова консолідуюча фіча, 2026-09-15, ТЗ уточнюється й далі) —
+        ''' USER описує потребу вільним текстом, результат — не картки оголошень (як Catalog.aspx),
+        ''' а зведена картина ринку: скільки постачальників у якій категорії/районі відповідають
+        ''' запиту. Порожній keyword — увесь ринок без фільтра (огляд "що є в принципі"). Лише
+        ''' Approved і лише публічні поля (без Phone) — той самий принцип видимості для
+        ''' анонімного USER, що вже Catalog.aspx (п.12 уточненої моделі ролей).</summary>
+        Public Shared Function SearchOrderBoard(keyword As String) As List(Of OrderBoardRow)
+            Dim result As New List(Of OrderBoardRow)
+            Dim sql As New StringBuilder(
+                "SELECT s.CategoryId, c.Name AS CategoryName, s.District, s.ProviderId, u.FullName AS ProviderName, " &
+                "COUNT(*) AS ServiceCount " &
+                "FROM Services s " &
+                "JOIN Categories c ON c.CategoryId = s.CategoryId " &
+                "JOIN Users u ON u.UserId = s.ProviderId " &
+                "WHERE s.Status = 'Approved' ")
+
+            Dim parameters As New List(Of MySqlParameter)
+            If Not String.IsNullOrWhiteSpace(keyword) Then
+                sql.Append("AND (s.Title LIKE @Keyword OR s.Description LIKE @Keyword) ")
+                parameters.Add(New MySqlParameter("@Keyword", "%" & keyword & "%"))
+            End If
+            sql.Append("GROUP BY s.CategoryId, c.Name, s.District, s.ProviderId, u.FullName ")
+            sql.Append("ORDER BY c.Name, s.District, u.FullName;")
+
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand(sql.ToString(), conn)
+                    cmd.Parameters.AddRange(parameters.ToArray())
+                    Using reader = cmd.ExecuteReader()
+                        While reader.Read()
+                            result.Add(New OrderBoardRow With {
+                                .CategoryId = reader.GetInt32("CategoryId"),
+                                .CategoryName = reader.GetString("CategoryName"),
+                                .District = If(reader.IsDBNull(reader.GetOrdinal("District")), "", reader.GetString("District")),
+                                .ProviderId = reader.GetInt32("ProviderId"),
+                                .ProviderName = reader.GetString("ProviderName"),
+                                .ServiceCount = reader.GetInt32("ServiceCount")
+                            })
+                        End While
+                    End Using
+                End Using
+            End Using
+            Return result
+        End Function
+
         Private Shared Function BuildSearchWhere(categoryId As Integer?, district As String, keyword As String,
                                                   minPrice As Decimal?, maxPrice As Decimal?,
                                                   parameters As List(Of MySqlParameter)) As String

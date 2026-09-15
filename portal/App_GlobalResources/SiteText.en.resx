@@ -16,6 +16,7 @@
   <data name="SiteLogo" xml:space="preserve"><value>Services Portal</value></data>
   <data name="Nav_Home" xml:space="preserve"><value>Home</value></data>
   <data name="Nav_Catalog" xml:space="preserve"><value>Catalog</value></data>
+  <data name="Nav_OrderBoard" xml:space="preserve"><value>Order Board</value></data>
   <data name="Nav_LegalGuide" xml:space="preserve"><value>Legal Guide</value></data>
   <data name="Nav_Donate" xml:space="preserve"><value>Support the Project</value></data>
   <data name="Nav_Login" xml:space="preserve"><value>Log In</value></data>
@@ -64,6 +65,18 @@
   <data name="Catalog_Table_Name" xml:space="preserve"><value>Name</value></data>
   <data name="Catalog_Table_Price" xml:space="preserve"><value>Price</value></data>
   <data name="Catalog_Table_Date" xml:space="preserve"><value>Date</value></data>
+
+  <data name="OrderBoard_Heading" xml:space="preserve"><value>Order Board</value></data>
+  <data name="OrderBoard_Intro" xml:space="preserve"><value>Describe in your own words what service you need — we'll show categories and providers matching your request.</value></data>
+  <data name="OrderBoard_Label_Query" xml:space="preserve"><value>What do you need?</value></data>
+  <data name="OrderBoard_Placeholder" xml:space="preserve"><value>e.g. plumber, computer repair, math tutor…</value></data>
+  <data name="OrderBoard_Btn_Search" xml:space="preserve"><value>Search</value></data>
+  <data name="OrderBoard_Btn_Reset" xml:space="preserve"><value>Show the whole market</value></data>
+  <data name="OrderBoard_Empty" xml:space="preserve"><value>No results found for your request. Try a different wording.</value></data>
+  <data name="OrderBoard_Summary" xml:space="preserve"><value>Found {0} listings from {1} providers in {2} categories.</value></data>
+  <data name="OrderBoard_Column_Provider" xml:space="preserve"><value>Provider</value></data>
+  <data name="OrderBoard_Column_Count" xml:space="preserve"><value>Listings</value></data>
+  <data name="OrderBoard_Column_Profile" xml:space="preserve"><value>Profile →</value></data>
 
   <data name="Price_Negotiable" xml:space="preserve"><value>Price negotiable</value></data>
 

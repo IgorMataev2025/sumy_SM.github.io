@@ -615,6 +615,16 @@ fieldset.form-row {
     font-weight: 600;
 }
 
+/* Стіл замовлень (нова консолідуюча фіча, 2026-09-15) — заголовок категорії між
+   таблицями груп, той самий catalog-table нижче для рядків район/постачальник/кількість. */
+.order-board-category {
+    margin-top: 2rem;
+}
+
+.order-board-category h2 {
+    margin-bottom: 0.5rem;
+}
+
 .service-details {
     max-width: 720px;
 }
