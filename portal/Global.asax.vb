@@ -1,4 +1,5 @@
 Imports System
+Imports System.Collections.Generic
 Imports System.Configuration
 Imports System.Web
 
@@ -19,6 +20,15 @@ Namespace SumyPortal
         ''' перевірки незалежні одна від одної.</summary>
         Private Shared _nextDigestCheckAtUtc As DateTime = DateTime.MinValue
         Private Shared ReadOnly _digestCheckLock As New Object()
+
+        ''' <summary>Моніторинг залогінених користувачів у реальному часі (2026-09-16) —
+        ''' той самий "poor man's cron" принцип, що вище, але per-user, а не один спільний
+        ''' таймер: без цього UPDATE Users SET LastActivityAt писав би в БД на КОЖЕН
+        ''' запит/AJAX-опитування (MessagesPoll.ashx/CallSignal.ashx кожні 3-5с). Скидається
+        ''' при рестарті пулу — гірше за це лише коротка затримка появи в "онлайн", не
+        ''' втрата даних.</summary>
+        Private Shared ReadOnly _lastActivityWriteUtc As New Dictionary(Of String, DateTime)(StringComparer.OrdinalIgnoreCase)
+        Private Shared ReadOnly _activityLock As New Object()
 
         Sub Application_Start(sender As Object, e As EventArgs)
             ' Ініціалізація на старті застосунку (кеші довідників тощо — пізніше).
@@ -107,6 +117,33 @@ Namespace SumyPortal
 
             Dim baseUrl = Request.Url.GetLeftPart(UriPartial.Authority)
             DigestSender.SendDueDigests(days, baseUrl)
+        End Sub
+
+        ''' <summary>Моніторинг залогінених користувачів у реальному часі (2026-09-16) —
+        ''' PostAuthenticateRequest (не BeginRequest, як фікс голого домену вище) обрано
+        ''' свідомо: це окрема стадія конвеєра, що виконується строго ПІСЛЯ
+        ''' FormsAuthenticationModule, тож User.Identity тут уже гарантовано встановлений
+        ''' з cookie (на BeginRequest автентифікація ще не відбулась).</summary>
+        Sub Application_PostAuthenticateRequest(sender As Object, e As EventArgs)
+            Dim user = HttpContext.Current.User
+            If user Is Nothing OrElse user.Identity Is Nothing OrElse Not user.Identity.IsAuthenticated Then Return
+
+            TrackActivityOnce(user.Identity.Name)
+        End Sub
+
+        Private Sub TrackActivityOnce(email As String)
+            Dim throttleSeconds As Integer
+            If Not Integer.TryParse(ConfigurationManager.AppSettings("ActivityWriteThrottleSeconds"), throttleSeconds) Then throttleSeconds = 60
+
+            SyncLock _activityLock
+                Dim lastWrite As DateTime
+                If _lastActivityWriteUtc.TryGetValue(email, lastWrite) AndAlso DateTime.UtcNow < lastWrite.AddSeconds(throttleSeconds) Then
+                    Return ' інший запит цього ж користувача вже оновив LastActivityAt нещодавно
+                End If
+                _lastActivityWriteUtc(email) = DateTime.UtcNow
+            End SyncLock
+
+            UserAccount.TouchLastActivity(email)
         End Sub
 
         Sub Session_Start(sender As Object, e As EventArgs)

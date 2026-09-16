@@ -10,7 +10,8 @@
         <a href="~/AdminServices.aspx" runat="server">Усі оголошення</a> ·
         <a href="~/AdminReports.aspx" runat="server">Скарги</a> ·
         <a href="~/AdminCategories.aspx" runat="server">Категорії</a> ·
-        <a href="~/AdminUsers.aspx" runat="server">Користувачі</a>
+        <a href="~/AdminUsers.aspx" runat="server">Користувачі</a> ·
+        <a href="~/AdminOnlineUsers.aspx" runat="server">Онлайн</a>
     </p>
 
     <asp:Panel ID="emptyPanel" runat="server" Visible="false" CssClass="stub-note">

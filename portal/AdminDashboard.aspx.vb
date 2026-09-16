@@ -1,4 +1,5 @@
 Imports System
+Imports System.Configuration
 
 Namespace SumyPortal
 
@@ -31,6 +32,13 @@ Namespace SumyPortal
 
                 Dim logCount = AdminActionLog.GetRecent().Count
                 logCountLiteral.Text = If(logCount = 0, "Журнал порожній.", logCount.ToString() & " записів (останні дії адміністраторів).")
+
+                Dim onlineMinutes As Integer
+                If Not Integer.TryParse(ConfigurationManager.AppSettings("OnlineThresholdMinutes"), onlineMinutes) Then onlineMinutes = 5
+                Dim onlineCount = UserAccount.GetOnlineUsers(onlineMinutes).Count
+                onlineCountLiteral.Text = If(onlineCount = 0,
+                    "Онлайн зараз немає нікого.",
+                    onlineCount.ToString() & " користувач(ів) онлайн зараз.")
             End If
         End Sub
 

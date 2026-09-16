@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS Users (
     PasswordResetToken     VARCHAR(100) NULL,
     PasswordResetExpires   DATETIME NULL,
     CreatedAt       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    LastActivityAt  DATETIME NULL, -- моніторинг залогінених онлайн (2026-09-16), migration_019_last_activity.sql
     INDEX IX_Users_EmailConfirmationToken (EmailConfirmationToken),
     INDEX IX_Users_PasswordResetToken (PasswordResetToken)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

@@ -10,7 +10,8 @@
         <a href="~/AdminServices.aspx" runat="server">Усі оголошення</a> ·
         <a href="~/AdminCategories.aspx" runat="server">Категорії</a> ·
         <a href="~/AdminUsers.aspx" runat="server">Користувачі</a> ·
-        <a href="~/AdminLog.aspx" runat="server">Журнал дій</a>
+        <a href="~/AdminLog.aspx" runat="server">Журнал дій</a> ·
+        <a href="~/AdminOnlineUsers.aspx" runat="server">Онлайн</a>
     </p>
     <p class="stub-note">
         Скарга — лише сигнал для адміна, не автоматична модерація: статус

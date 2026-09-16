@@ -10,7 +10,8 @@
         <a href="~/AdminServices.aspx" runat="server">Усі оголошення</a> ·
         <a href="~/AdminReports.aspx" runat="server">Скарги</a> ·
         <a href="~/AdminCategories.aspx" runat="server">Категорії</a> ·
-        <a href="~/AdminLog.aspx" runat="server">Журнал дій</a>
+        <a href="~/AdminLog.aspx" runat="server">Журнал дій</a> ·
+        <a href="~/AdminOnlineUsers.aspx" runat="server">Онлайн</a>
     </p>
 
     <asp:Label ID="infoLabel" runat="server" CssClass="stub-note" Visible="false" />

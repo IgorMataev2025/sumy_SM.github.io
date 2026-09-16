@@ -34,5 +34,9 @@
             <h3>Журнал дій</h3>
             <p><asp:Literal ID="logCountLiteral" runat="server" /></p>
         </a>
+        <a class="category-card" href="~/AdminOnlineUsers.aspx" runat="server">
+            <h3>Онлайн зараз</h3>
+            <p><asp:Literal ID="onlineCountLiteral" runat="server" /></p>
+        </a>
     </div>
 </asp:Content>

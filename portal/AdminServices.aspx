@@ -10,7 +10,8 @@
         <a href="~/AdminReports.aspx" runat="server">Скарги</a> ·
         <a href="~/AdminCategories.aspx" runat="server">Категорії</a> ·
         <a href="~/AdminUsers.aspx" runat="server">Користувачі</a> ·
-        <a href="~/AdminLog.aspx" runat="server">Журнал дій</a>
+        <a href="~/AdminLog.aspx" runat="server">Журнал дій</a> ·
+        <a href="~/AdminOnlineUsers.aspx" runat="server">Онлайн</a>
     </p>
     <p class="stub-note">
         Прямий CRUD адміністратора над будь-яким оголошенням (п.12 уточненої

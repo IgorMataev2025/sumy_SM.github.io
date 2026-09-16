@@ -34,9 +34,15 @@ Namespace SumyPortal
         ''' (тоді відлік іде від CreatedAt, DigestSender.vb).</summary>
         Public Property LastDigestSentAt As DateTime?
 
+        ''' <summary>Моніторинг залогінених користувачів у реальному часі (2026-09-16) —
+        ''' оновлюється Global.asax: Application_PostAuthenticateRequest на кожен
+        ''' автентифікований запит (throttled, TouchLastActivity). Nothing — користувач
+        ''' іще жодного разу не заходив після додавання цієї фічі.</summary>
+        Public Property LastActivityAt As DateTime?
+
         Private Const SelectColumns As String =
             "UserId, Email, FullName, Phone, UserType, IsLegalEntity, " &
-            "CompanyName, EDRPOU, District, IsActive, IsAdmin, EmailConfirmed, CreatedAt, LastDigestSentAt "
+            "CompanyName, EDRPOU, District, IsActive, IsAdmin, EmailConfirmed, CreatedAt, LastDigestSentAt, LastActivityAt "
 
         Private Shared Function Map(reader As MySqlDataReader) As UserAccount
             Return New UserAccount With {
@@ -53,7 +59,8 @@ Namespace SumyPortal
                 .IsAdmin = reader.GetBoolean("IsAdmin"),
                 .EmailConfirmed = reader.GetBoolean("EmailConfirmed"),
                 .CreatedAt = reader.GetDateTime("CreatedAt"),
-                .LastDigestSentAt = If(reader.IsDBNull(reader.GetOrdinal("LastDigestSentAt")), CType(Nothing, DateTime?), reader.GetDateTime("LastDigestSentAt"))
+                .LastDigestSentAt = If(reader.IsDBNull(reader.GetOrdinal("LastDigestSentAt")), CType(Nothing, DateTime?), reader.GetDateTime("LastDigestSentAt")),
+                .LastActivityAt = If(reader.IsDBNull(reader.GetOrdinal("LastActivityAt")), CType(Nothing, DateTime?), reader.GetDateTime("LastActivityAt"))
             }
         End Function
 
@@ -132,6 +139,41 @@ Namespace SumyPortal
                 End Using
             End Using
         End Sub
+
+        ''' <summary>Моніторинг залогінених користувачів у реальному часі (2026-09-16) —
+        ''' викликається з Global.asax на кожен автентифікований запит, уже throttled там
+        ''' у пам'яті (не частіше ActivityWriteThrottleSeconds на користувача), тому тут
+        ''' просто UPDATE за email без попереднього SELECT — той самий принцип, що
+        ''' MarkDigestSent вище (пише сам факт, не читає обліковий запис заново).</summary>
+        Public Shared Sub TouchLastActivity(email As String)
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand("UPDATE Users SET LastActivityAt = UTC_TIMESTAMP() WHERE Email = @Email;", conn)
+                    cmd.Parameters.AddWithValue("@Email", email)
+                    cmd.ExecuteNonQuery()
+                End Using
+            End Using
+        End Sub
+
+        ''' <summary>Моніторинг залогінених користувачів у реальному часі (2026-09-16) —
+        ''' "онлайн" означає LastActivityAt не старіший за minutes хвилин
+        ''' (AdminOnlineUsers.aspx, Web.config: OnlineThresholdMinutes).</summary>
+        Public Shared Function GetOnlineUsers(minutes As Integer) As List(Of UserAccount)
+            Dim result As New List(Of UserAccount)
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand(
+                    "SELECT " & SelectColumns & "FROM Users " &
+                    "WHERE LastActivityAt >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL @Minutes MINUTE) " &
+                    "ORDER BY LastActivityAt DESC;", conn)
+                    cmd.Parameters.AddWithValue("@Minutes", minutes)
+                    Using reader = cmd.ExecuteReader()
+                        While reader.Read()
+                            result.Add(Map(reader))
+                        End While
+                    End Using
+                End Using
+            End Using
+            Return result
+        End Function
 
         ''' <summary>Блокування/розблокування акаунта адміністратором (ТЗ, розділ 4.3). Адмінів блокувати не можна.</summary>
         Public Shared Function SetActive(userId As Integer, isActive As Boolean) As Boolean
