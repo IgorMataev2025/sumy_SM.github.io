@@ -47,6 +47,12 @@
                                     Visible='<%#: Not CType(Container.DataItem, SumyPortal.UserAccount).IsAdmin %>'>
                                     · <%#: If(CType(Container.DataItem, SumyPortal.UserAccount).IsActive, "Заблокувати", "Розблокувати") %>
                                 </asp:LinkButton>
+                                <asp:LinkButton runat="server" CommandName="Delete" CausesValidation="false"
+                                    CommandArgument='<%#: CType(Container.DataItem, SumyPortal.UserAccount).UserId %>'
+                                    Visible='<%#: Not CType(Container.DataItem, SumyPortal.UserAccount).IsAdmin %>'
+                                    OnClientClick="return confirm('Видалити цього користувача та всі його оголошення назавжди? Дію не можна скасувати.');">
+                                    · Видалити
+                                </asp:LinkButton>
                             </td>
                         </tr>
                     </ItemTemplate>

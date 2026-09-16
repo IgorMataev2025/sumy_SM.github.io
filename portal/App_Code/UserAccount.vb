@@ -187,6 +187,33 @@ Namespace SumyPortal
             End Using
         End Function
 
+        ''' <summary>Остаточне видалення акаунта адміністратором (за прямим запитом користувача,
+        ''' 2026-09-16, AdminUsers.aspx) — на відміну від DeleteAccount (самовидалення,
+        ''' знеособлення) тут рядки прибираються фізично. Спершу власні оголошення (каскадно
+        ''' прибирає ServicePhotos/ModerationLog/Favorites/Reviews/ServiceReports/
+        ''' VideoCallSignals/MessageReadStatus/Messages цих оголошень, ON DELETE CASCADE,
+        ''' schema.sql), потім сам обліковий запис (каскадно прибирає Favorites/Reviews/
+        ''' VideoCallSignals/MessageReadStatus/Messages/ProviderGalleryPhotos, де цей
+        ''' користувач — споживач/відправник/учасник, а не власник оголошення). Адмінів
+        ''' видалити не можна (той самий захист, що SetActive) — інакше впёрлись би в
+        ''' FK без каскаду (Services.ApprovedBy/ModerationLog.AdminId/AdminActionLog.AdminId/
+        ''' ServiceReports.ReviewedBy посилаються на адміна, що діяв, без ON DELETE CASCADE).
+        ''' Файли на диску (фото оголошень/специфікації/галерея) видаляє сторінка окремо —
+        ''' той самий принцип, що AdminServices.aspx.vb: AdminDelete.</summary>
+        Public Shared Function AdminDeleteUser(userId As Integer) As Boolean
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand("DELETE FROM Services WHERE ProviderId = @UserId;", conn)
+                    cmd.Parameters.AddWithValue("@UserId", userId)
+                    cmd.ExecuteNonQuery()
+                End Using
+
+                Using cmd As New MySqlCommand("DELETE FROM Users WHERE UserId = @UserId AND IsAdmin = FALSE;", conn)
+                    cmd.Parameters.AddWithValue("@UserId", userId)
+                    Return cmd.ExecuteNonQuery() > 0
+                End Using
+            End Using
+        End Function
+
         Public Shared Function EmailExists(email As String) As Boolean
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand("SELECT COUNT(*) FROM Users WHERE Email = @Email;", conn)
