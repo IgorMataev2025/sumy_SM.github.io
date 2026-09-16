@@ -668,9 +668,12 @@ Namespace SumyPortal
         ''' <summary>"Стіл замовлень" (нова консолідуюча фіча, 2026-09-15, ТЗ уточнюється й далі) —
         ''' USER описує потребу вільним текстом, результат — не картки оголошень (як Catalog.aspx),
         ''' а зведена картина ринку: скільки постачальників у якій категорії/районі відповідають
-        ''' запиту. Порожній keyword — увесь ринок без фільтра (огляд "що є в принципі"). Лише
-        ''' Approved і лише публічні поля (без Phone) — той самий принцип видимості для
-        ''' анонімного USER, що вже Catalog.aspx (п.12 уточненої моделі ролей).</summary>
+        ''' запиту. Порожній keyword — увесь ринок без фільтра (огляд "що є в принципі"). Контекстний
+        ''' пошук (2026-09-16): keyword звіряється не лише з Title/Description оголошення, а й із
+        ''' назвою категорії, районом, ПІБ і назвою компанії постачальника — щоб запит на кшталт
+        ''' "Роменський" чи "ФОП Іваненко" теж знаходив відповідні рядки. Лише Approved і лише
+        ''' публічні поля (без Phone) — той самий принцип видимості для анонімного USER, що вже
+        ''' Catalog.aspx (п.12 уточненої моделі ролей).</summary>
         Public Shared Function SearchOrderBoard(keyword As String) As List(Of OrderBoardRow)
             Dim result As New List(Of OrderBoardRow)
             Dim sql As New StringBuilder(
@@ -683,7 +686,8 @@ Namespace SumyPortal
 
             Dim parameters As New List(Of MySqlParameter)
             If Not String.IsNullOrWhiteSpace(keyword) Then
-                sql.Append("AND (s.Title LIKE @Keyword OR s.Description LIKE @Keyword) ")
+                sql.Append("AND (s.Title LIKE @Keyword OR s.Description LIKE @Keyword OR c.Name LIKE @Keyword " &
+                            "OR s.District LIKE @Keyword OR u.FullName LIKE @Keyword OR u.CompanyName LIKE @Keyword) ")
                 parameters.Add(New MySqlParameter("@Keyword", "%" & keyword & "%"))
             End If
             sql.Append("GROUP BY s.CategoryId, c.Name, s.District, s.ProviderId, u.FullName ")
