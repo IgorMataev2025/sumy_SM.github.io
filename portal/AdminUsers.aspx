@@ -41,10 +41,11 @@
                             <td><%#: If(CType(Container.DataItem, SumyPortal.UserAccount).IsActive, "Активний", "Заблокований") %></td>
                             <td><%#: CType(Container.DataItem, SumyPortal.UserAccount).CreatedAt.ToString("dd.MM.yyyy") %></td>
                             <td>
+                                <a href='<%#: "AdminUserEdit.aspx?id=" & CType(Container.DataItem, SumyPortal.UserAccount).UserId %>'>Редагувати</a>
                                 <asp:LinkButton runat="server" CommandName="ToggleActive"
                                     CommandArgument='<%#: CType(Container.DataItem, SumyPortal.UserAccount).UserId %>'
                                     Visible='<%#: Not CType(Container.DataItem, SumyPortal.UserAccount).IsAdmin %>'>
-                                    <%#: If(CType(Container.DataItem, SumyPortal.UserAccount).IsActive, "Заблокувати", "Розблокувати") %>
+                                    · <%#: If(CType(Container.DataItem, SumyPortal.UserAccount).IsActive, "Заблокувати", "Розблокувати") %>
                                 </asp:LinkButton>
                             </td>
                         </tr>
