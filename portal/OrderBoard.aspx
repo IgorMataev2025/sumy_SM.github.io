@@ -1,4 +1,5 @@
 <%@ Page Title="" Language="VB" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="OrderBoard.aspx.vb" Inherits="SumyPortal.OrderBoard" %>
+<%@ MasterType VirtualPath="~/Site.master" %>
 <asp:Content ID="TitleContent" ContentPlaceHolderID="TitleContent" runat="server">
     Стіл замовлень — Портал послуг Safina
 </asp:Content>

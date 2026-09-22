@@ -1,4 +1,5 @@
 <%@ Page Title="" Language="VB" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="Donate.aspx.vb" Inherits="SumyPortal.Donate" %>
+<%@ MasterType VirtualPath="~/Site.master" %>
 <asp:Content ID="TitleContent" ContentPlaceHolderID="TitleContent" runat="server">
     Підтримати проєкт — Портал послуг Safina
 </asp:Content>

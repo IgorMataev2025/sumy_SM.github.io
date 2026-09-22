@@ -15,6 +15,8 @@ Namespace SumyPortal
         End Sub
 
         Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
+            Master.OgTitle = "Головна — Портал послуг Safina"
+
             If Not IsPostBack Then
                 Try
                     rptCategories.DataSource = ServiceCategory.GetActiveCategories()

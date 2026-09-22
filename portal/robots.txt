@@ -8,6 +8,7 @@ Disallow: /ForgotPassword.aspx
 Disallow: /ResetPassword.aspx
 Disallow: /ConfirmEmail.aspx
 Disallow: /Profile.aspx
+Allow: /Profile.aspx?providerId=
 Disallow: /MyServices.aspx
 Disallow: /ServiceEdit.aspx
 Disallow: /Messages.aspx

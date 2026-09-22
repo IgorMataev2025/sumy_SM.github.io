@@ -12,6 +12,12 @@ Namespace SumyPortal
         Protected Property LatitudeForScript As String
         Protected Property LongitudeForScript As String
 
+        ''' <summary>Alt-текст для фото галереї (розширене SEO, 2026-09-22) — rptPhotos
+        ''' прив'язаний до ServicePhoto (без Title), тому назва оголошення виставляється тут
+        ''' і читається в розмітці як звичайна властивість сторінки всередині `&lt;%#: %&gt;`
+        ''' (databind-вирази виконуються в контексті Page, не лише Container.DataItem).</summary>
+        Protected Property GalleryAltText As String
+
         ''' <summary>Відповідь постачальника на відгук (п.19, наступна фіча понад MVP, 2026-09-12) —
         ''' чи показувати форму відповіді під кожним відгуком у rptReviews_ItemDataBound.
         ''' Обчислюється в LoadReviews лише при не-постбек завантаженні (той самий виклик,
@@ -54,6 +60,7 @@ Namespace SumyPortal
             ' (той самий прийом, що вже в ServiceContract.aspx.vb).
             titleLiteral.Text = Server.HtmlEncode(svc.Title)
             headingLiteral.Text = Server.HtmlEncode(svc.Title)
+            GalleryAltText = svc.Title
             categoryLiteral.Text = Server.HtmlEncode(svc.CategoryName)
             verifiedBadge.Visible = svc.IsVerified
 
@@ -83,6 +90,7 @@ Namespace SumyPortal
             Master.MetaDescription = Server.HtmlEncode(If(String.IsNullOrWhiteSpace(svc.Description),
                 svc.Title & " — " & svc.CategoryName & " у Сумах та області. Портал послуг Safina.",
                 Truncate(svc.Description, 155)))
+            Master.OgTitle = Server.HtmlEncode(svc.Title) & " — Портал послуг Safina"
             ' Публічна галерея на акаунті постачальника (Profile.aspx?providerId=X) —
             ' доступна будь-кому, включно з анонімами (постановка робочої тестової версії, 2026-09-12).
             providerGalleryLink.NavigateUrl = ResolveUrl("~/Profile.aspx?providerId=" & svc.ProviderId)
@@ -141,6 +149,7 @@ Namespace SumyPortal
             _isReviewsOwnerView = (currentUser IsNot Nothing AndAlso currentUser.UserId = svc.ProviderId)
             LoadReviews(svc.ServiceId)
             LoadSimilar(svc)
+            RenderServiceJsonLd(svc)
 
             ' Форма відгуку — будь-який залогінений, крім самого власника оголошення
             ' (п.9 уточненої постановки), і лише якщо ще не залишав відгук на нього.
@@ -226,6 +235,47 @@ Namespace SumyPortal
 
             Response.Redirect(Request.RawUrl, True)
         End Sub
+
+        ''' <summary>JSON-LD Service (розширене SEO/GEO, 2026-09-22) — структуровані дані для
+        ''' Google Rich Results і LLM-краулерів. aggregateRating додається лише коли є хоч
+        ''' один відгук (схема.org вимагає ratingCount &gt; 0 для валідного aggregateRating),
+        ''' offers — лише коли ціна вказана (не "за домовленістю").</summary>
+        Private Sub RenderServiceJsonLd(svc As Service)
+            Dim baseUrl = Request.Url.GetLeftPart(UriPartial.Authority)
+            Dim pageUrl = baseUrl & ResolveUrl("~/ServiceDetails.aspx?id=" & svc.ServiceId)
+
+            Dim json As New System.Text.StringBuilder()
+            json.Append("{""@context"":""https://schema.org"",""@type"":""Service"",")
+            json.Append("""name"":""").Append(JsonEscape(svc.Title)).Append(""",")
+            json.Append("""description"":""").Append(JsonEscape(If(svc.Description, svc.Title))).Append(""",")
+            json.Append("""url"":""").Append(JsonEscape(pageUrl)).Append(""",")
+            json.Append("""areaServed"":{""@type"":""City"",""name"":""").Append(JsonEscape(If(String.IsNullOrEmpty(svc.District), "Суми", svc.District))).Append("""},")
+            json.Append("""serviceType"":""").Append(JsonEscape(svc.CategoryName)).Append(""",")
+            json.Append("""provider"":{""@type"":""Organization"",""name"":""").Append(JsonEscape(svc.ProviderName)).Append("""}")
+
+            If svc.Price.HasValue Then
+                json.Append(",""offers"":{""@type"":""Offer"",""price"":""").Append(svc.Price.Value.ToString(CultureInfo.InvariantCulture)).Append(""",""priceCurrency"":""UAH""}")
+            End If
+
+            Dim average As Decimal? = Nothing
+            Dim reviewCount As Integer = 0
+            Review.GetSummary(svc.ServiceId, average, reviewCount)
+            If reviewCount > 0 AndAlso average.HasValue Then
+                json.Append(",""aggregateRating"":{""@type"":""AggregateRating"",""ratingValue"":""").
+                    Append(average.Value.ToString("0.0", CultureInfo.InvariantCulture)).
+                    Append(""",""reviewCount"":""").Append(reviewCount).Append("""}")
+            End If
+
+            json.Append("}")
+            serviceJsonLdLiteral.Text = "<script type=""application/ld+json"">" & json.ToString() & "</script>"
+        End Sub
+
+        ''' <summary>Мінімальне власне екранування для JSON-значень — той самий прийом, що
+        ''' Catalog.aspx.vb/Site.master.vb.</summary>
+        Private Function JsonEscape(s As String) As String
+            If s Is Nothing Then Return String.Empty
+            Return s.Replace("\", "\\").Replace("""", "\""").Replace(vbCr, "").Replace(vbLf, "\n").Replace("</", "<\/")
+        End Function
 
         ''' <summary>Обрізає текст до заданої довжини на межі слова (не посеред слова) —
         ''' для meta description (п.21, наступна фіча понад MVP, 2026-09-12). Якщо текст і

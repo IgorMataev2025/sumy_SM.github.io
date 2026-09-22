@@ -1,4 +1,5 @@
 <%@ Page Title="" Language="VB" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="PrivacyPolicy.aspx.vb" Inherits="SumyPortal.PrivacyPolicy" %>
+<%@ MasterType VirtualPath="~/Site.master" %>
 <asp:Content ID="TitleContent" ContentPlaceHolderID="TitleContent" runat="server">
     Політика конфіденційності — Портал послуг Safina
 </asp:Content>

@@ -31,11 +31,21 @@ Namespace SumyPortal
 
             AppendUrl(sb, baseUrl & "/Default.aspx")
             AppendUrl(sb, baseUrl & "/Catalog.aspx")
+            AppendUrl(sb, baseUrl & "/OrderBoard.aspx")
             AppendUrl(sb, baseUrl & "/LegalGuide.aspx")
+            AppendUrl(sb, baseUrl & "/PrivacyPolicy.aspx")
+            AppendUrl(sb, baseUrl & "/Donate.aspx")
 
             ' Лише опубліковані оголошення — той самий фільтр, що каталог/картка.
             For Each item In Service.GetApprovedForSitemap()
                 AppendUrl(sb, baseUrl & "/ServiceDetails.aspx?id=" & item.Key, item.Value)
+            Next
+
+            ' Публічні профілі постачальників (2026-09-22) — лише ті, хто має хоча б одне
+            ' Approved-оголошення (robots.txt відкриває саме цей шаблон URL, не Profile.aspx
+            ' загалом — власний кабінет лишається закритим для індексації).
+            For Each providerId In Service.GetApprovedProviderIdsForSitemap()
+                AppendUrl(sb, baseUrl & "/Profile.aspx?providerId=" & providerId)
             Next
 
             sb.Append("</urlset>")

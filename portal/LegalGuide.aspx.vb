@@ -14,6 +14,7 @@ Namespace SumyPortal
         Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
             Master.MetaDescription = "Юридична довідка порталу Safina — права споживача, " &
                 "вимоги до постачальника (ФОП/юрособа), порядок вирішення спорів."
+            Master.OgTitle = "Юридична довідка — Портал послуг Safina"
         End Sub
 
     End Class

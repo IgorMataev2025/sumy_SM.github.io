@@ -14,6 +14,25 @@
     <meta name="description" runat="server" id="metaDescriptionTag"
         content="Портал послуг Safina — оголошення побутових послуг, медицини, освіти та комунальних послуг у Сумах та області." />
     <title><asp:ContentPlaceHolder ID="TitleContent" runat="server">Портал послуг Safina</asp:ContentPlaceHolder></title>
+    <!-- Розширене SEO/GEO (2026-09-22) — canonical + Open Graph/Twitter Card. Canonical
+         завжди самопосилання на поточний запит (Site.master.vb) — безпечний дефолт без
+         окремої логіки на сторінку; Og*/Twitter дублюють title/description того самого
+         запиту (не нова праця для кожної сторінки), OgTitle — той самий патерн властивості,
+         що вже MetaDescription (п.21), із дефолтом нижче в атрибуті. -->
+    <link rel="canonical" runat="server" id="canonicalTag" href="" />
+    <meta property="og:site_name" content="Портал послуг Safina" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" runat="server" id="ogLocaleTag" content="uk_UA" />
+    <meta property="og:title" runat="server" id="ogTitleTag" content="Портал послуг Safina" />
+    <meta property="og:description" runat="server" id="ogDescriptionTag" content="" />
+    <meta property="og:url" runat="server" id="ogUrlTag" content="" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" runat="server" id="twitterTitleTag" content="Портал послуг Safina" />
+    <meta name="twitter:description" runat="server" id="twitterDescriptionTag" content="" />
+    <!-- JSON-LD Organization/WebSite (GEO — структуровані дані для Google Rich Results і
+         LLM-краулерів, що читають schema.org напряму) — статичний опис порталу, домен
+         підставляється з запиту (Site.master.vb), той самий принцип, що вже Sitemap.vb. -->
+    <asp:Literal ID="orgJsonLdLiteral" runat="server" />
     <link rel="stylesheet" href="~/css/site.css" runat="server" id="cssLink" />
     <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
 </head>

@@ -26,6 +26,13 @@ Namespace SumyPortal
         End Class
 
         Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
+            ' Розширене SEO (2026-09-22) — той самий принцип, що Catalog.aspx.vb (п.21):
+            ' на кожному запиті, не лише Not IsPostBack, бо пошук лишається тим самим
+            ' документом для пошуковика.
+            Master.MetaDescription = "Стіл замовлень порталу Safina — зведена картина ринку " &
+                "послуг у Сумах та області: категорія, район, постачальник за вашим запитом."
+            Master.OgTitle = "Стіл замовлень — Портал послуг Safina"
+
             If Not IsPostBack Then
                 BindResults()
             End If

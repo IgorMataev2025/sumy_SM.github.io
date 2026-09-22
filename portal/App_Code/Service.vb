@@ -507,6 +507,24 @@ Namespace SumyPortal
             Return result
         End Function
 
+        ''' <summary>Розширене SEO (2026-09-22) — публічні профілі постачальників
+        ''' (Profile.aspx?providerId=X, п.13) для sitemap.xml: лише ті, хто має хоча б одне
+        ''' Approved-оголошення (інакше сторінка публічна, але порожня — не варта індексації).
+        ''' DISTINCT, той самий вузький принцип, що GetApprovedForSitemap вище.</summary>
+        Public Shared Function GetApprovedProviderIdsForSitemap() As List(Of Integer)
+            Dim result As New List(Of Integer)
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand("SELECT DISTINCT ProviderId FROM Services WHERE Status = 'Approved';", conn)
+                    Using reader = cmd.ExecuteReader()
+                        While reader.Read()
+                            result.Add(reader.GetInt32("ProviderId"))
+                        End While
+                    End Using
+                End Using
+            End Using
+            Return result
+        End Function
+
         ''' <summary>Автопідказки в пошуку (п.26, наступна фіча понад MVP, 2026-09-12) —
         ''' до limit унікальних назв опублікованих оголошень (за алфавітом) для HTML5
         ''' &lt;datalist&gt; на полі "Ключове слово" (Catalog.aspx) — нативний браузерний

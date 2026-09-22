@@ -10,6 +10,13 @@ Namespace SumyPortal
     Public Class PrivacyPolicy
         Inherits System.Web.UI.Page
 
+        ''' <summary>Розширене SEO (2026-09-22), той самий принцип, що LegalGuide.aspx.vb (п.21).</summary>
+        Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
+            Master.MetaDescription = "Політика конфіденційності порталу Safina — які дані " &
+                "збираються, з якою метою і як захищаються персональні дані користувачів."
+            Master.OgTitle = "Політика конфіденційності — Портал послуг Safina"
+        End Sub
+
     End Class
 
 End Namespace

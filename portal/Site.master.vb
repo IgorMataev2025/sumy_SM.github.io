@@ -1,4 +1,5 @@
 Imports System
+Imports System.Globalization
 Imports System.IO
 
 Namespace SumyPortal
@@ -25,6 +26,23 @@ Namespace SumyPortal
             End Set
         End Property
 
+        ''' <summary>Розширене SEO/GEO (2026-09-22) — той самий патерн, що MetaDescription
+        ''' вище: сторінка задає свій og:title/twitter:title через
+        ''' CType(Master, SiteMaster).OgTitle = "..." у власному Page_Load (виконується ДО
+        ''' Page_Load master-сторінки — Load дочірніх контролів, включно з MasterPage,
+        ''' спрацьовує вже після Load самої Page — тому значення встигає застосуватись до
+        ''' фінального рендеру без додаткової синхронізації). За замовчуванням лишається
+        ''' назва порталу, задана прямо в розмітці.</summary>
+        Public Property OgTitle As String
+            Get
+                Return ogTitleTag.Content
+            End Get
+            Set(value As String)
+                ogTitleTag.Content = value
+                twitterTitleTag.Content = value
+            End Set
+        End Property
+
         ''' <summary>Кеш-бастинг для site.css (2026-09-14) — IIS роздає статику з
         ''' Cache-Control: max-age=31536000 (рік), тому вже відкриті у відвідувача
         ''' версії CSS/JS кешуються браузером надовго; кожен наступний CSS-фікс без
@@ -39,6 +57,29 @@ Namespace SumyPortal
             Catch
             End Try
             cssLink.Href = ResolveUrl("~/css/site.css") & "?v=" & cssVersion
+
+            ' Розширене SEO/GEO (2026-09-22) — canonical/og:url завжди самопосилання на
+            ' поточний абсолютний запит (домен береться з Request.Url, той самий принцип,
+            ' що вже Sitemap.vb — коректно і на *.etempurl.com, і після купівлі домену без
+            ' змін коду). og:description/twitter:description дзеркалять metaDescriptionTag —
+            ' на момент виконання цього Page_Load (дочірній контрол MasterPage) власний
+            ' Page_Load контентної сторінки вже відпрацював і встиг застосувати свій
+            ' override через властивість MetaDescription вище.
+            Dim currentUrl = Request.Url.AbsoluteUri
+            canonicalTag.HRef = currentUrl
+            ogUrlTag.Content = currentUrl
+            ogDescriptionTag.Content = metaDescriptionTag.Content
+            twitterDescriptionTag.Content = metaDescriptionTag.Content
+            ogLocaleTag.Content = If(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName = LocalizationHelper.EnglishCulture,
+                "en_US", "uk_UA")
+
+            ' JSON-LD Organization/WebSite (GEO) — статичний опис порталу, домен з запиту.
+            Dim baseUrl = Request.Url.GetLeftPart(UriPartial.Authority)
+            Dim orgJson = "{""@context"":""https://schema.org"",""@type"":""Organization"",""name"":""Портал послуг Safina""," &
+                """url"":""" & JsonEscape(baseUrl) & "/""," &
+                """description"":""Портал послуг для мешканців Сум та області""," &
+                """areaServed"":{""@type"":""City"",""name"":""Суми""}}"
+            orgJsonLdLiteral.Text = "<script type=""application/ld+json"">" & orgJson & "</script>"
 
             Dim isAuthenticated = Page.User.Identity.IsAuthenticated
             anonNav.Visible = Not isAuthenticated
@@ -73,6 +114,15 @@ Namespace SumyPortal
                 End If
             End If
         End Sub
+
+        ''' <summary>Мінімальне власне екранування для JSON-значень у &lt;script
+        ''' type="application/ld+json"&gt; — той самий прийом (і той самий код), що вже
+        ''' Catalog.aspx.vb: JSON.stringify тут немає, а "&lt;/" екранується окремо, бо
+        ''' браузер закриває &lt;script&gt; за буквальним "&lt;/script" незалежно від значення type.</summary>
+        Private Function JsonEscape(s As String) As String
+            If s Is Nothing Then Return String.Empty
+            Return s.Replace("\", "\\").Replace("""", "\""").Replace(vbCr, "").Replace(vbLf, "\n").Replace("</", "<\/")
+        End Function
 
     End Class
 
