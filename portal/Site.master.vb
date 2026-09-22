@@ -54,6 +54,10 @@ Namespace SumyPortal
                     userRoleBadge.Visible = True
                     userRoleBadge.InnerText = If(account.UserType = "Provider",
                         Resources.SiteText.UserRole_Provider, Resources.SiteText.UserRole_Consumer)
+
+                    ' Постачальнику "Головна" (лендинг для нових відвідувачів) не потрібна —
+                    ' Каталог/Стіл замовлень лишаються (2026-09-22).
+                    homeNavLink.Visible = (account.UserType <> "Provider")
                 End If
 
                 ' Лічильник непрочитаних повідомлень (наступна фіча понад MVP, обрано
