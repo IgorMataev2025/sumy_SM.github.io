@@ -30,6 +30,7 @@
                      Site.master.vb. -->
                 <asp:PlaceHolder ID="userEmailNav" runat="server" Visible="false">
                     <span class="site-user"><asp:Literal ID="userNameLiteral" runat="server" /></span>
+                    <span class="role-badge" id="userRoleBadge" runat="server" visible="false"></span>
                 </asp:PlaceHolder>
             </div>
             <nav class="site-nav">

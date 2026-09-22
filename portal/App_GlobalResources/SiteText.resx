@@ -26,6 +26,8 @@
   <data name="Nav_Messages" xml:space="preserve"><value>Повідомлення</value></data>
   <data name="Nav_Profile" xml:space="preserve"><value>Профіль</value></data>
   <data name="Nav_Logout" xml:space="preserve"><value>Вихід</value></data>
+  <data name="UserRole_Provider" xml:space="preserve"><value>Постачальник</value></data>
+  <data name="UserRole_Consumer" xml:space="preserve"><value>Споживач</value></data>
   <data name="Footer_PrivacyPolicy" xml:space="preserve"><value>Політика конфіденційності</value></data>
 
   <data name="Home_HeroTitle" xml:space="preserve"><value>Портал послуг міста та області Суми</value></data>

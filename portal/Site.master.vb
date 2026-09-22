@@ -50,6 +50,12 @@ Namespace SumyPortal
                 Dim account = UserAccount.FindByEmail(Page.User.Identity.Name)
                 myServicesLink.Visible = (account IsNot Nothing AndAlso account.UserType = "Provider")
 
+                If account IsNot Nothing Then
+                    userRoleBadge.Visible = True
+                    userRoleBadge.InnerText = If(account.UserType = "Provider",
+                        Resources.SiteText.UserRole_Provider, Resources.SiteText.UserRole_Consumer)
+                End If
+
                 ' Лічильник непрочитаних повідомлень (наступна фіча понад MVP, обрано
                 ' автономно циклом /loop, 2026-09-13) — один легкий COUNT-запит на
                 ' кожне завантаження сторінки залогіненим користувачем (індексовано,

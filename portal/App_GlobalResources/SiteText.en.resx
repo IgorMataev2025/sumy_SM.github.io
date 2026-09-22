@@ -26,6 +26,8 @@
   <data name="Nav_Messages" xml:space="preserve"><value>Messages</value></data>
   <data name="Nav_Profile" xml:space="preserve"><value>Profile</value></data>
   <data name="Nav_Logout" xml:space="preserve"><value>Log Out</value></data>
+  <data name="UserRole_Provider" xml:space="preserve"><value>Provider</value></data>
+  <data name="UserRole_Consumer" xml:space="preserve"><value>Consumer</value></data>
   <data name="Footer_PrivacyPolicy" xml:space="preserve"><value>Privacy Policy</value></data>
 
   <data name="Home_HeroTitle" xml:space="preserve"><value>Services Portal for Sumy City and Region</value></data>
