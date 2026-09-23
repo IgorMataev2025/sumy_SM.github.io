@@ -19,7 +19,7 @@
   <data name="Nav_OrderBoard" xml:space="preserve"><value>Стіл замовлень</value></data>
   <data name="Nav_LegalGuide" xml:space="preserve"><value>Юридична довідка</value></data>
   <data name="Nav_Donate" xml:space="preserve"><value>Підтримати проєкт</value></data>
-  <data name="Nav_Login" xml:space="preserve"><value>Вхід</value></data>
+  <data name="Nav_Login" xml:space="preserve"><value>Вхід для авторизованих користувачів</value></data>
   <data name="Nav_Register" xml:space="preserve"><value>Реєстрація</value></data>
   <data name="Nav_MyServices" xml:space="preserve"><value>Мої оголошення</value></data>
   <data name="Nav_Favorites" xml:space="preserve"><value>Обране</value></data>
