@@ -73,6 +73,8 @@
   <data name="Catalog_Pagination_Next" xml:space="preserve"><value>Next →</value></data>
   <data name="Catalog_AllCategories" xml:space="preserve"><value>All Categories</value></data>
   <data name="Catalog_AllDistricts" xml:space="preserve"><value>All Districts</value></data>
+  <data name="Catalog_ProviderFilter_Prefix" xml:space="preserve"><value>Showing listings from provider:</value></data>
+  <data name="Catalog_ProviderFilter_Clear" xml:space="preserve"><value>show all ×</value></data>
   <data name="Catalog_PageInfo" xml:space="preserve"><value>Found: {0}. Page {1} of {2}.</value></data>
   <data name="Catalog_NewBadge" xml:space="preserve"><value>New</value></data>
   <data name="Catalog_VerifiedBadge" xml:space="preserve"><value>✓ Verified</value></data>
@@ -96,6 +98,7 @@
   <data name="OrderBoard_Column_Provider" xml:space="preserve"><value>Provider</value></data>
   <data name="OrderBoard_Column_Count" xml:space="preserve"><value>Listings</value></data>
   <data name="OrderBoard_Column_Profile" xml:space="preserve"><value>Profile →</value></data>
+  <data name="OrderBoard_Column_Listings" xml:space="preserve"><value>Listings →</value></data>
 
   <data name="Price_Negotiable" xml:space="preserve"><value>Price negotiable</value></data>
 

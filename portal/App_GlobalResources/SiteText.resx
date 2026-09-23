@@ -73,6 +73,8 @@
   <data name="Catalog_Pagination_Next" xml:space="preserve"><value>Наступна →</value></data>
   <data name="Catalog_AllCategories" xml:space="preserve"><value>Всі категорії</value></data>
   <data name="Catalog_AllDistricts" xml:space="preserve"><value>Всі райони</value></data>
+  <data name="Catalog_ProviderFilter_Prefix" xml:space="preserve"><value>Показано оголошення постачальника:</value></data>
+  <data name="Catalog_ProviderFilter_Clear" xml:space="preserve"><value>показати всіх ×</value></data>
   <data name="Catalog_PageInfo" xml:space="preserve"><value>Знайдено: {0}. Сторінка {1} з {2}.</value></data>
   <data name="Catalog_NewBadge" xml:space="preserve"><value>Новинка</value></data>
   <data name="Catalog_VerifiedBadge" xml:space="preserve"><value>✓ Перевірено</value></data>
@@ -96,6 +98,7 @@
   <data name="OrderBoard_Column_Provider" xml:space="preserve"><value>Постачальник</value></data>
   <data name="OrderBoard_Column_Count" xml:space="preserve"><value>Оголошень</value></data>
   <data name="OrderBoard_Column_Profile" xml:space="preserve"><value>Профіль →</value></data>
+  <data name="OrderBoard_Column_Listings" xml:space="preserve"><value>Оголошення →</value></data>
 
   <data name="Price_Negotiable" xml:space="preserve"><value>Ціна за домовленістю</value></data>
 

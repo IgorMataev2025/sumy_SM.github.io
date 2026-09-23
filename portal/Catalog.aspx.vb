@@ -27,6 +27,20 @@ Namespace SumyPortal
             End Set
         End Property
 
+        ''' <summary>Фільтр за постачальником (перехід з OrderBoard.aspx "Оголошення →",
+        ''' 2026-09-23) — немає власного UI-контролу (на відміну від категорії/району), тому
+        ''' переживає постбеки (пошук/сортування/пагінація) через ViewState, той самий підхід,
+        ''' що CurrentPage. Скидається лише "Скинути"/переходом на чистий Catalog.aspx.</summary>
+        Private Property ProviderIdFilter As Integer?
+            Get
+                If ViewState("ProviderIdFilter") Is Nothing Then Return Nothing
+                Return CType(ViewState("ProviderIdFilter"), Integer)
+            End Get
+            Set(value As Integer?)
+                ViewState("ProviderIdFilter") = value
+            End Set
+        End Property
+
         ''' <summary>Бейдж "Новинка" (наступна фіча понад MVP, 2026-09-13) — межа за
         ''' CreatedAt (той самий стовпець, що сортування "спочатку нові", п.23; без нової
         ''' міграції БД). Той самий прийом Web.config appSettings, що StaleServiceDays/
@@ -51,8 +65,28 @@ Namespace SumyPortal
                 BindFilterOptions()
                 BindKeywordSuggestions()
                 PreselectCategoryFromQueryString()
+                PreselectProviderFromQueryString()
                 CurrentPage = 1
                 BindResults()
+            End If
+        End Sub
+
+        ''' <summary>Перехід зі "Стола замовлень" (OrderBoard.aspx "Оголошення →", 2026-09-23) —
+        ''' на відміну від categoryId тут немає dropdown для вибору, тому фільтр застосовується
+        ''' мовчки (немає що "переобрати" в UI) і показується окремим банером
+        ''' (providerFilterPanel) з посиланням скинути. Невідомий/чужий providerId просто дає
+        ''' порожній каталог (Service.SearchApproved і так фільтрує лише Approved), без винятку.</summary>
+        Private Sub PreselectProviderFromQueryString()
+            Dim providerId As Integer
+            If Integer.TryParse(Request.QueryString("providerId"), providerId) Then
+                Dim provider = UserAccount.GetById(providerId)
+                If provider IsNot Nothing Then
+                    ProviderIdFilter = providerId
+                    providerFilterPanel.Visible = True
+                    providerFilterNameLiteral.Text = Server.HtmlEncode(
+                        If(provider.IsLegalEntity AndAlso Not String.IsNullOrWhiteSpace(provider.CompanyName),
+                           provider.CompanyName, provider.FullName))
+                End If
             End If
         End Sub
 
@@ -105,13 +139,13 @@ Namespace SumyPortal
             Dim sortBy = ddlSort.SelectedValue
 
             Dim total As Integer
-            Dim items = Service.SearchApproved(categoryId, district, keyword, minPrice, maxPrice, sortBy, CurrentPage, PageSize, total)
+            Dim items = Service.SearchApproved(categoryId, district, keyword, minPrice, maxPrice, sortBy, CurrentPage, PageSize, total, ProviderIdFilter)
 
             ' Захист від виходу за межі (напр. якщо дані змінились між запитами) — повертаємось на останню сторінку.
             Dim totalPagesCheck = Math.Max(1, CInt(Math.Ceiling(total / CDbl(PageSize))))
             If CurrentPage > totalPagesCheck Then
                 CurrentPage = totalPagesCheck
-                items = Service.SearchApproved(categoryId, district, keyword, minPrice, maxPrice, sortBy, CurrentPage, PageSize, total)
+                items = Service.SearchApproved(categoryId, district, keyword, minPrice, maxPrice, sortBy, CurrentPage, PageSize, total, ProviderIdFilter)
             End If
 
             For Each item In items
@@ -146,7 +180,7 @@ Namespace SumyPortal
         ''' (Catalog.aspx), JS зчитує його лише коли користувач реально перемикається на вкладку "Карта".</summary>
         Private Sub BindMapData(categoryId As Integer?, district As String, keyword As String,
                                  minPrice As Decimal?, maxPrice As Decimal?)
-            Dim items = Service.SearchApprovedForMap(categoryId, district, keyword, minPrice, maxPrice)
+            Dim items = Service.SearchApprovedForMap(categoryId, district, keyword, minPrice, maxPrice, ProviderIdFilter)
 
             Dim sb As New StringBuilder("[")
             For i As Integer = 0 To items.Count - 1
@@ -205,6 +239,8 @@ Namespace SumyPortal
             txtMinPrice.Text = String.Empty
             txtMaxPrice.Text = String.Empty
             ddlSort.SelectedIndex = 0
+            ProviderIdFilter = Nothing
+            providerFilterPanel.Visible = False
             CurrentPage = 1
             BindResults()
         End Sub

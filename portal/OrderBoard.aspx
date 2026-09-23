@@ -51,6 +51,10 @@
                                         <td><%#: CType(Container.DataItem, SumyPortal.Service.OrderBoardRow).ProviderName %></td>
                                         <td><%#: CType(Container.DataItem, SumyPortal.Service.OrderBoardRow).ServiceCount %></td>
                                         <td>
+                                            <a href='<%#: "Catalog.aspx?categoryId=" & CType(Container.DataItem, SumyPortal.Service.OrderBoardRow).CategoryId & "&providerId=" & CType(Container.DataItem, SumyPortal.Service.OrderBoardRow).ProviderId %>'>
+                                                <asp:Literal runat="server" Text="<%$ Resources:SiteText, OrderBoard_Column_Listings %>" />
+                                            </a>
+                                            ·
                                             <a href='<%#: "Profile.aspx?providerId=" & CType(Container.DataItem, SumyPortal.Service.OrderBoardRow).ProviderId %>'>
                                                 <asp:Literal runat="server" Text="<%$ Resources:SiteText, OrderBoard_Column_Profile %>" />
                                             </a>

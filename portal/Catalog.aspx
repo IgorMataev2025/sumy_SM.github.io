@@ -15,6 +15,16 @@
 <asp:Content ID="MainContent" ContentPlaceHolderID="MainContent" runat="server">
     <h1><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Heading %>" /></h1>
 
+    <!-- Банер фільтра постачальника (перехід з OrderBoard.aspx "Оголошення →", 2026-09-23) —
+         немає власного UI-контролу серед фільтрів нижче, тому мовчазний фільтр був би
+         незрозумілим користувачу; банер пояснює звідки звузився список і дає посилання
+         скинути (звичайний перехід на чистий Catalog.aspx, без постбеку). -->
+    <asp:Panel ID="providerFilterPanel" runat="server" CssClass="stub-note" Visible="false">
+        <asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_ProviderFilter_Prefix %>" />
+        <b><asp:Literal ID="providerFilterNameLiteral" runat="server" /></b>
+        — <a href="Catalog.aspx"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_ProviderFilter_Clear %>" /></a>
+    </asp:Panel>
+
     <asp:Panel ID="filterPanel" runat="server" CssClass="filter-panel">
         <div class="filter-row">
             <div class="form-row">

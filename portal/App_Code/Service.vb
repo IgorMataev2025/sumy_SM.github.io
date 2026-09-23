@@ -733,12 +733,17 @@ Namespace SumyPortal
 
         Private Shared Function BuildSearchWhere(categoryId As Integer?, district As String, keyword As String,
                                                   minPrice As Decimal?, maxPrice As Decimal?,
-                                                  parameters As List(Of MySqlParameter)) As String
+                                                  parameters As List(Of MySqlParameter),
+                                                  Optional providerId As Integer? = Nothing) As String
             Dim sb As New StringBuilder("WHERE s.Status = 'Approved' ")
 
             If categoryId.HasValue Then
                 sb.Append("AND s.CategoryId = @CategoryId ")
                 parameters.Add(New MySqlParameter("@CategoryId", categoryId.Value))
+            End If
+            If providerId.HasValue Then
+                sb.Append("AND s.ProviderId = @ProviderId ")
+                parameters.Add(New MySqlParameter("@ProviderId", providerId.Value))
             End If
             If Not String.IsNullOrWhiteSpace(district) Then
                 sb.Append("AND s.District = @District ")
@@ -781,12 +786,13 @@ Namespace SumyPortal
         Public Shared Function SearchApproved(categoryId As Integer?, district As String, keyword As String,
                                                minPrice As Decimal?, maxPrice As Decimal?, sortBy As String,
                                                pageNumber As Integer, pageSize As Integer,
-                                               ByRef totalCount As Integer) As List(Of Service)
+                                               ByRef totalCount As Integer,
+                                               Optional providerId As Integer? = Nothing) As List(Of Service)
             Dim result As New List(Of Service)
 
             Using conn = DbHelper.GetConnection()
                 Dim countParams As New List(Of MySqlParameter)
-                Dim whereSql = BuildSearchWhere(categoryId, district, keyword, minPrice, maxPrice, countParams)
+                Dim whereSql = BuildSearchWhere(categoryId, district, keyword, minPrice, maxPrice, countParams, providerId)
 
                 Using countCmd As New MySqlCommand("SELECT COUNT(*) FROM Services s " & whereSql & ";", conn)
                     countCmd.Parameters.AddRange(countParams.ToArray())
@@ -795,7 +801,7 @@ Namespace SumyPortal
 
                 ' MySqlParameter не можна повторно прив'язати до іншої команди — будуємо WHERE ще раз зі свіжими параметрами.
                 Dim selectParams As New List(Of MySqlParameter)
-                Dim whereSql2 = BuildSearchWhere(categoryId, district, keyword, minPrice, maxPrice, selectParams)
+                Dim whereSql2 = BuildSearchWhere(categoryId, district, keyword, minPrice, maxPrice, selectParams, providerId)
 
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
@@ -823,12 +829,13 @@ Namespace SumyPortal
         ''' Nothing — постачальник її не ставив) сюди не потрапляють, лишаючись доступними у звичайному
         ''' списку.</summary>
         Public Shared Function SearchApprovedForMap(categoryId As Integer?, district As String, keyword As String,
-                                                      minPrice As Decimal?, maxPrice As Decimal?) As List(Of Service)
+                                                      minPrice As Decimal?, maxPrice As Decimal?,
+                                                      Optional providerId As Integer? = Nothing) As List(Of Service)
             Dim result As New List(Of Service)
 
             Using conn = DbHelper.GetConnection()
                 Dim parameters As New List(Of MySqlParameter)
-                Dim whereSql = BuildSearchWhere(categoryId, district, keyword, minPrice, maxPrice, parameters)
+                Dim whereSql = BuildSearchWhere(categoryId, district, keyword, minPrice, maxPrice, parameters, providerId)
                 whereSql &= "AND s.Latitude IS NOT NULL AND s.Longitude IS NOT NULL "
 
                 Using cmd As New MySqlCommand(
