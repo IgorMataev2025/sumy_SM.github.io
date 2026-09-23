@@ -1,6 +1,6 @@
 <%@ Page Title="" Language="VB" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="RegisterProvider.aspx.vb" Inherits="SumyPortal.RegisterProvider" %>
 <asp:Content ID="TitleContent" ContentPlaceHolderID="TitleContent" runat="server">
-    Реєстрація постачальника — Портал послуг Safina
+    <asp:Literal runat="server" Text="<%$ Resources:SiteText, PageTitle_RegisterProvider %>" /> — <asp:Literal runat="server" Text="<%$ Resources:SiteText, SiteTitleSuffix %>" />
 </asp:Content>
 <asp:Content ID="MainContent" ContentPlaceHolderID="MainContent" runat="server">
     <h1><asp:Literal runat="server" Text="<%$ Resources:SiteText, RegisterProvider_Heading %>" /></h1>

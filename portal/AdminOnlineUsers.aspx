@@ -1,6 +1,6 @@
 <%@ Page Title="" Language="VB" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="AdminOnlineUsers.aspx.vb" Inherits="SumyPortal.AdminOnlineUsers" %>
 <asp:Content ID="TitleContent" ContentPlaceHolderID="TitleContent" runat="server">
-    Онлайн зараз — Портал послуг Safina
+    <asp:Literal runat="server" Text="<%$ Resources:SiteText, PageTitle_AdminOnlineUsers %>" /> — <asp:Literal runat="server" Text="<%$ Resources:SiteText, SiteTitleSuffix %>" />
 </asp:Content>
 <asp:Content ID="MainContent" ContentPlaceHolderID="MainContent" runat="server">
     <meta http-equiv="refresh" content="20" />

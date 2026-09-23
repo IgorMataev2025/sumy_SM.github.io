@@ -1,6 +1,6 @@
 <%@ Page Title="" Language="VB" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="AdminModeration.aspx.vb" Inherits="SumyPortal.AdminModeration" %>
 <asp:Content ID="TitleContent" ContentPlaceHolderID="TitleContent" runat="server">
-    Модерація оголошень — Портал послуг Safina
+    <asp:Literal runat="server" Text="<%$ Resources:SiteText, PageTitle_AdminModeration %>" /> — <asp:Literal runat="server" Text="<%$ Resources:SiteText, SiteTitleSuffix %>" />
 </asp:Content>
 <asp:Content ID="MainContent" ContentPlaceHolderID="MainContent" runat="server">
     <h1>Модерація оголошень</h1>

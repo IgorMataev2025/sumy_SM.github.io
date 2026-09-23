@@ -1,6 +1,6 @@
 <%@ Page Title="" Language="VB" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="AdminDashboard.aspx.vb" Inherits="SumyPortal.AdminDashboard" %>
 <asp:Content ID="TitleContent" ContentPlaceHolderID="TitleContent" runat="server">
-    Адмін-панель — Портал послуг Safina
+    <asp:Literal runat="server" Text="<%$ Resources:SiteText, PageTitle_AdminDashboard %>" /> — <asp:Literal runat="server" Text="<%$ Resources:SiteText, SiteTitleSuffix %>" />
 </asp:Content>
 <asp:Content ID="MainContent" ContentPlaceHolderID="MainContent" runat="server">
     <h1>Адмін-панель</h1>

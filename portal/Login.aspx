@@ -1,6 +1,6 @@
 <%@ Page Title="" Language="VB" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="Login.aspx.vb" Inherits="SumyPortal.Login" %>
 <asp:Content ID="TitleContent" ContentPlaceHolderID="TitleContent" runat="server">
-    Вхід — Портал послуг Safina
+    <asp:Literal runat="server" Text="<%$ Resources:SiteText, Login_Heading %>" /> — <asp:Literal runat="server" Text="<%$ Resources:SiteText, SiteTitleSuffix %>" />
 </asp:Content>
 <asp:Content ID="MainContent" ContentPlaceHolderID="MainContent" runat="server">
     <h1><asp:Literal runat="server" Text="<%$ Resources:SiteText, Login_Heading %>" /></h1>

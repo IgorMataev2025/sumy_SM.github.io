@@ -1,6 +1,6 @@
 <%@ Page Title="" Language="VB" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="AdminCategories.aspx.vb" Inherits="SumyPortal.AdminCategories" %>
 <asp:Content ID="TitleContent" ContentPlaceHolderID="TitleContent" runat="server">
-    Категорії — Портал послуг Safina
+    <asp:Literal runat="server" Text="<%$ Resources:SiteText, PageTitle_AdminCategories %>" /> — <asp:Literal runat="server" Text="<%$ Resources:SiteText, SiteTitleSuffix %>" />
 </asp:Content>
 <asp:Content ID="MainContent" ContentPlaceHolderID="MainContent" runat="server">
     <h1>Категорії послуг</h1>

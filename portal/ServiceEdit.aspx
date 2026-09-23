@@ -1,6 +1,6 @@
 <%@ Page Title="" Language="VB" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="ServiceEdit.aspx.vb" Inherits="SumyPortal.ServiceEdit" %>
 <asp:Content ID="TitleContent" ContentPlaceHolderID="TitleContent" runat="server">
-    <asp:Literal ID="titleLiteral" runat="server" /> — Портал послуг Safina
+    <asp:Literal ID="titleLiteral" runat="server" /> — <asp:Literal runat="server" Text="<%$ Resources:SiteText, SiteTitleSuffix %>" />
 </asp:Content>
 <asp:Content ID="HeadContent" ContentPlaceHolderID="HeadContent" runat="server">
     <!-- Leaflet + OpenStreetMap — безкоштовно, без API-ключа (постановка робочої тестової версії, 2026-09-12). -->

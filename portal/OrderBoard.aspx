@@ -1,7 +1,7 @@
 <%@ Page Title="" Language="VB" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="OrderBoard.aspx.vb" Inherits="SumyPortal.OrderBoard" %>
 <%@ MasterType VirtualPath="~/Site.master" %>
 <asp:Content ID="TitleContent" ContentPlaceHolderID="TitleContent" runat="server">
-    Стіл замовлень — Портал послуг Safina
+    <asp:Literal runat="server" Text="<%$ Resources:SiteText, OrderBoard_Heading %>" /> — <asp:Literal runat="server" Text="<%$ Resources:SiteText, SiteTitleSuffix %>" />
 </asp:Content>
 <asp:Content ID="MainContent" ContentPlaceHolderID="MainContent" runat="server">
     <h1><asp:Literal runat="server" Text="<%$ Resources:SiteText, OrderBoard_Heading %>" /></h1>

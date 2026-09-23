@@ -1,7 +1,7 @@
 <%@ Page Title="" Language="VB" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="Donate.aspx.vb" Inherits="SumyPortal.Donate" %>
 <%@ MasterType VirtualPath="~/Site.master" %>
 <asp:Content ID="TitleContent" ContentPlaceHolderID="TitleContent" runat="server">
-    Підтримати проєкт — Портал послуг Safina
+    <asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Donate %>" /> — <asp:Literal runat="server" Text="<%$ Resources:SiteText, SiteTitleSuffix %>" />
 </asp:Content>
 <asp:Content ID="MainContent" ContentPlaceHolderID="MainContent" runat="server">
     <h1><asp:Literal runat="server" Text="<%$ Resources:SiteText, Donate_Heading %>" /></h1>

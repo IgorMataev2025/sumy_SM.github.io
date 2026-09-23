@@ -1,7 +1,7 @@
 <%@ Page Title="" Language="VB" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="Catalog.aspx.vb" Inherits="SumyPortal.Catalog" %>
 <%@ MasterType VirtualPath="~/Site.master" %>
 <asp:Content ID="TitleContent" ContentPlaceHolderID="TitleContent" runat="server">
-    Каталог послуг — Портал послуг Safina
+    <asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Heading %>" /> — <asp:Literal runat="server" Text="<%$ Resources:SiteText, SiteTitleSuffix %>" />
 </asp:Content>
 <asp:Content ID="HeadContent" ContentPlaceHolderID="HeadContent" runat="server">
     <!-- Leaflet + OpenStreetMap — той самий безкоштовний стек, що вже на ServiceDetails.aspx/

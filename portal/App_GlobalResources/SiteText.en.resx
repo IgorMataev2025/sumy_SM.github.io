@@ -30,6 +30,23 @@
   <data name="UserRole_Consumer" xml:space="preserve"><value>Consumer</value></data>
   <data name="Footer_PrivacyPolicy" xml:space="preserve"><value>Privacy Policy</value></data>
 
+  <data name="SiteTitleSuffix" xml:space="preserve"><value>Safina Services Portal</value></data>
+  <data name="PageTitle_MessageThread" xml:space="preserve"><value>Conversation</value></data>
+  <data name="PageTitle_RegisterConsumer" xml:space="preserve"><value>Consumer Registration</value></data>
+  <data name="PageTitle_RegisterProvider" xml:space="preserve"><value>Provider Registration</value></data>
+  <data name="PageTitle_ResetPassword" xml:space="preserve"><value>New Password</value></data>
+  <data name="PageTitle_ServiceContract" xml:space="preserve"><value>Service Agreement</value></data>
+  <data name="PageTitle_AdminCategories" xml:space="preserve"><value>Categories</value></data>
+  <data name="PageTitle_AdminDashboard" xml:space="preserve"><value>Admin Panel</value></data>
+  <data name="PageTitle_AdminLog" xml:space="preserve"><value>Admin Action Log</value></data>
+  <data name="PageTitle_AdminModeration" xml:space="preserve"><value>Service Moderation</value></data>
+  <data name="PageTitle_AdminOnlineUsers" xml:space="preserve"><value>Online Now</value></data>
+  <data name="PageTitle_AdminReports" xml:space="preserve"><value>Service Reports</value></data>
+  <data name="PageTitle_AdminServiceEdit" xml:space="preserve"><value>Edit Service (Admin)</value></data>
+  <data name="PageTitle_AdminServices" xml:space="preserve"><value>All Services</value></data>
+  <data name="PageTitle_AdminUserEdit" xml:space="preserve"><value>Edit User</value></data>
+  <data name="PageTitle_AdminUsers" xml:space="preserve"><value>Users</value></data>
+
   <data name="Home_HeroTitle" xml:space="preserve"><value>Services Portal for Sumy City and Region</value></data>
   <data name="Home_HeroText" xml:space="preserve"><value>Providers post information about their services, and residents find and use them. The catalog and listing pages are open for browsing without registration; signing in is needed only for actions — contacting a provider, leaving a review, or posting your own listing.</value></data>
   <data name="Home_CategoriesHeading" xml:space="preserve"><value>Service Categories</value></data>

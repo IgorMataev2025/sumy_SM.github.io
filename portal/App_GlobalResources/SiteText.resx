@@ -30,6 +30,23 @@
   <data name="UserRole_Consumer" xml:space="preserve"><value>Споживач</value></data>
   <data name="Footer_PrivacyPolicy" xml:space="preserve"><value>Політика конфіденційності</value></data>
 
+  <data name="SiteTitleSuffix" xml:space="preserve"><value>Портал послуг Safina</value></data>
+  <data name="PageTitle_MessageThread" xml:space="preserve"><value>Розмова</value></data>
+  <data name="PageTitle_RegisterConsumer" xml:space="preserve"><value>Реєстрація споживача</value></data>
+  <data name="PageTitle_RegisterProvider" xml:space="preserve"><value>Реєстрація постачальника</value></data>
+  <data name="PageTitle_ResetPassword" xml:space="preserve"><value>Новий пароль</value></data>
+  <data name="PageTitle_ServiceContract" xml:space="preserve"><value>Договір про надання послуг</value></data>
+  <data name="PageTitle_AdminCategories" xml:space="preserve"><value>Категорії</value></data>
+  <data name="PageTitle_AdminDashboard" xml:space="preserve"><value>Адмін-панель</value></data>
+  <data name="PageTitle_AdminLog" xml:space="preserve"><value>Журнал дій адміністратора</value></data>
+  <data name="PageTitle_AdminModeration" xml:space="preserve"><value>Модерація оголошень</value></data>
+  <data name="PageTitle_AdminOnlineUsers" xml:space="preserve"><value>Онлайн зараз</value></data>
+  <data name="PageTitle_AdminReports" xml:space="preserve"><value>Скарги на оголошення</value></data>
+  <data name="PageTitle_AdminServiceEdit" xml:space="preserve"><value>Редагування оголошення (адмін)</value></data>
+  <data name="PageTitle_AdminServices" xml:space="preserve"><value>Усі оголошення</value></data>
+  <data name="PageTitle_AdminUserEdit" xml:space="preserve"><value>Редагування користувача</value></data>
+  <data name="PageTitle_AdminUsers" xml:space="preserve"><value>Користувачі</value></data>
+
   <data name="Home_HeroTitle" xml:space="preserve"><value>Портал послуг міста та області Суми</value></data>
   <data name="Home_HeroText" xml:space="preserve"><value>Постачальники розміщують інформацію про свої послуги, а мешканці — знаходять і користуються нею. Каталог і картки оголошень відкриті для перегляду без реєстрації; вхід потрібен лише для дій — зв'язатись з постачальником, лишити відгук або власне оголошення.</value></data>
   <data name="Home_CategoriesHeading" xml:space="preserve"><value>Категорії послуг</value></data>

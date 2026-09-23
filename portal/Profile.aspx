@@ -1,6 +1,6 @@
 <%@ Page Title="" Language="VB" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="Profile.aspx.vb" Inherits="SumyPortal.Profile" %>
 <asp:Content ID="TitleContent" ContentPlaceHolderID="TitleContent" runat="server">
-    Профіль — Портал послуг Safina
+    <asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Profile %>" /> — <asp:Literal runat="server" Text="<%$ Resources:SiteText, SiteTitleSuffix %>" />
 </asp:Content>
 <asp:Content ID="MainContent" ContentPlaceHolderID="MainContent" runat="server">
     <h1><asp:Literal ID="headingLiteral" runat="server" /></h1>
