@@ -179,3 +179,11 @@ SELECT * FROM (SELECT
     'Інформація від ОСББ, комунальних служб, адмінпослуги',
     NULL, TRUE) AS tmp
 WHERE NOT EXISTS (SELECT 1 FROM Categories WHERE Name = 'Комунальні / державні послуги');
+
+-- Міграція 020 (2026-09-24): категорія «Інше» — для послуг поза переліком.
+INSERT INTO Categories (Name, Description, ParentId, IsActive)
+SELECT * FROM (SELECT
+    'Інше',
+    'Послуги, що не підпадають під жодну з наведених категорій',
+    NULL, TRUE) AS tmp
+WHERE NOT EXISTS (SELECT 1 FROM Categories WHERE Name = 'Інше');
