@@ -35,6 +35,12 @@ Namespace SumyPortal
                 svc.ReviewCount = count
             Next
 
+            Dim expiryDates = Service.GetExpiryDates(CurrentProvider.UserId, Service.StaleDays)
+            For Each svc In services
+                Dim expiresAt As DateTime
+                If expiryDates.TryGetValue(svc.ServiceId, expiresAt) Then svc.ExpiresAt = expiresAt
+            Next
+
             rptServices.DataSource = services
             rptServices.DataBind()
             emptyPanel.Visible = (services.Count = 0)
@@ -47,6 +53,8 @@ Namespace SumyPortal
             If e.Item.ItemType <> ListItemType.Item AndAlso e.Item.ItemType <> ListItemType.AlternatingItem Then Return
 
             Dim svc = CType(e.Item.DataItem, Service)
+            BindExpiry(e.Item, svc)
+
             Dim statsLiteral = CType(e.Item.FindControl("statsLiteral"), Literal)
             If statsLiteral Is Nothing Then Return
 
@@ -59,6 +67,26 @@ Namespace SumyPortal
                     Resources.SiteText.MyServices_Stats_ReviewsNone)
             }
             statsLiteral.Text = String.Join(" · ", parts)
+        End Sub
+
+        ''' <summary>«Активне до …» для опублікованих; за StaleWarningDays до автозняття —
+        ''' попереджувальний стиль і кнопка «Продовжити» (раніше не показуємо, щоб список не
+        ''' перетворювався на щоденне «клікни продовжити»).</summary>
+        Private Sub BindExpiry(item As RepeaterItem, svc As Service)
+            If Not svc.ExpiresAt.HasValue Then Return
+
+            Dim expiryLabel = CType(item.FindControl("expiryLabel"), Label)
+            Dim renewButton = CType(item.FindControl("renewButton"), LinkButton)
+            Dim expiringSoon = svc.ExpiresAt.Value <= DateTime.UtcNow.AddDays(Service.StaleWarningDays)
+
+            expiryLabel.Visible = True
+            expiryLabel.CssClass = If(expiringSoon, "form-error", "service-category")
+            expiryLabel.Text = String.Format(
+                If(expiringSoon, Resources.SiteText.MyServices_ExpiresSoon, Resources.SiteText.MyServices_ActiveUntil),
+                svc.ExpiresAt.Value)
+
+            renewButton.Visible = expiringSoon
+            renewButton.Text = String.Format(Resources.SiteText.MyServices_Renew, Service.StaleDays)
         End Sub
 
         Protected Sub rptServices_ItemCommand(source As Object, e As RepeaterCommandEventArgs)
@@ -75,6 +103,11 @@ Namespace SumyPortal
                     ok = Service.Unpublish(serviceId, CurrentProvider.UserId)
                     If ok Then
                         ShowInfo(Resources.SiteText.MyServices_Msg_Unpublished)
+                    End If
+                Case "Renew"
+                    ok = Service.Renew(serviceId, CurrentProvider.UserId)
+                    If ok Then
+                        ShowInfo(String.Format(Resources.SiteText.MyServices_Msg_Renewed, Service.StaleDays))
                     End If
                 Case "Delete"
                     ok = Service.Delete(serviceId, CurrentProvider.UserId)

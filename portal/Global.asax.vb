@@ -80,8 +80,7 @@ Namespace SumyPortal
                 _nextStaleCheckAtUtc = DateTime.UtcNow.AddDays(1)
             End SyncLock
 
-            Dim days As Integer
-            If Not Integer.TryParse(ConfigurationManager.AppSettings("StaleServiceDays"), days) Then days = 90
+            Dim days = Service.StaleDays
 
             Dim archived = Service.ArchiveStaleApproved(days)
             For Each svc In archived
@@ -94,6 +93,19 @@ Namespace SumyPortal
                 Catch
                     ' Помилка листа не повинна ламати саму архівацію — той самий підхід, що
                     ' NotifyOtherParty у MessageThread.aspx.vb.
+                End Try
+            Next
+
+            ' Попередження — ПІСЛЯ архівації, щоб щойно зняте оголошення не отримало ще й
+            ' лист «скоро знімемо» тим самим проходом.
+            Dim myServicesUrl = Request.Url.GetLeftPart(UriPartial.Authority) & VirtualPathUtility.ToAbsolute("~/MyServices.aspx")
+            For Each svc In Service.WarnExpiringApproved(days, Service.StaleWarningDays)
+                Try
+                    EmailSender.Send(svc.ProviderEmail, "Оголошення скоро буде знято з публікації — Safina",
+                        String.Format("Оголошення «{0}» буде автоматично знято з публікації {1:dd.MM.yyyy}. " &
+                            "Щоб воно лишалось у каталозі, натисніть «Продовжити» в розділі «Мої оголошення»: {2}",
+                            svc.Title, svc.ExpiresAt.Value, myServicesUrl))
+                Catch
                 End Try
             Next
         End Sub

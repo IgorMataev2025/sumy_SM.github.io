@@ -231,6 +231,10 @@
   <data name="MyServices_Delete" xml:space="preserve"><value>Delete</value></data>
   <data name="MyServices_DeleteConfirmJs" xml:space="preserve"><value>return confirm("Delete this listing permanently? Its photos, reviews and conversations will be deleted too. This cannot be undone.");</value></data>
   <data name="MyServices_Msg_Deleted" xml:space="preserve"><value>The listing has been deleted.</value></data>
+  <data name="MyServices_ActiveUntil" xml:space="preserve"><value>Published until {0:d}</value></data>
+  <data name="MyServices_ExpiresSoon" xml:space="preserve"><value>This listing will be unpublished automatically on {0:d} — renew it to keep it in the catalog.</value></data>
+  <data name="MyServices_Renew" xml:space="preserve"><value>Renew for {0} more days</value></data>
+  <data name="MyServices_Msg_Renewed" xml:space="preserve"><value>Publication renewed for {0} more days.</value></data>
   <data name="MyServices_Stats_Views" xml:space="preserve"><value>Views: {0}</value></data>
   <data name="MyServices_Stats_Conversations" xml:space="preserve"><value>Conversations: {0}</value></data>
   <data name="MyServices_Stats_Favorites" xml:space="preserve"><value>Favorites: {0}</value></data>

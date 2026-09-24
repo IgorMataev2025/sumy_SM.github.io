@@ -63,6 +63,11 @@ Namespace SumyPortal
         Public Property ReviewAverage As Decimal?
         Public Property ReviewCount As Integer
 
+        ''' <summary>Дата автозняття опублікованого оголошення (міграція 021) — заповнюється лише
+        ''' для MyServices.aspx і листа-попередження, окремим вузьким запитом (GetExpiryDates /
+        ''' WarnExpiringApproved), Map(reader) її не знає.</summary>
+        Public Property ExpiresAt As DateTime?
+
         Public ReadOnly Property StatusLabel As String
             Get
                 Select Case Status
@@ -409,7 +414,7 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "UPDATE Services SET Status = 'Approved', RejectReason = NULL, " &
-                    "ApprovedAt = UTC_TIMESTAMP(), ApprovedBy = @AdminId " &
+                    "ApprovedAt = UTC_TIMESTAMP(), ApprovedBy = @AdminId, RenewedAt = NULL, ExpiryWarnedAt = NULL " &
                     "WHERE ServiceId = @ServiceId AND Status = 'Pending';", conn)
                     cmd.Parameters.AddWithValue("@AdminId", adminId)
                     cmd.Parameters.AddWithValue("@ServiceId", serviceId)
@@ -475,6 +480,100 @@ Namespace SumyPortal
             End Using
         End Function
 
+        ''' <summary>Лист-попередження за warnDays до автозняття (2026-09-24, міграція 021) —
+        ''' повертає оголошення, яким час попередити, і одразу позначає ExpiryWarnedAt, щоб
+        ''' наступна щоденна перевірка не надіслала лист повторно (скидається при продовженні
+        ''' й повторному схваленні). Той самий стиль «SELECT, потім UPDATE по рядку», що
+        ''' ArchiveStaleApproved нижче.</summary>
+        Public Shared Function WarnExpiringApproved(days As Integer, warnDays As Integer) As List(Of Service)
+            Dim result As New List(Of Service)
+            Using conn = DbHelper.GetConnection()
+                Using selectCmd As New MySqlCommand(
+                    "SELECT s.ServiceId, s.Title, u.FullName AS ProviderName, u.Email AS ProviderEmail, " &
+                    "DATE_ADD(COALESCE(s.RenewedAt, s.ApprovedAt), INTERVAL @Days DAY) AS ExpiresAt " &
+                    "FROM Services s JOIN Users u ON u.UserId = s.ProviderId " &
+                    "WHERE s.Status = 'Approved' AND s.ExpiryWarnedAt IS NULL " &
+                    "AND COALESCE(s.RenewedAt, s.ApprovedAt) < DATE_SUB(UTC_TIMESTAMP(), INTERVAL @WarnAfter DAY);", conn)
+                    selectCmd.Parameters.AddWithValue("@Days", days)
+                    selectCmd.Parameters.AddWithValue("@WarnAfter", days - warnDays)
+                    Using reader = selectCmd.ExecuteReader()
+                        While reader.Read()
+                            result.Add(New Service With {
+                                .ServiceId = reader.GetInt32("ServiceId"),
+                                .Title = reader.GetString("Title"),
+                                .ProviderName = reader.GetString("ProviderName"),
+                                .ProviderEmail = reader.GetString("ProviderEmail"),
+                                .ExpiresAt = reader.GetDateTime("ExpiresAt")
+                            })
+                        End While
+                    End Using
+                End Using
+
+                For Each svc In result
+                    Using updateCmd As New MySqlCommand(
+                        "UPDATE Services SET ExpiryWarnedAt = UTC_TIMESTAMP() WHERE ServiceId = @ServiceId AND ExpiryWarnedAt IS NULL;", conn)
+                        updateCmd.Parameters.AddWithValue("@ServiceId", svc.ServiceId)
+                        updateCmd.ExecuteNonQuery()
+                    End Using
+                Next
+            End Using
+            Return result
+        End Function
+
+        ''' <summary>«Продовжити публікацію» постачальником (2026-09-24) — строк рахується заново
+        ''' від сьогодні. ApprovedAt не чіпаємо навмисно (дайджест/sitemap/«Новинка» не повинні
+        ''' вважати продовжене оголошення новим). Власника й статус перевіряє сам SQL.</summary>
+        Public Shared Function Renew(serviceId As Integer, providerId As Integer) As Boolean
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand(
+                    "UPDATE Services SET RenewedAt = UTC_TIMESTAMP(), ExpiryWarnedAt = NULL " &
+                    "WHERE ServiceId = @ServiceId AND ProviderId = @ProviderId AND Status = 'Approved';", conn)
+                    cmd.Parameters.AddWithValue("@ServiceId", serviceId)
+                    cmd.Parameters.AddWithValue("@ProviderId", providerId)
+                    Return cmd.ExecuteNonQuery() > 0
+                End Using
+            End Using
+        End Function
+
+        ''' <summary>Дати автозняття опублікованих оголошень постачальника — для MyServices.aspx
+        ''' (вузький запит, той самий принцип, що GetApprovedForSitemap: не тягнути нове поле
+        ''' в Map(reader)).</summary>
+        Public Shared Function GetExpiryDates(providerId As Integer, days As Integer) As Dictionary(Of Integer, DateTime)
+            Dim result As New Dictionary(Of Integer, DateTime)
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand(
+                    "SELECT ServiceId, DATE_ADD(COALESCE(RenewedAt, ApprovedAt), INTERVAL @Days DAY) AS ExpiresAt " &
+                    "FROM Services WHERE ProviderId = @ProviderId AND Status = 'Approved' AND ApprovedAt IS NOT NULL;", conn)
+                    cmd.Parameters.AddWithValue("@ProviderId", providerId)
+                    cmd.Parameters.AddWithValue("@Days", days)
+                    Using reader = cmd.ExecuteReader()
+                        While reader.Read()
+                            result(reader.GetInt32("ServiceId")) = reader.GetDateTime("ExpiresAt")
+                        End While
+                    End Using
+                End Using
+            End Using
+            Return result
+        End Function
+
+        ''' <summary>Пороги автозняття з Web.config (appSettings StaleServiceDays/StaleWarningDays)
+        ''' — спільні для Global.asax.vb (щоденна перевірка) і MyServices.aspx.vb (показ дати).</summary>
+        Public Shared ReadOnly Property StaleDays As Integer
+            Get
+                Dim days As Integer
+                If Not Integer.TryParse(System.Configuration.ConfigurationManager.AppSettings("StaleServiceDays"), days) Then days = 90
+                Return days
+            End Get
+        End Property
+
+        Public Shared ReadOnly Property StaleWarningDays As Integer
+            Get
+                Dim days As Integer
+                If Not Integer.TryParse(System.Configuration.ConfigurationManager.AppSettings("StaleWarningDays"), days) Then days = 7
+                Return days
+            End Get
+        End Property
+
         ''' <summary>Автоматичне зняття застарілих оголошень (п.20, наступна фіча понад MVP,
         ''' 2026-09-12) — опубліковане оголошення, що не оновлювалось понад заданий поріг
         ''' днів від дати публікації (ApprovedAt), знімається з публікації (Approved → Draft,
@@ -491,7 +590,7 @@ Namespace SumyPortal
                 Using selectCmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.Title, u.FullName AS ProviderName, u.Email AS ProviderEmail " &
                     "FROM Services s JOIN Users u ON u.UserId = s.ProviderId " &
-                    "WHERE s.Status = 'Approved' AND s.ApprovedAt < DATE_SUB(UTC_TIMESTAMP(), INTERVAL @Days DAY);", conn)
+                    "WHERE s.Status = 'Approved' AND COALESCE(s.RenewedAt, s.ApprovedAt) < DATE_SUB(UTC_TIMESTAMP(), INTERVAL @Days DAY);", conn)
                     selectCmd.Parameters.AddWithValue("@Days", days)
                     Using reader = selectCmd.ExecuteReader()
                         While reader.Read()
@@ -952,10 +1051,20 @@ Namespace SumyPortal
                                             status As String, rejectReason As String, isVerified As Boolean) As Boolean
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
-                    "UPDATE Services SET CategoryId = @CategoryId, Title = @Title, Description = @Description, " &
+                    "UPDATE Services SET " &
+                    "ApprovedAt = IF(@Status = 'Approved' AND Status <> 'Approved', UTC_TIMESTAMP(), ApprovedAt), " &
+                    "RenewedAt = IF(@Status = 'Approved' AND Status <> 'Approved', NULL, RenewedAt), " &
+                    "ExpiryWarnedAt = IF(@Status = 'Approved' AND Status <> 'Approved', NULL, ExpiryWarnedAt), " &
+                    "CategoryId = @CategoryId, Title = @Title, Description = @Description, " &
                     "Price = @Price, District = @District, Phone = @Phone, Latitude = @Latitude, Longitude = @Longitude, " &
                     "Status = @Status, RejectReason = @RejectReason, IsVerified = @IsVerified " &
                     "WHERE ServiceId = @ServiceId;", conn)
+                    ' Пряма публікація адміном (статус стає Approved) = те саме, що Approve(): строк
+                    ' публікації починається заново. Без цього ніколи не схвалене оголошення лишалось
+                    ' з ApprovedAt = NULL (падали дайджест/sitemap — reader.GetDateTime на NULL), а
+                    ' раніше автознняте — з давньою датою (наступна перевірка знову б його зняла).
+                    ' Присвоєння ApprovedAt/RenewedAt/ExpiryWarnedAt стоять ДО Status: MySQL виконує
+                    ' SET зліва направо, тож тут Status — ще старе значення.
                     cmd.Parameters.AddWithValue("@ServiceId", serviceId)
                     cmd.Parameters.AddWithValue("@CategoryId", categoryId)
                     cmd.Parameters.AddWithValue("@Title", title)

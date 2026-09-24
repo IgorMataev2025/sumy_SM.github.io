@@ -29,6 +29,10 @@
                      бо потребує форматування decimal/умовного "немає відгуків". -->
                 <p class="service-category"><asp:Literal ID="statsLiteral" runat="server" /></p>
 
+                <%-- Строк публікації (2026-09-24, міграція 021) — лише для опублікованих;
+                     текст і видимість кнопки «Продовжити» — у rptServices_ItemDataBound. --%>
+                <asp:Label ID="expiryLabel" runat="server" Visible="false" />
+
                 <asp:Literal runat="server" Visible='<%#: Not String.IsNullOrEmpty(CType(Container.DataItem, SumyPortal.Service).RejectReason) %>'
                     Text='<%#: Resources.SiteText.MyServices_RejectReasonPrefix & CType(Container.DataItem, SumyPortal.Service).RejectReason %>' />
 
@@ -44,6 +48,9 @@
                         CommandArgument='<%#: CType(Container.DataItem, SumyPortal.Service).ServiceId %>'
                         Visible='<%#: CType(Container.DataItem, SumyPortal.Service).Status = "Approved" %>'
                         Text="<%$ Resources:SiteText, MyServices_Unpublish %>" />
+
+                    <asp:LinkButton ID="renewButton" runat="server" CommandName="Renew" Visible="false"
+                        CommandArgument='<%#: CType(Container.DataItem, SumyPortal.Service).ServiceId %>' />
 
                     <asp:LinkButton runat="server" CommandName="Delete"
                         CommandArgument='<%#: CType(Container.DataItem, SumyPortal.Service).ServiceId %>'
