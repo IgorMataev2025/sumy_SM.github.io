@@ -49,6 +49,10 @@
                         Visible='<%#: CType(Container.DataItem, SumyPortal.Service).Status = "Approved" %>'
                         Text="<%$ Resources:SiteText, MyServices_Unpublish %>" />
 
+                    <asp:LinkButton runat="server" CommandName="Copy"
+                        CommandArgument='<%#: CType(Container.DataItem, SumyPortal.Service).ServiceId %>'
+                        Text="<%$ Resources:SiteText, MyServices_Copy %>" />
+
                     <asp:LinkButton ID="renewButton" runat="server" CommandName="Renew" Visible="false"
                         CommandArgument='<%#: CType(Container.DataItem, SumyPortal.Service).ServiceId %>' />
 

@@ -235,6 +235,8 @@
   <data name="MyServices_ExpiresSoon" xml:space="preserve"><value>{0:d} оголошення буде автоматично знято з публікації — продовжте, щоб воно лишалось у каталозі.</value></data>
   <data name="MyServices_Renew" xml:space="preserve"><value>Продовжити ще на {0} днів</value></data>
   <data name="MyServices_Msg_Renewed" xml:space="preserve"><value>Публікацію продовжено ще на {0} днів.</value></data>
+  <data name="MyServices_Copy" xml:space="preserve"><value>Копіювати</value></data>
+  <data name="MyServices_CopyTitleSuffix" xml:space="preserve"><value> (копія)</value></data>
   <data name="MyServices_Stats_Views" xml:space="preserve"><value>Перегляди: {0}</value></data>
   <data name="MyServices_Stats_Conversations" xml:space="preserve"><value>Розмови: {0}</value></data>
   <data name="MyServices_Stats_Favorites" xml:space="preserve"><value>Вподобання: {0}</value></data>

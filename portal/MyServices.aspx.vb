@@ -104,6 +104,13 @@ Namespace SumyPortal
                     If ok Then
                         ShowInfo(Resources.SiteText.MyServices_Msg_Unpublished)
                     End If
+                Case "Copy"
+                    Dim copyId = CopyService(serviceId)
+                    If copyId.HasValue Then
+                        Response.Redirect("ServiceEdit.aspx?id=" & copyId.Value, False)
+                        Context.ApplicationInstance.CompleteRequest()
+                        Return
+                    End If
                 Case "Renew"
                     ok = Service.Renew(serviceId, CurrentProvider.UserId)
                     If ok Then
@@ -119,6 +126,50 @@ Namespace SumyPortal
 
             BindServices()
         End Sub
+
+        ''' <summary>«Копіювати оголошення» (2026-09-24) — нова чернетка з усіма полями, фото
+        ''' й специфікацією оригіналу (файли копіюються фізично в теку нового оголошення, щоб
+        ''' видалення одного не зачепило інше). Оригінал будь-якого статусу; власника перевіряє
+        ''' GetById. Nothing — оригінал не знайдено/чужий.</summary>
+        Private Function CopyService(sourceId As Integer) As Integer?
+            Dim src = Service.GetById(sourceId, CurrentProvider.UserId)
+            If src Is Nothing Then Return Nothing
+
+            Dim title = src.Title & Resources.SiteText.MyServices_CopyTitleSuffix
+            If title.Length > 255 Then title = title.Substring(0, 255)
+
+            Dim newId = Service.Create(CurrentProvider.UserId, src.CategoryId, title, src.Description,
+                src.Price, src.District, src.Phone, src.Latitude, src.Longitude)
+
+            Dim relativeDir = "~/Uploads/Services/" & newId & "/"
+            For Each photo In Service.GetPhotos(sourceId)
+                Dim copied = CopyUploadedFile(photo.FilePath, relativeDir)
+                If copied IsNot Nothing Then Service.AddPhoto(newId, copied)
+            Next
+            If Not String.IsNullOrEmpty(src.SpecificationFilePath) Then
+                Dim copied = CopyUploadedFile(src.SpecificationFilePath, relativeDir)
+                If copied IsNot Nothing Then Service.SetSpecificationFilePath(newId, CurrentProvider.UserId, copied)
+            End If
+
+            Return newId
+        End Function
+
+        ''' <summary>Копія файлу під новим GUID-іменем (той самий формат імені, що при
+        ''' завантаженні в ServiceEdit.aspx.vb). Nothing, якщо файлу вже немає на диску —
+        ''' тоді копія просто без нього, а не помилка.</summary>
+        Private Function CopyUploadedFile(sourceRelativePath As String, targetRelativeDir As String) As String
+            Try
+                Dim sourcePhysical = Server.MapPath(sourceRelativePath)
+                If Not File.Exists(sourcePhysical) Then Return Nothing
+                Dim targetPhysicalDir = Server.MapPath(targetRelativeDir)
+                Directory.CreateDirectory(targetPhysicalDir)
+                Dim fileName = Guid.NewGuid().ToString("N") & Path.GetExtension(sourcePhysical).ToLowerInvariant()
+                File.Copy(sourcePhysical, Path.Combine(targetPhysicalDir, fileName))
+                Return targetRelativeDir & fileName
+            Catch
+                Return Nothing
+            End Try
+        End Function
 
         ''' <summary>Фото й специфікація лежать в одній теці оголошення — прибираємо її цілком
         ''' (той самий підхід, що AdminUsers.aspx.vb). Рядки в БД уже видалено, тому помилка

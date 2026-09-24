@@ -235,6 +235,8 @@
   <data name="MyServices_ExpiresSoon" xml:space="preserve"><value>This listing will be unpublished automatically on {0:d} — renew it to keep it in the catalog.</value></data>
   <data name="MyServices_Renew" xml:space="preserve"><value>Renew for {0} more days</value></data>
   <data name="MyServices_Msg_Renewed" xml:space="preserve"><value>Publication renewed for {0} more days.</value></data>
+  <data name="MyServices_Copy" xml:space="preserve"><value>Copy</value></data>
+  <data name="MyServices_CopyTitleSuffix" xml:space="preserve"><value> (copy)</value></data>
   <data name="MyServices_Stats_Views" xml:space="preserve"><value>Views: {0}</value></data>
   <data name="MyServices_Stats_Conversations" xml:space="preserve"><value>Conversations: {0}</value></data>
   <data name="MyServices_Stats_Favorites" xml:space="preserve"><value>Favorites: {0}</value></data>
