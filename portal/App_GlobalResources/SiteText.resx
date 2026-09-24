@@ -228,6 +228,9 @@
   <data name="MyServices_Unpublish" xml:space="preserve"><value>Зняти з публікації</value></data>
   <data name="MyServices_Msg_Submitted" xml:space="preserve"><value>Оголошення подано на модерацію.</value></data>
   <data name="MyServices_Msg_Unpublished" xml:space="preserve"><value>Оголошення знято з публікації.</value></data>
+  <data name="MyServices_Delete" xml:space="preserve"><value>Видалити</value></data>
+  <data name="MyServices_DeleteConfirmJs" xml:space="preserve"><value>return confirm("Видалити оголошення назавжди? Разом із ним буде видалено фото, відгуки та переписку по ньому. Дію не можна скасувати.");</value></data>
+  <data name="MyServices_Msg_Deleted" xml:space="preserve"><value>Оголошення видалено.</value></data>
   <data name="MyServices_Stats_Views" xml:space="preserve"><value>Перегляди: {0}</value></data>
   <data name="MyServices_Stats_Conversations" xml:space="preserve"><value>Розмови: {0}</value></data>
   <data name="MyServices_Stats_Favorites" xml:space="preserve"><value>Вподобання: {0}</value></data>

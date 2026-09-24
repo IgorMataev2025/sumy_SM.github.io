@@ -216,6 +216,23 @@ Namespace SumyPortal
             End Using
         End Function
 
+        ''' <summary>Видалення власного оголошення постачальником (2026-09-24) — лише Draft/Rejected
+        ''' (опубліковане спершу знімається з публікації, на модерації — чекає рішення адміна).
+        ''' Власника й статус перевіряє сам SQL, той самий прийом, що Unpublish. Пов'язані рядки
+        ''' (фото, відгуки, переписка, вподобане тощо) видаляються каскадно (ON DELETE CASCADE);
+        ''' файли з диска прибирає сторінка.</summary>
+        Public Shared Function Delete(serviceId As Integer, providerId As Integer) As Boolean
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand(
+                    "DELETE FROM Services " &
+                    "WHERE ServiceId = @ServiceId AND ProviderId = @ProviderId AND Status IN ('Draft', 'Rejected');", conn)
+                    cmd.Parameters.AddWithValue("@ServiceId", serviceId)
+                    cmd.Parameters.AddWithValue("@ProviderId", providerId)
+                    Return cmd.ExecuteNonQuery() > 0
+                End Using
+            End Using
+        End Function
+
         ' --- Фото ---
 
         Public Shared Function GetPhotos(serviceId As Integer) As List(Of ServicePhoto)

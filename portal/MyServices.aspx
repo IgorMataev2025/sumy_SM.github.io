@@ -7,7 +7,9 @@
 
     <p><a href="ServiceEdit.aspx" class="btn-primary btn-link"><asp:Literal runat="server" Text="<%$ Resources:SiteText, MyServices_NewLink %>" /></a></p>
 
-    <asp:Label ID="infoLabel" runat="server" CssClass="stub-note" Visible="false" />
+    <%-- EnableViewState="false": інакше текст попередньої дії переживає наступний постбек
+         і, напр., "Оголошення видалено." лишається на екрані, коли нова дія не вдалась. --%>
+    <asp:Label ID="infoLabel" runat="server" CssClass="stub-note" Visible="false" EnableViewState="false" />
 
     <asp:Panel ID="emptyPanel" runat="server" Visible="false" CssClass="stub-note">
         <asp:Literal runat="server" Text="<%$ Resources:SiteText, MyServices_Empty %>" />
@@ -42,6 +44,12 @@
                         CommandArgument='<%#: CType(Container.DataItem, SumyPortal.Service).ServiceId %>'
                         Visible='<%#: CType(Container.DataItem, SumyPortal.Service).Status = "Approved" %>'
                         Text="<%$ Resources:SiteText, MyServices_Unpublish %>" />
+
+                    <asp:LinkButton runat="server" CommandName="Delete"
+                        CommandArgument='<%#: CType(Container.DataItem, SumyPortal.Service).ServiceId %>'
+                        Visible='<%#: CType(Container.DataItem, SumyPortal.Service).Status = "Draft" OrElse CType(Container.DataItem, SumyPortal.Service).Status = "Rejected" %>'
+                        OnClientClick="<%$ Resources:SiteText, MyServices_DeleteConfirmJs %>"
+                        Text="<%$ Resources:SiteText, MyServices_Delete %>" />
                 </div>
             </div>
         </ItemTemplate>

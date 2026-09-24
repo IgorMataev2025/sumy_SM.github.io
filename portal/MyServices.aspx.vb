@@ -1,5 +1,6 @@
 Imports System
 Imports System.Collections.Generic
+Imports System.IO
 
 Namespace SumyPortal
 
@@ -75,9 +76,26 @@ Namespace SumyPortal
                     If ok Then
                         ShowInfo(Resources.SiteText.MyServices_Msg_Unpublished)
                     End If
+                Case "Delete"
+                    ok = Service.Delete(serviceId, CurrentProvider.UserId)
+                    If ok Then
+                        DeleteServiceDirectory(serviceId)
+                        ShowInfo(Resources.SiteText.MyServices_Msg_Deleted)
+                    End If
             End Select
 
             BindServices()
+        End Sub
+
+        ''' <summary>Фото й специфікація лежать в одній теці оголошення — прибираємо її цілком
+        ''' (той самий підхід, що AdminUsers.aspx.vb). Рядки в БД уже видалено, тому помилка
+        ''' файлової системи не критична.</summary>
+        Private Sub DeleteServiceDirectory(serviceId As Integer)
+            Try
+                Dim dir = Server.MapPath("~/Uploads/Services/" & serviceId & "/")
+                If Directory.Exists(dir) Then Directory.Delete(dir, True)
+            Catch
+            End Try
         End Sub
 
         Private Sub ShowInfo(message As String)
