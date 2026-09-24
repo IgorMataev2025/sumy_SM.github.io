@@ -290,7 +290,11 @@
   <data name="ServiceEdit_Heading_New" xml:space="preserve"><value>Нове оголошення</value></data>
   <data name="ServiceEdit_Heading_Edit" xml:space="preserve"><value>Редагування оголошення</value></data>
   <data name="ServiceEdit_Locked_Pending" xml:space="preserve"><value>Оголошення вже подано на модерацію — редагування недоступне, доки адміністратор не прийме рішення.</value></data>
-  <data name="ServiceEdit_Locked_Approved" xml:space="preserve"><value>Оголошення опубліковано. Щоб редагувати, спершу зніміть його з публікації в списку оголошень.</value></data>
+  <data name="ServiceEdit_Quick_Intro" xml:space="preserve"><value>Оголошення опубліковане. Ціну, район і телефон можна змінити тут — зміни одразу з’являться в каталозі, без повторної модерації.</value></data>
+  <data name="ServiceEdit_Quick_Btn" xml:space="preserve"><value>Зберегти зміни</value></data>
+  <data name="ServiceEdit_Quick_Saved" xml:space="preserve"><value>Зміни збережено — вони вже видні в каталозі.</value></data>
+  <data name="ServiceEdit_Quick_Failed" xml:space="preserve"><value>Не вдалося зберегти: оголошення більше не опубліковане. Поверніться до списку оголошень.</value></data>
+  <data name="ServiceEdit_Quick_OtherFields" xml:space="preserve"><value>Щоб змінити назву, опис, категорію, фото чи специфікацію, зніміть оголошення з публікації в списку оголошень — після змін воно знову пройде модерацію.</value></data>
   <data name="ServiceEdit_BackToList" xml:space="preserve"><value>← До списку оголошень</value></data>
   <data name="ServiceEdit_Label_Category" xml:space="preserve"><value>Категорія</value></data>
   <data name="ServiceEdit_Label_Title" xml:space="preserve"><value>Назва</value></data>

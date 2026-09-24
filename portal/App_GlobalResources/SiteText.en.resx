@@ -290,7 +290,11 @@
   <data name="ServiceEdit_Heading_New" xml:space="preserve"><value>New Listing</value></data>
   <data name="ServiceEdit_Heading_Edit" xml:space="preserve"><value>Edit Listing</value></data>
   <data name="ServiceEdit_Locked_Pending" xml:space="preserve"><value>The listing has already been submitted for moderation — editing is unavailable until the administrator makes a decision.</value></data>
-  <data name="ServiceEdit_Locked_Approved" xml:space="preserve"><value>The listing is published. To edit it, first unpublish it from the listings page.</value></data>
+  <data name="ServiceEdit_Quick_Intro" xml:space="preserve"><value>This listing is published. You can change the price, district and phone here — changes appear in the catalog immediately, without another moderation.</value></data>
+  <data name="ServiceEdit_Quick_Btn" xml:space="preserve"><value>Save Changes</value></data>
+  <data name="ServiceEdit_Quick_Saved" xml:space="preserve"><value>Changes saved — they are already visible in the catalog.</value></data>
+  <data name="ServiceEdit_Quick_Failed" xml:space="preserve"><value>Could not save: the listing is no longer published. Please go back to your listings.</value></data>
+  <data name="ServiceEdit_Quick_OtherFields" xml:space="preserve"><value>To change the title, description, category, photos or specification, unpublish the listing from your listings — after editing it will go through moderation again.</value></data>
   <data name="ServiceEdit_BackToList" xml:space="preserve"><value>← Back to Listings</value></data>
   <data name="ServiceEdit_Label_Category" xml:space="preserve"><value>Category</value></data>
   <data name="ServiceEdit_Label_Title" xml:space="preserve"><value>Title</value></data>

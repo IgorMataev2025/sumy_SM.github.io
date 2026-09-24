@@ -17,6 +17,41 @@
         <p><a href="MyServices.aspx"><asp:Literal runat="server" Text="<%$ Resources:SiteText, ServiceEdit_BackToList %>" /></a></p>
     </asp:Panel>
 
+    <%-- Швидке редагування опублікованого оголошення (2026-09-24): лише ціна/район/телефон,
+         без повторної модерації. Окрема панель з власною ValidationGroup, щоб валідатори
+         основної форми (напр. обов'язкова назва) не блокували збереження. --%>
+    <asp:Panel ID="quickEditPanel" runat="server" Visible="false" CssClass="auth-form service-form">
+        <p class="stub-note"><asp:Literal runat="server" Text="<%$ Resources:SiteText, ServiceEdit_Quick_Intro %>" /></p>
+        <h3><asp:Literal ID="quickTitleLiteral" runat="server" /></h3>
+
+        <asp:ValidationSummary runat="server" ValidationGroup="quick" CssClass="form-error" DisplayMode="BulletList" />
+        <asp:Label ID="quickResultLabel" runat="server" Visible="false" EnableViewState="false" />
+
+        <div class="form-row">
+            <label for="<%= txtQuickPrice.ClientID %>"><asp:Literal runat="server" Text="<%$ Resources:SiteText, ServiceEdit_Label_Price %>" /></label>
+            <asp:TextBox ID="txtQuickPrice" runat="server" MaxLength="10" />
+            <asp:RegularExpressionValidator runat="server" ControlToValidate="txtQuickPrice" ValidationGroup="quick" ErrorMessage="<%$ Resources:SiteText, ServiceEdit_Val_Price %>" ValidationExpression="^\d+(\.\d{1,2})?$" Display="Dynamic" CssClass="field-error" />
+        </div>
+
+        <div class="form-row">
+            <label for="<%= ddlQuickDistrict.ClientID %>"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Register_Label_District %>" /></label>
+            <asp:DropDownList ID="ddlQuickDistrict" runat="server" />
+        </div>
+
+        <div class="form-row">
+            <label for="<%= txtQuickPhone.ClientID %>"><asp:Literal runat="server" Text="<%$ Resources:SiteText, ServiceEdit_Label_Phone %>" /></label>
+            <asp:TextBox ID="txtQuickPhone" runat="server" MaxLength="50" />
+            <asp:RequiredFieldValidator runat="server" ControlToValidate="txtQuickPhone" ValidationGroup="quick" ErrorMessage="<%$ Resources:SiteText, ServiceEdit_Val_Phone %>" Display="Dynamic" CssClass="field-error" />
+        </div>
+
+        <div class="form-row form-actions">
+            <asp:Button ID="btnQuickSave" runat="server" Text="<%$ Resources:SiteText, ServiceEdit_Quick_Btn %>" OnClick="btnQuickSave_Click" ValidationGroup="quick" CssClass="btn-primary" />
+        </div>
+
+        <p class="stub-note"><asp:Literal runat="server" Text="<%$ Resources:SiteText, ServiceEdit_Quick_OtherFields %>" /></p>
+        <p><a href="MyServices.aspx"><asp:Literal runat="server" Text="<%$ Resources:SiteText, ServiceEdit_BackToList %>" /></a></p>
+    </asp:Panel>
+
     <asp:Panel ID="formPanel" runat="server" CssClass="auth-form service-form">
         <asp:ValidationSummary ID="validationSummary" runat="server" CssClass="form-error" DisplayMode="BulletList" />
         <asp:Label ID="serverErrorLabel" runat="server" CssClass="form-error" Visible="false" />

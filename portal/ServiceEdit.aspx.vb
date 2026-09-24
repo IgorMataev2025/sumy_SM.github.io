@@ -54,12 +54,24 @@ Namespace SumyPortal
                     headingLiteral.Text = Resources.SiteText.ServiceEdit_Heading_Edit
                     titleLiteral.Text = Resources.SiteText.ServiceEdit_Heading_Edit
 
+                    If svc.Status = "Approved" Then
+                        ' Опубліковане — швидке редагування ціни/району/телефону без модерації.
+                        formPanel.Visible = False
+                        quickEditPanel.Visible = True
+                        quickTitleLiteral.Text = Server.HtmlEncode(svc.Title)
+                        txtQuickPrice.Text = If(svc.Price.HasValue, svc.Price.Value.ToString("0.##", CultureInfo.InvariantCulture), String.Empty)
+                        SumyDistricts.Populate(ddlQuickDistrict, Resources.SiteText.District_NotSpecified)
+                        If ddlQuickDistrict.Items.FindByValue(svc.District) IsNot Nothing Then
+                            ddlQuickDistrict.SelectedValue = svc.District
+                        End If
+                        txtQuickPhone.Text = svc.Phone
+                        Return
+                    End If
+
                     If svc.Status <> "Draft" AndAlso svc.Status <> "Rejected" Then
                         formPanel.Visible = False
                         lockedPanel.Visible = True
-                        lockedText.Text = If(svc.Status = "Pending",
-                            Resources.SiteText.ServiceEdit_Locked_Pending,
-                            Resources.SiteText.ServiceEdit_Locked_Approved)
+                        lockedText.Text = Resources.SiteText.ServiceEdit_Locked_Pending
                         Return
                     End If
 
@@ -133,6 +145,22 @@ Namespace SumyPortal
                 Service.SubmitForModeration(serviceId.Value, CurrentProvider.UserId)
                 Response.Redirect("MyServices.aspx")
             End If
+        End Sub
+
+        Protected Sub btnQuickSave_Click(sender As Object, e As EventArgs)
+            If Not Page.IsValid Then Return
+
+            Dim price As Decimal? = Nothing
+            If Not String.IsNullOrWhiteSpace(txtQuickPrice.Text) Then
+                price = Decimal.Parse(txtQuickPrice.Text, CultureInfo.InvariantCulture)
+            End If
+
+            ' Якщо оголошення тим часом зняли з публікації/автозняли — SQL не оновить рядок.
+            Dim ok = Service.UpdatePublishedDetails(ServiceIdParam, CurrentProvider.UserId,
+                price, ddlQuickDistrict.SelectedValue, txtQuickPhone.Text.Trim())
+            quickResultLabel.Text = If(ok, Resources.SiteText.ServiceEdit_Quick_Saved, Resources.SiteText.ServiceEdit_Quick_Failed)
+            quickResultLabel.CssClass = If(ok, "stub-note", "form-error")
+            quickResultLabel.Visible = True
         End Sub
 
         ''' <summary>Зберігає поля, обробляє видалення позначених і завантаження нових фото. Nothing — якщо є помилка валідації/збереження.</summary>

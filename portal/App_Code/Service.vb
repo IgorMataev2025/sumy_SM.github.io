@@ -176,6 +176,26 @@ Namespace SumyPortal
             End Using
         End Function
 
+        ''' <summary>Швидке редагування ОПУБЛІКОВАНОГО оголошення (2026-09-24, рішення користувача
+        ''' «дрібні поля без модерації») — лише ціна/район/телефон, статус лишається Approved.
+        ''' Назва/опис/категорія/фото — як і раніше лише через зняття з публікації й модерацію.
+        ''' Власника й статус перевіряє сам SQL (той самий прийом, що Update/Unpublish).</summary>
+        Public Shared Function UpdatePublishedDetails(serviceId As Integer, providerId As Integer,
+                                                      price As Decimal?, district As String, phone As String) As Boolean
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand(
+                    "UPDATE Services SET Price = @Price, District = @District, Phone = @Phone " &
+                    "WHERE ServiceId = @ServiceId AND ProviderId = @ProviderId AND Status = 'Approved';", conn)
+                    cmd.Parameters.AddWithValue("@ServiceId", serviceId)
+                    cmd.Parameters.AddWithValue("@ProviderId", providerId)
+                    cmd.Parameters.AddWithValue("@Price", If(price.HasValue, CObj(price.Value), DBNull.Value))
+                    cmd.Parameters.AddWithValue("@District", If(String.IsNullOrWhiteSpace(district), DBNull.Value, CObj(district)))
+                    cmd.Parameters.AddWithValue("@Phone", If(String.IsNullOrWhiteSpace(phone), DBNull.Value, CObj(phone)))
+                    Return cmd.ExecuteNonQuery() > 0
+                End Using
+            End Using
+        End Function
+
         Private Shared Sub AddCommonParams(cmd As MySqlCommand, providerId As Integer, categoryId As Integer, title As String,
                                             description As String, price As Decimal?, district As String, phone As String,
                                             latitude As Decimal?, longitude As Decimal?)
