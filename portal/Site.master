@@ -54,8 +54,8 @@
             </div>
             <nav class="site-nav">
                 <a href="~/Default.aspx" runat="server" id="homeNavLink"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Home %>" /></a>
-                <a href="~/Catalog.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Catalog %>" /></a>
-                <a href="~/OrderBoard.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_OrderBoard %>" /></a>
+                <a href="~/Catalog.aspx" runat="server" id="catalogNavLink"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Catalog %>" /></a>
+                <a href="~/OrderBoard.aspx" runat="server" id="orderBoardNavLink"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_OrderBoard %>" /></a>
                 <a href="~/LegalGuide.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_LegalGuide %>" /></a>
                 <a href="~/Donate.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Donate %>" /></a>
                 <asp:PlaceHolder ID="anonNav" runat="server">

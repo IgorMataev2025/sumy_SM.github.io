@@ -85,6 +85,12 @@ Namespace SumyPortal
             anonNav.Visible = Not isAuthenticated
             userNav.Visible = isAuthenticated
             userEmailNav.Visible = isAuthenticated
+            ' Гостю Каталог/Стіл замовлень у меню не показуються (2026-09-24): дублюють
+            ' одне одного й ускладнюють перший контакт із сайтом. Гість потрапляє в каталог
+            ' через картки категорій на головній; самі сторінки лишаються відкритими
+            ' анонімно (Web.config, SEO/sitemap).
+            catalogNavLink.Visible = isAuthenticated
+            orderBoardNavLink.Visible = isAuthenticated
             If isAuthenticated Then
                 userNameLiteral.Text = Server.HtmlEncode(Page.User.Identity.Name)
 
