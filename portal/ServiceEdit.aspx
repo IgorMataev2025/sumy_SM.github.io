@@ -123,10 +123,15 @@
 
         <asp:Panel ID="existingPhotosPanel" runat="server" Visible="false" CssClass="form-row">
             <label><asp:Literal runat="server" Text="<%$ Resources:SiteText, ServiceEdit_ExistingPhotos_Label %>" /></label>
-            <asp:Repeater ID="rptPhotos" runat="server">
+            <asp:Repeater ID="rptPhotos" runat="server" OnItemCommand="rptPhotos_ItemCommand">
                 <ItemTemplate>
                     <div class="photo-thumb">
                         <img src='<%#: ResolveUrl(CType(Container.DataItem, SumyPortal.ServicePhoto).FilePath) %>' alt="" />
+                        <%-- Головне = перше (мініатюра в каталозі); інші можна зробити головним (2026-09-24). --%>
+                        <asp:Label runat="server" CssClass="status-badge" Visible='<%# Container.ItemIndex = 0 %>' Text="<%$ Resources:SiteText, ServiceEdit_Photo_Main %>" />
+                        <asp:LinkButton runat="server" CommandName="MakeMain" CausesValidation="false" Visible='<%# Container.ItemIndex > 0 %>'
+                            CommandArgument='<%#: CType(Container.DataItem, SumyPortal.ServicePhoto).PhotoId %>'
+                            Text="<%$ Resources:SiteText, ServiceEdit_Photo_MakeMain %>" />
                         <label>
                             <asp:CheckBox runat="server" ID="chkDeletePhoto" />
                             <%#: Resources.SiteText.Profile_Gallery_Delete %>

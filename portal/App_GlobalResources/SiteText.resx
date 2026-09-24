@@ -313,6 +313,8 @@
   <data name="ServiceEdit_Map_Label" xml:space="preserve"><value>Місцезнаходження на карті (необов'язково — клікніть, щоб поставити мітку)</value></data>
   <data name="ServiceEdit_Map_Hint" xml:space="preserve"><value>Мітку ще не встановлено.</value></data>
   <data name="ServiceEdit_ExistingPhotos_Label" xml:space="preserve"><value>Наявні фото</value></data>
+  <data name="ServiceEdit_Photo_Main" xml:space="preserve"><value>★ Головне</value></data>
+  <data name="ServiceEdit_Photo_MakeMain" xml:space="preserve"><value>Зробити головним</value></data>
   <data name="ServiceEdit_AddPhoto_Prefix" xml:space="preserve"><value>Додати фото (до</value></data>
   <data name="ServiceEdit_AddPhoto_Suffix" xml:space="preserve"><value>шт., jpg/png/gif)</value></data>
   <data name="ServiceEdit_Label_Specification" xml:space="preserve"><value>Специфікація</value></data>

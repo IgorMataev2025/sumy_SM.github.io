@@ -147,6 +147,17 @@ Namespace SumyPortal
             End If
         End Sub
 
+        ''' <summary>«Зробити головним» — окремий постбек без валідації й без збереження решти
+        ''' форми: введені, але не збережені поля переживають постбек у самих контролах.</summary>
+        Protected Sub rptPhotos_ItemCommand(source As Object, e As RepeaterCommandEventArgs)
+            If e.CommandName <> "MakeMain" Then Return
+            Dim photoId As Integer
+            If Integer.TryParse(CStr(e.CommandArgument), photoId) Then
+                Service.SetMainPhoto(photoId, CurrentProvider.UserId)
+            End If
+            BindPhotos(ServiceIdParam)
+        End Sub
+
         Protected Sub btnQuickSave_Click(sender As Object, e As EventArgs)
             If Not Page.IsValid Then Return
 

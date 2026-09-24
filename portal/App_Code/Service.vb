@@ -298,6 +298,52 @@ Namespace SumyPortal
             End Using
         End Sub
 
+        ''' <summary>«Зробити головним» (2026-09-24). Головне фото скрізь — перше за PhotoId
+        ''' (GetPhotos: мініатюри каталогу/схожих, перше в галереї), тож без нового стовпця й
+        ''' міграції просто міняємо FilePath обраного фото й першого місцями (в транзакції).
+        ''' Лише Draft/Rejected власника — той самий обсяг, що решта змін фото в ServiceEdit.</summary>
+        Public Shared Function SetMainPhoto(photoId As Integer, providerId As Integer) As Boolean
+            Using conn = DbHelper.GetConnection()
+                Dim serviceId As Integer
+                Dim chosenPath As String
+                Using cmd As New MySqlCommand(
+                    "SELECT p.ServiceId, p.FilePath FROM ServicePhotos p JOIN Services s ON s.ServiceId = p.ServiceId " &
+                    "WHERE p.PhotoId = @PhotoId AND s.ProviderId = @ProviderId AND s.Status IN ('Draft', 'Rejected');", conn)
+                    cmd.Parameters.AddWithValue("@PhotoId", photoId)
+                    cmd.Parameters.AddWithValue("@ProviderId", providerId)
+                    Using reader = cmd.ExecuteReader()
+                        If Not reader.Read() Then Return False
+                        serviceId = reader.GetInt32("ServiceId")
+                        chosenPath = reader.GetString("FilePath")
+                    End Using
+                End Using
+
+                Dim firstId As Integer
+                Dim firstPath As String
+                Using cmd As New MySqlCommand("SELECT PhotoId, FilePath FROM ServicePhotos WHERE ServiceId = @ServiceId ORDER BY PhotoId LIMIT 1;", conn)
+                    cmd.Parameters.AddWithValue("@ServiceId", serviceId)
+                    Using reader = cmd.ExecuteReader()
+                        reader.Read()
+                        firstId = reader.GetInt32("PhotoId")
+                        firstPath = reader.GetString("FilePath")
+                    End Using
+                End Using
+                If firstId = photoId Then Return True
+
+                Using tx = conn.BeginTransaction()
+                    For Each pair In {New KeyValuePair(Of Integer, String)(firstId, chosenPath), New KeyValuePair(Of Integer, String)(photoId, firstPath)}
+                        Using cmd As New MySqlCommand("UPDATE ServicePhotos SET FilePath = @FilePath WHERE PhotoId = @PhotoId;", conn, tx)
+                            cmd.Parameters.AddWithValue("@FilePath", pair.Value)
+                            cmd.Parameters.AddWithValue("@PhotoId", pair.Key)
+                            cmd.ExecuteNonQuery()
+                        End Using
+                    Next
+                    tx.Commit()
+                End Using
+                Return True
+            End Using
+        End Function
+
         ''' <summary>Видаляє запис фото, якщо воно належить оголошенню цього постачальника. Повертає шлях файлу для видалення з диска (або Nothing).</summary>
         Public Shared Function DeletePhoto(photoId As Integer, providerId As Integer) As String
             Using conn = DbHelper.GetConnection()

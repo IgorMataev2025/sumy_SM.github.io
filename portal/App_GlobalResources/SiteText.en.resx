@@ -313,6 +313,8 @@
   <data name="ServiceEdit_Map_Label" xml:space="preserve"><value>Location on the map (optional — click to place a marker)</value></data>
   <data name="ServiceEdit_Map_Hint" xml:space="preserve"><value>No marker set yet.</value></data>
   <data name="ServiceEdit_ExistingPhotos_Label" xml:space="preserve"><value>Existing Photos</value></data>
+  <data name="ServiceEdit_Photo_Main" xml:space="preserve"><value>★ Main</value></data>
+  <data name="ServiceEdit_Photo_MakeMain" xml:space="preserve"><value>Make main</value></data>
   <data name="ServiceEdit_AddPhoto_Prefix" xml:space="preserve"><value>Add photos (up to</value></data>
   <data name="ServiceEdit_AddPhoto_Suffix" xml:space="preserve"><value>photos, jpg/png/gif)</value></data>
   <data name="ServiceEdit_Label_Specification" xml:space="preserve"><value>Specification</value></data>
