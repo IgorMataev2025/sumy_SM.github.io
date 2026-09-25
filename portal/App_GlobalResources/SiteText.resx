@@ -84,6 +84,7 @@
   <data name="Catalog_Map_Empty" xml:space="preserve"><value>Жодне з відфільтрованих оголошень не має мітки на карті.</value></data>
   <data name="Catalog_Map_DetailsLink" xml:space="preserve"><value>Детальніше</value></data>
   <data name="Catalog_Table_Name" xml:space="preserve"><value>Назва</value></data>
+  <data name="Catalog_Table_Provider" xml:space="preserve"><value>Постачальник</value></data>
   <data name="Catalog_Table_Price" xml:space="preserve"><value>Ціна</value></data>
   <data name="Catalog_Table_Date" xml:space="preserve"><value>Дата</value></data>
 

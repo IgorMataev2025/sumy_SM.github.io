@@ -987,15 +987,21 @@ Namespace SumyPortal
 
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified, s.SpecificationFilePath " &
-                    "FROM Services s JOIN Categories c ON c.CategoryId = s.CategoryId " & whereSql2 &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified, s.SpecificationFilePath, " &
+                    "u.FullName AS ProviderName " &
+                    "FROM Services s JOIN Categories c ON c.CategoryId = s.CategoryId " &
+                    "JOIN Users u ON u.UserId = s.ProviderId " & whereSql2 &
                     BuildSortOrder(sortBy) & "LIMIT @PageSize OFFSET @Offset;", conn)
                     cmd.Parameters.AddRange(selectParams.ToArray())
                     cmd.Parameters.AddWithValue("@PageSize", pageSize)
                     cmd.Parameters.AddWithValue("@Offset", (pageNumber - 1) * pageSize)
                     Using reader = cmd.ExecuteReader()
                         While reader.Read()
-                            result.Add(Map(reader))
+                            ' ProviderName — для колонки "Постачальник" у табличному режимі Catalog.aspx
+                            ' (2026-09-25); те саме ім'я (FullName), що показує ServiceDetails.aspx.
+                            Dim svc = Map(reader)
+                            svc.ProviderName = reader.GetString("ProviderName")
+                            result.Add(svc)
                         End While
                     End Using
                 End Using

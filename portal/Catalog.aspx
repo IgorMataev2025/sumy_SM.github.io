@@ -155,6 +155,7 @@
             <table class="catalog-table">
                 <thead>
                     <tr>
+                        <th data-sort="provider" data-type="text"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Table_Provider %>" /><span class="sort-arrow"></span></th>
                         <th data-sort="title" data-type="text"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Table_Name %>" /><span class="sort-arrow"></span></th>
                         <th data-sort="category" data-type="text"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Label_Category %>" /><span class="sort-arrow"></span></th>
                         <th data-sort="district" data-type="text"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Label_District %>" /><span class="sort-arrow"></span></th>
@@ -167,11 +168,13 @@
                         <ItemTemplate>
                             <tr class="catalog-table-row"
                                 data-href='<%#: "ServiceDetails.aspx?id=" & CType(Container.DataItem, SumyPortal.Service).ServiceId %>'
+                                data-provider='<%#: CType(Container.DataItem, SumyPortal.Service).ProviderName %>'
                                 data-title='<%#: CType(Container.DataItem, SumyPortal.Service).Title %>'
                                 data-category='<%#: CType(Container.DataItem, SumyPortal.Service).CategoryName %>'
                                 data-district='<%#: CType(Container.DataItem, SumyPortal.Service).District %>'
                                 data-price='<%#: If(CType(Container.DataItem, SumyPortal.Service).Price.HasValue, CType(Container.DataItem, SumyPortal.Service).Price.Value.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture), "") %>'
                                 data-date='<%#: CType(Container.DataItem, SumyPortal.Service).CreatedAt.Ticks %>'>
+                                <td><%#: CType(Container.DataItem, SumyPortal.Service).ProviderName %></td>
                                 <td><%#: CType(Container.DataItem, SumyPortal.Service).Title %></td>
                                 <td><%#: CType(Container.DataItem, SumyPortal.Service).CategoryName %></td>
                                 <td><%#: If(String.IsNullOrEmpty(CType(Container.DataItem, SumyPortal.Service).District), Resources.SiteText.Details_NotSpecified, CType(Container.DataItem, SumyPortal.Service).District) %></td>

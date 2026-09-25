@@ -84,6 +84,7 @@
   <data name="Catalog_Map_Empty" xml:space="preserve"><value>None of the filtered listings have a map marker.</value></data>
   <data name="Catalog_Map_DetailsLink" xml:space="preserve"><value>Details</value></data>
   <data name="Catalog_Table_Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Catalog_Table_Provider" xml:space="preserve"><value>Provider</value></data>
   <data name="Catalog_Table_Price" xml:space="preserve"><value>Price</value></data>
   <data name="Catalog_Table_Date" xml:space="preserve"><value>Date</value></data>
 
