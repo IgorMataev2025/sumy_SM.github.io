@@ -151,7 +151,11 @@
                 <asp:Literal ID="maxPhotosLiteral" runat="server" />
                 <asp:Literal runat="server" Text="<%$ Resources:SiteText, ServiceEdit_AddPhoto_Suffix %>" />
             </label>
-            <asp:FileUpload ID="fileUpload" runat="server" AllowMultiple="true" />
+            <asp:FileUpload ID="fileUpload" runat="server" AllowMultiple="true" accept=".jpg,.jpeg,.png,.gif" />
+            <!-- Вибрані, ще не збережені фото (за запитом користувача, 2026-09-25): браузер при кількох
+                 файлах показує лише одну назву/лічильник — тут мініатюри всіх + "видалити" для кожної.
+                 Повторний вибір ДОДАЄ до списку, а не замінює. Заповнює скрипт нижче. -->
+            <div id="photoPickList"></div>
         </div>
 
         <div class="form-row form-actions">
@@ -208,6 +212,55 @@
                     specInput.focus();
                 });
                 sync();
+            })();
+
+            (function () {
+                var input = document.getElementById('<%= fileUpload.ClientID %>');
+                var list = document.getElementById('photoPickList');
+                var deleteText = '<%= HttpUtility.JavaScriptStringEncode(Resources.SiteText.Profile_Gallery_Delete) %>';
+                var picked = [];
+                // Без DataTransfer (дуже старі браузери) input.files не змінити — лишаємо стандартну поведінку.
+                if (typeof DataTransfer === 'undefined') { return; }
+
+                function apply() {
+                    var dt = new DataTransfer();
+                    picked.forEach(function (f) { dt.items.add(f); });
+                    input.files = dt.files;
+                    render();
+                }
+
+                function render() {
+                    list.innerHTML = '';
+                    picked.forEach(function (f, i) {
+                        var tile = document.createElement('div');
+                        tile.className = 'photo-thumb';
+                        var img = document.createElement('img');
+                        img.alt = '';
+                        img.src = URL.createObjectURL(f);
+                        img.onload = function () { URL.revokeObjectURL(img.src); };
+                        var name = document.createElement('span');
+                        name.textContent = f.name.length > 18 ? f.name.slice(0, 15) + '…' : f.name;
+                        name.title = f.name;
+                        var del = document.createElement('button');
+                        del.type = 'button';
+                        del.className = 'btn-secondary';
+                        del.style.cssText = 'padding:0.1rem 0.6rem;font-size:0.8rem;';
+                        del.textContent = deleteText;
+                        del.addEventListener('click', function () { picked.splice(i, 1); apply(); });
+                        tile.appendChild(img);
+                        tile.appendChild(name);
+                        tile.appendChild(del);
+                        list.appendChild(tile);
+                    });
+                }
+
+                input.addEventListener('change', function () {
+                    Array.prototype.forEach.call(input.files, function (f) {
+                        var dup = picked.some(function (p) { return p.name === f.name && p.size === f.size && p.lastModified === f.lastModified; });
+                        if (!dup) { picked.push(f); }
+                    });
+                    apply();
+                });
             })();
         </script>
     </asp:Panel>
