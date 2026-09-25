@@ -87,11 +87,14 @@
             <table class="catalog-table">
                 <thead>
                     <tr>
+                        <%-- Мініатюра (2026-09-25) — після прибирання режиму "Список" фото інакше не видно. --%>
+                        <th><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Table_Photo %>" /></th>
                         <th data-sort="provider" data-type="text"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Table_Provider %>" /><span class="sort-arrow"></span></th>
                         <th data-sort="title" data-type="text"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Table_Name %>" /><span class="sort-arrow"></span></th>
                         <th data-sort="category" data-type="text"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Label_Category %>" /><span class="sort-arrow"></span></th>
                         <th data-sort="district" data-type="text"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Label_District %>" /><span class="sort-arrow"></span></th>
                         <th data-sort="price" data-type="number"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Table_Price %>" /><span class="sort-arrow"></span></th>
+                        <th data-sort="rating" data-type="number"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Table_Rating %>" /><span class="sort-arrow"></span></th>
                         <th data-sort="date" data-type="number"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Catalog_Table_Date %>" /><span class="sort-arrow"></span></th>
                     </tr>
                 </thead>
@@ -105,7 +108,13 @@
                                 data-category='<%#: CType(Container.DataItem, SumyPortal.Service).CategoryName %>'
                                 data-district='<%#: CType(Container.DataItem, SumyPortal.Service).District %>'
                                 data-price='<%#: If(CType(Container.DataItem, SumyPortal.Service).Price.HasValue, CType(Container.DataItem, SumyPortal.Service).Price.Value.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture), "") %>'
+                                data-rating='<%#: If(CType(Container.DataItem, SumyPortal.Service).ReviewAverage.HasValue, CType(Container.DataItem, SumyPortal.Service).ReviewAverage.Value.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture), "") %>'
                                 data-date='<%#: CType(Container.DataItem, SumyPortal.Service).CreatedAt.Ticks %>'>
+                                <td>
+                                    <asp:Image runat="server" Visible='<%#: Not String.IsNullOrEmpty(CType(Container.DataItem, SumyPortal.Service).ThumbnailUrl) %>'
+                                        ImageUrl='<%#: If(String.IsNullOrEmpty(CType(Container.DataItem, SumyPortal.Service).ThumbnailUrl), "", ResolveUrl(CType(Container.DataItem, SumyPortal.Service).ThumbnailUrl)) %>'
+                                        AlternateText="" style="width:48px;height:36px;object-fit:cover;border-radius:4px;display:block;" />
+                                </td>
                                 <td><%#: CType(Container.DataItem, SumyPortal.Service).ProviderName %></td>
                                 <td>
                                     <%#: CType(Container.DataItem, SumyPortal.Service).Title %>
@@ -121,6 +130,7 @@
                                 <td><%#: CType(Container.DataItem, SumyPortal.Service).CategoryName %></td>
                                 <td><%#: If(String.IsNullOrEmpty(CType(Container.DataItem, SumyPortal.Service).District), Resources.SiteText.Details_NotSpecified, CType(Container.DataItem, SumyPortal.Service).District) %></td>
                                 <td><%#: If(CType(Container.DataItem, SumyPortal.Service).Price.HasValue, CType(Container.DataItem, SumyPortal.Service).Price.Value.ToString("0.## грн"), Resources.SiteText.Price_Negotiable) %></td>
+                                <td style="white-space:nowrap;"><%#: If(CType(Container.DataItem, SumyPortal.Service).ReviewAverage.HasValue, "★ " & CType(Container.DataItem, SumyPortal.Service).ReviewAverage.Value.ToString("0.0") & " (" & CType(Container.DataItem, SumyPortal.Service).ReviewCount & ")", "—") %></td>
                                 <td><%#: CType(Container.DataItem, SumyPortal.Service).CreatedAt.ToString("dd.MM.yyyy") %></td>
                             </tr>
                         </ItemTemplate>

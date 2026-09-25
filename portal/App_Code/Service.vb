@@ -988,19 +988,26 @@ Namespace SumyPortal
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
                     "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified, s.SpecificationFilePath, " &
-                    "u.FullName AS ProviderName " &
+                    "u.FullName AS ProviderName, rv.AvgRating, COALESCE(rv.ReviewCount, 0) AS ReviewCount, " &
+                    "(SELECT p.FilePath FROM ServicePhotos p WHERE p.ServiceId = s.ServiceId ORDER BY p.PhotoId LIMIT 1) AS ThumbPath " &
                     "FROM Services s JOIN Categories c ON c.CategoryId = s.CategoryId " &
-                    "JOIN Users u ON u.UserId = s.ProviderId " & whereSql2 &
+                    "JOIN Users u ON u.UserId = s.ProviderId " &
+                    "LEFT JOIN (SELECT ServiceId, AVG(Rating) AS AvgRating, COUNT(*) AS ReviewCount FROM Reviews GROUP BY ServiceId) rv " &
+                    "ON rv.ServiceId = s.ServiceId " & whereSql2 &
                     BuildSortOrder(sortBy) & "LIMIT @PageSize OFFSET @Offset;", conn)
                     cmd.Parameters.AddRange(selectParams.ToArray())
                     cmd.Parameters.AddWithValue("@PageSize", pageSize)
                     cmd.Parameters.AddWithValue("@Offset", (pageNumber - 1) * pageSize)
                     Using reader = cmd.ExecuteReader()
                         While reader.Read()
-                            ' ProviderName — для колонки "Постачальник" у табличному режимі Catalog.aspx
-                            ' (2026-09-25); те саме ім'я (FullName), що показує ServiceDetails.aspx.
+                            ' Колонки таблиці Catalog.aspx (2026-09-25): "Постачальник" (FullName, як
+                            ' ServiceDetails.aspx), "Рейтинг" (середня оцінка/кількість відгуків) і
+                            ' "Фото" (перше за PhotoId = головне) — одним запитом, без N+1.
                             Dim svc = Map(reader)
                             svc.ProviderName = reader.GetString("ProviderName")
+                            svc.ReviewAverage = If(reader.IsDBNull(reader.GetOrdinal("AvgRating")), CType(Nothing, Decimal?), reader.GetDecimal("AvgRating"))
+                            svc.ReviewCount = Convert.ToInt32(reader("ReviewCount"))
+                            svc.ThumbnailUrl = If(reader.IsDBNull(reader.GetOrdinal("ThumbPath")), Nothing, reader.GetString("ThumbPath"))
                             result.Add(svc)
                         End While
                     End Using

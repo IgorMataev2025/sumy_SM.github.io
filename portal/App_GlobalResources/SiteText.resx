@@ -85,6 +85,8 @@
   <data name="Catalog_Map_DetailsLink" xml:space="preserve"><value>Детальніше</value></data>
   <data name="Catalog_Table_Name" xml:space="preserve"><value>Назва</value></data>
   <data name="Catalog_Table_Provider" xml:space="preserve"><value>Постачальник</value></data>
+  <data name="Catalog_Table_Photo" xml:space="preserve"><value>Фото</value></data>
+  <data name="Catalog_Table_Rating" xml:space="preserve"><value>Рейтинг</value></data>
   <data name="Catalog_Table_Price" xml:space="preserve"><value>Ціна</value></data>
   <data name="Catalog_Table_Date" xml:space="preserve"><value>Дата</value></data>
 
