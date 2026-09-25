@@ -68,6 +68,10 @@ Namespace SumyPortal
         ''' WarnExpiringApproved), Map(reader) її не знає.</summary>
         Public Property ExpiresAt As DateTime?
 
+        ''' <summary>Коли користувач додав оголошення в «Обране» — лише для Favorites.aspx
+        ''' (Favorite.GetByUser), Map(reader) її не знає.</summary>
+        Public Property FavoritedAt As DateTime?
+
         Public ReadOnly Property StatusLabel As String
             Get
                 Select Case Status

@@ -70,16 +70,28 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
-                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified, s.SpecificationFilePath " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified, s.SpecificationFilePath, " &
+                    "u.FullName AS ProviderName, f.CreatedAt AS FavoritedAt, rv.AvgRating, COALESCE(rv.ReviewCount, 0) AS ReviewCount, " &
+                    "(SELECT p.FilePath FROM ServicePhotos p WHERE p.ServiceId = s.ServiceId ORDER BY p.PhotoId LIMIT 1) AS ThumbPath " &
                     "FROM Favorites f " &
                     "JOIN Services s ON s.ServiceId = f.ServiceId " &
                     "JOIN Categories c ON c.CategoryId = s.CategoryId " &
+                    "JOIN Users u ON u.UserId = s.ProviderId " &
+                    "LEFT JOIN (SELECT ServiceId, AVG(Rating) AS AvgRating, COUNT(*) AS ReviewCount FROM Reviews GROUP BY ServiceId) rv ON rv.ServiceId = s.ServiceId " &
                     "WHERE f.UserId = @UserId AND s.ProviderId <> @UserId " &
                     "ORDER BY f.CreatedAt DESC;", conn)
                     cmd.Parameters.AddWithValue("@UserId", userId)
                     Using reader = cmd.ExecuteReader()
                         While reader.Read()
-                            result.Add(Service.Map(reader))
+                            ' Таблиця + панель подробиць на Favorites.aspx (2026-09-25): постачальник,
+                            ' рейтинг, мініатюра й дата додавання — одним запитом.
+                            Dim svc = Service.Map(reader)
+                            svc.ProviderName = reader.GetString("ProviderName")
+                            svc.FavoritedAt = reader.GetDateTime("FavoritedAt")
+                            svc.ReviewAverage = If(reader.IsDBNull(reader.GetOrdinal("AvgRating")), CType(Nothing, Decimal?), reader.GetDecimal("AvgRating"))
+                            svc.ReviewCount = Convert.ToInt32(reader("ReviewCount"))
+                            svc.ThumbnailUrl = If(reader.IsDBNull(reader.GetOrdinal("ThumbPath")), Nothing, reader.GetString("ThumbPath"))
+                            result.Add(svc)
                         End While
                     End Using
                 End Using

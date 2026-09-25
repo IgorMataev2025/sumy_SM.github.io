@@ -253,6 +253,9 @@
   <data name="Favorites_Empty_CatalogLink" xml:space="preserve"><value>catalog</value></data>
   <data name="Favorites_Empty_Suffix" xml:space="preserve"><value>and click "Add to Favorites" on its page.</value></data>
   <data name="Favorites_Unavailable" xml:space="preserve"><value>Unavailable — no longer published</value></data>
+  <data name="Favorites_Col_Added" xml:space="preserve"><value>Added</value></data>
+  <data name="Favorites_Hint" xml:space="preserve"><value>Click a row to see details below the table; ↑/↓ to move between rows, double-click or Enter to open the listing. Click a column header to sort.</value></data>
+  <data name="Favorites_OpenListing" xml:space="preserve"><value>Open listing</value></data>
 
   <data name="Messages_Empty" xml:space="preserve"><value>No conversations yet. Message a provider from a listing card in the catalog.</value></data>
   <data name="Messages_FirstContact" xml:space="preserve"><value>Request of {0:dd.MM.yyyy}</value></data>

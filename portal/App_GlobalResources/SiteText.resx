@@ -253,6 +253,9 @@
   <data name="Favorites_Empty_CatalogLink" xml:space="preserve"><value>каталозі</value></data>
   <data name="Favorites_Empty_Suffix" xml:space="preserve"><value>і натисніть «Додати в обране» на його сторінці.</value></data>
   <data name="Favorites_Unavailable" xml:space="preserve"><value>Недоступне — знято з публікації</value></data>
+  <data name="Favorites_Col_Added" xml:space="preserve"><value>Додано</value></data>
+  <data name="Favorites_Hint" xml:space="preserve"><value>Клацніть рядок — подробиці з'являться під таблицею; ↑/↓ — перехід між рядками, подвійний клік або Enter — відкрити оголошення. Клік по заголовку — сортування.</value></data>
+  <data name="Favorites_OpenListing" xml:space="preserve"><value>Відкрити оголошення</value></data>
 
   <data name="Messages_Empty" xml:space="preserve"><value>Розмов ще немає. Напишіть постачальнику з картки оголошення в каталозі.</value></data>
   <data name="Messages_FirstContact" xml:space="preserve"><value>Звернення від {0:dd.MM.yyyy}</value></data>
