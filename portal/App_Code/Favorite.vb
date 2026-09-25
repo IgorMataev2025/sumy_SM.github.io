@@ -35,10 +35,14 @@ Namespace SumyPortal
         End Sub
 
         ''' <summary>Скільки разів це оголошення вподобали (MyServices.aspx, статистика для
-        ''' постачальника, п.17) — незалежно від того, чи вподобане досі опубліковане.</summary>
+        ''' постачальника, п.17) — незалежно від того, чи вподобане досі опубліковане.
+        ''' Власне вподобання постачальника (могло лишитись з часів, коли кнопка була і на
+        ''' своїх оголошеннях) не рахуємо (2026-09-25).</summary>
         Public Shared Function GetCount(serviceId As Integer) As Integer
             Using conn = DbHelper.GetConnection()
-                Using cmd As New MySqlCommand("SELECT COUNT(*) FROM Favorites WHERE ServiceId = @ServiceId;", conn)
+                Using cmd As New MySqlCommand(
+                    "SELECT COUNT(*) FROM Favorites f JOIN Services s ON s.ServiceId = f.ServiceId " &
+                    "WHERE f.ServiceId = @ServiceId AND f.UserId <> s.ProviderId;", conn)
                     cmd.Parameters.AddWithValue("@ServiceId", serviceId)
                     Return Convert.ToInt32(cmd.ExecuteScalar())
                 End Using
@@ -56,9 +60,9 @@ Namespace SumyPortal
             End Using
         End Sub
 
-        ''' <summary>Вподобані оголошення користувача, що досі опубліковані (Favorites.aspx) —
-        ''' зняте з публікації чи видалене оголошення просто не показуємо, запис у
-        ''' Favorites лишається "на випадок" повторної публікації.</summary>
+        ''' <summary>Вподобані оголошення користувача (Favorites.aspx) — з 2026-09-25 і зняті
+        ''' з публікації теж (сторінка показує їх як "Недоступне", щоб не зникали мовчки;
+        ''' видалене оголошення прибирає каскад БД). Власні оголошення не показуємо.</summary>
         Public Shared Function GetByUser(userId As Integer) As List(Of Service)
             Dim result As New List(Of Service)
             Using conn = DbHelper.GetConnection()
@@ -68,7 +72,7 @@ Namespace SumyPortal
                     "FROM Favorites f " &
                     "JOIN Services s ON s.ServiceId = f.ServiceId " &
                     "JOIN Categories c ON c.CategoryId = s.CategoryId " &
-                    "WHERE f.UserId = @UserId AND s.Status = 'Approved' " &
+                    "WHERE f.UserId = @UserId AND s.ProviderId <> @UserId " &
                     "ORDER BY f.CreatedAt DESC;", conn)
                     cmd.Parameters.AddWithValue("@UserId", userId)
                     Using reader = cmd.ExecuteReader()

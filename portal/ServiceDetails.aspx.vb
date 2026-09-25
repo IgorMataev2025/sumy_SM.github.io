@@ -122,9 +122,10 @@ Namespace SumyPortal
             contractLink.Visible = (currentUser IsNot Nothing AndAlso currentUser.UserId <> svc.ProviderId)
             contractLink.NavigateUrl = ResolveUrl("~/ServiceContract.aspx?id=" & svc.ServiceId)
 
-            ' Вподобане (п.8 уточненої постановки) — доступне будь-якому залогіненому.
-            btnToggleFavorite.Visible = (currentUser IsNot Nothing)
-            If currentUser IsNot Nothing Then
+            ' Вподобане (п.8 уточненої постановки) — доступне будь-якому залогіненому, крім
+            ' власника оголошення (додавати себе в обране безглуздо, 2026-09-25).
+            btnToggleFavorite.Visible = (currentUser IsNot Nothing AndAlso currentUser.UserId <> svc.ProviderId)
+            If btnToggleFavorite.Visible Then
                 Dim isFavorite = Favorite.IsFavorite(currentUser.UserId, svc.ServiceId)
                 btnToggleFavorite.Text = If(isFavorite, Resources.SiteText.Details_Favorite_Remove, Resources.SiteText.Details_Favorite_Add)
             End If
