@@ -142,7 +142,9 @@ Namespace SumyPortal
         Protected Sub btnSubmitModeration_Click(sender As Object, e As EventArgs)
             Dim serviceId = SaveService()
             If serviceId.HasValue Then
-                Service.SubmitForModeration(serviceId.Value, CurrentProvider.UserId)
+                If Service.SubmitForModeration(serviceId.Value, CurrentProvider.UserId) Then
+                    AdminNotifier.NewPendingService(serviceId.Value, txtTitle.Text.Trim())
+                End If
                 Response.Redirect("MyServices.aspx")
             End If
         End Sub

@@ -39,8 +39,41 @@
                     <asp:Literal runat="server" Text='<%#: "Район: " & CType(Container.DataItem, SumyPortal.Service).District & ". Телефон: " & CType(Container.DataItem, SumyPortal.Service).Phone %>' />
                 </p>
 
+                <%-- 2026-09-25 (аудит Адміна, п.1): модерація не наосліп — фото, специфікація, мітка
+                     на карті й повний вигляд прямо в черзі, без переходу в кожне оголошення. --%>
+                <div>
+                    <asp:Repeater runat="server" DataSource='<%# PhotosOf(Container.DataItem) %>'>
+                        <ItemTemplate>
+                            <a class="photo-thumb" href='<%#: ResolveUrl(CType(Container.DataItem, SumyPortal.ServicePhoto).FilePath) %>' target="_blank">
+                                <img src='<%#: ResolveUrl(CType(Container.DataItem, SumyPortal.ServicePhoto).FilePath) %>' alt="" />
+                            </a>
+                        </ItemTemplate>
+                    </asp:Repeater>
+                </div>
+                <p class="service-category">
+                    <asp:Literal runat="server" Visible='<%# PhotosOf(Container.DataItem).Count = 0 %>' Text="Фото немає · " />
+                    <asp:HyperLink runat="server" Target="_blank" Text="📄 Специфікація"
+                        Visible='<%# Not String.IsNullOrEmpty(CType(Container.DataItem, SumyPortal.Service).SpecificationFilePath) %>'
+                        NavigateUrl='<%# If(String.IsNullOrEmpty(CType(Container.DataItem, SumyPortal.Service).SpecificationFilePath), "", ResolveUrl(CType(Container.DataItem, SumyPortal.Service).SpecificationFilePath)) %>' />
+                    <asp:HyperLink runat="server" Target="_blank" Text="📍 Мітка на карті"
+                        Visible='<%# CType(Container.DataItem, SumyPortal.Service).Latitude.HasValue %>'
+                        NavigateUrl='<%# MapUrl(Container.DataItem) %>' />
+                    <asp:Literal runat="server" Visible='<%# Not CType(Container.DataItem, SumyPortal.Service).Latitude.HasValue %>' Text="Мітки на карті немає" />
+                    · <a href='<%#: ResolveUrl("~/AdminServiceEdit.aspx?id=" & CType(Container.DataItem, SumyPortal.Service).ServiceId) %>'>Відкрити повністю</a>
+                </p>
+
                 <div class="form-row">
-                    <asp:TextBox runat="server" ID="txtRejectReason" placeholder="Причина відхилення (обов'язково для відмови)" />
+                    <asp:DropDownList runat="server" ID="ddlRejectTemplate">
+                        <asp:ListItem Text="— типова причина відхилення —" Value="" />
+                        <asp:ListItem Text="Немає фото послуги" />
+                        <asp:ListItem Text="Неповний або незрозумілий опис" />
+                        <asp:ListItem Text="Не вказано ціну або умови оплати" />
+                        <asp:ListItem Text="Неправильна категорія" />
+                        <asp:ListItem Text="Заборонена або незаконна послуга" />
+                        <asp:ListItem Text="Дублікат наявного оголошення" />
+                        <asp:ListItem Text="Контакти або реклама в тексті/фото" />
+                    </asp:DropDownList>
+                    <asp:TextBox runat="server" ID="txtRejectReason" placeholder="Своя причина або уточнення" />
                 </div>
 
                 <div class="service-card-actions">

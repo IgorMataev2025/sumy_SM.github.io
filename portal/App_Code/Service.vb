@@ -488,6 +488,34 @@ Namespace SumyPortal
             End Using
         End Function
 
+        ''' <summary>Зняти опубліковане оголошення за скаргою (2026-09-25, аудит Адміна, п.3):
+        ''' Approved → Rejected з причиною — постачальник бачить її в «Мої оголошення», може
+        ''' виправити й знову подати (Rejected → Pending уже дозволено). Повертає email і
+        ''' ім'я постачальника для листа або Nothing, якщо оголошення вже не опубліковане.</summary>
+        Public Shared Function AdminTakeDown(serviceId As Integer, adminId As Integer, reason As String) As Service
+            Using conn = DbHelper.GetConnection()
+                Dim svc As Service = Nothing
+                Using cmd As New MySqlCommand(
+                    "SELECT s.Title, u.Email FROM Services s JOIN Users u ON u.UserId = s.ProviderId " &
+                    "WHERE s.ServiceId = @ServiceId AND s.Status = 'Approved';", conn)
+                    cmd.Parameters.AddWithValue("@ServiceId", serviceId)
+                    Using reader = cmd.ExecuteReader()
+                        If Not reader.Read() Then Return Nothing
+                        svc = New Service With {.ServiceId = serviceId, .Title = reader.GetString("Title"), .ProviderEmail = reader.GetString("Email")}
+                    End Using
+                End Using
+                Using cmd As New MySqlCommand(
+                    "UPDATE Services SET Status = 'Rejected', RejectReason = @Reason " &
+                    "WHERE ServiceId = @ServiceId AND Status = 'Approved';", conn)
+                    cmd.Parameters.AddWithValue("@Reason", reason)
+                    cmd.Parameters.AddWithValue("@ServiceId", serviceId)
+                    If cmd.ExecuteNonQuery() = 0 Then Return Nothing
+                End Using
+                LogModeration(conn, serviceId, adminId, "Rejected", reason)
+                Return svc
+            End Using
+        End Function
+
         Private Shared Sub LogModeration(conn As MySqlConnection, serviceId As Integer, adminId As Integer, action As String, comment As String)
             Using cmd As New MySqlCommand(
                 "INSERT INTO ModerationLog (ServiceId, AdminId, Action, Comment, ActionDate) " &

@@ -92,6 +92,65 @@ Namespace SumyPortal
             End Using
         End Function
 
+        ''' <summary>Відкриті скарги, згруповані за оголошенням (2026-09-25, аудит Адміна, п.3) —
+        ''' кілька скарг на одне оголошення = одна картка з лічильником; найстаріша скарга
+        ''' групи визначає порядок (FIFO, як і раніше).</summary>
+        Public Shared Function GetOpenGrouped() As List(Of ServiceReportGroup)
+            Dim groups As New List(Of ServiceReportGroup)
+            Dim byService As New Dictionary(Of Integer, ServiceReportGroup)
+            Dim statuses As New Dictionary(Of Integer, String)
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand(
+                    "SELECT DISTINCT s.ServiceId, s.Status FROM ServiceReports r JOIN Services s ON s.ServiceId = r.ServiceId WHERE r.Status = 'Open';", conn)
+                    Using reader = cmd.ExecuteReader()
+                        While reader.Read()
+                            statuses(reader.GetInt32("ServiceId")) = reader.GetString("Status")
+                        End While
+                    End Using
+                End Using
+            End Using
+            For Each report In GetOpen()
+                Dim group As ServiceReportGroup = Nothing
+                If Not byService.TryGetValue(report.ServiceId, group) Then
+                    group = New ServiceReportGroup With {
+                        .ServiceId = report.ServiceId,
+                        .ServiceTitle = report.ServiceTitle,
+                        .ServiceStatus = If(statuses.ContainsKey(report.ServiceId), statuses(report.ServiceId), "")
+                    }
+                    byService(report.ServiceId) = group
+                    groups.Add(group)
+                End If
+                group.Reports.Add(report)
+            Next
+            Return groups
+        End Function
+
+        ''' <summary>Закриває всі відкриті скарги на оголошення (після рішення адміна по групі).</summary>
+        Public Shared Function MarkReviewedForService(serviceId As Integer, adminId As Integer) As Integer
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand(
+                    "UPDATE ServiceReports SET Status = 'Reviewed', ReviewedAt = UTC_TIMESTAMP(), ReviewedBy = @AdminId " &
+                    "WHERE ServiceId = @ServiceId AND Status = 'Open';", conn)
+                    cmd.Parameters.AddWithValue("@AdminId", adminId)
+                    cmd.Parameters.AddWithValue("@ServiceId", serviceId)
+                    Return cmd.ExecuteNonQuery()
+                End Using
+            End Using
+        End Function
+
+    End Class
+
+    Public Class ServiceReportGroup
+        Public Property ServiceId As Integer
+        Public Property ServiceTitle As String
+        Public Property ServiceStatus As String
+        Public Property Reports As New List(Of ServiceReport)
+
+        Public ReadOnly Property IsPublished As Boolean
+            Get
+                Return ServiceStatus = "Approved"
+            End Get
+        End Property
     End Class
 
 End Namespace

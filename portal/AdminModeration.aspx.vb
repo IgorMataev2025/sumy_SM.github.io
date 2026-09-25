@@ -1,4 +1,6 @@
 Imports System
+Imports System.Collections.Generic
+Imports System.Globalization
 Imports System.Web.UI.WebControls
 
 Namespace SumyPortal
@@ -11,6 +13,28 @@ Namespace SumyPortal
                 BindQueue()
             End If
         End Sub
+
+        ''' <summary>Фото оголошення для картки черги (кеш на запит — розмітка питає двічі:
+        ''' для мініатюр і для позначки "Фото немає").</summary>
+        Private ReadOnly _photosCache As New Dictionary(Of Integer, List(Of ServicePhoto))
+
+        Protected Function PhotosOf(dataItem As Object) As List(Of ServicePhoto)
+            Dim serviceId = CType(dataItem, Service).ServiceId
+            Dim photos As List(Of ServicePhoto) = Nothing
+            If Not _photosCache.TryGetValue(serviceId, photos) Then
+                photos = Service.GetPhotos(serviceId)
+                _photosCache(serviceId) = photos
+            End If
+            Return photos
+        End Function
+
+        Protected Function MapUrl(dataItem As Object) As String
+            Dim svc = CType(dataItem, Service)
+            If Not svc.Latitude.HasValue OrElse Not svc.Longitude.HasValue Then Return String.Empty
+            Dim lat = svc.Latitude.Value.ToString("0.######", CultureInfo.InvariantCulture)
+            Dim lng = svc.Longitude.Value.ToString("0.######", CultureInfo.InvariantCulture)
+            Return String.Format("https://www.openstreetmap.org/?mlat={0}&mlon={1}#map=16/{0}/{1}", lat, lng)
+        End Function
 
         Private Sub BindQueue()
             Dim queue = Service.GetPendingForModeration()
@@ -32,8 +56,13 @@ Namespace SumyPortal
                     End If
 
                 Case "Reject"
+                    ' Типова причина зі списку + (необов'язково) власне уточнення — 2026-09-25.
+                    Dim ddlTemplate = TryCast(e.Item.FindControl("ddlRejectTemplate"), DropDownList)
                     Dim txtReason = TryCast(e.Item.FindControl("txtRejectReason"), TextBox)
-                    Dim reason = If(txtReason IsNot Nothing, txtReason.Text.Trim(), String.Empty)
+                    Dim parts As New List(Of String)
+                    If ddlTemplate IsNot Nothing AndAlso Not String.IsNullOrEmpty(ddlTemplate.SelectedValue) Then parts.Add(ddlTemplate.SelectedValue)
+                    If txtReason IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtReason.Text) Then parts.Add(txtReason.Text.Trim())
+                    Dim reason = String.Join(". ", parts)
 
                     If String.IsNullOrEmpty(reason) Then
                         ShowInfo("Для відхилення потрібно вказати причину.")

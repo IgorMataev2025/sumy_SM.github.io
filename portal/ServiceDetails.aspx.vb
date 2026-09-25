@@ -377,6 +377,9 @@ Namespace SumyPortal
             Dim reporterEmail = If(currentUser IsNot Nothing, currentUser.Email, Nothing)
 
             ServiceReport.Add(serviceId, reporterEmail, reason, txtReportComment.Text)
+            Dim reported = Service.GetApprovedById(serviceId)
+            AdminNotifier.NewReport(serviceId, If(reported IsNot Nothing, reported.Title, "#" & serviceId),
+                                    New ServiceReport With {.Reason = reason}.ReasonLabel, txtReportComment.Text)
 
             Response.Redirect(Request.RawUrl & separator & "reported=1", True)
         End Sub

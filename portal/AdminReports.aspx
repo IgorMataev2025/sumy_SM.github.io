@@ -14,9 +14,9 @@
         <a href="~/AdminOnlineUsers.aspx" runat="server">Онлайн</a>
     </p>
     <p class="stub-note">
-        Скарга — лише сигнал для адміна, не автоматична модерація: статус
-        оголошення сам по собі не змінюється. Щоб зняти з публікації чи
-        видалити оголошення — перейдіть на «Усі оголошення».
+        Скарги згруповано за оголошенням. «Зняти оголошення» переводить його у «Відхилено» з
+        вказаною причиною (постачальник отримає лист і зможе виправити й подати знову) і
+        закриває всі скарги на нього. «Скарги безпідставні» — лише закриває скарги.
     </p>
 
     <asp:Label ID="infoLabel" runat="server" CssClass="stub-note" Visible="false" />
@@ -25,25 +25,43 @@
         Відкритих скарг немає.
     </asp:Panel>
 
-    <asp:Repeater ID="rptReports" runat="server" OnItemCommand="rptReports_ItemCommand">
+    <%-- 2026-09-25 (аудит Адміна, п.3): групування за оголошенням + дія прямо зі скарги. --%>
+    <asp:Repeater ID="rptGroups" runat="server" OnItemCommand="rptGroups_ItemCommand">
         <ItemTemplate>
             <div class="service-card">
                 <div class="service-card-header">
-                    <h3><%#: CType(Container.DataItem, SumyPortal.ServiceReport).ServiceTitle %></h3>
-                    <span class="status-badge"><%#: CType(Container.DataItem, SumyPortal.ServiceReport).CreatedAt.ToString("dd.MM.yyyy HH:mm") %></span>
+                    <h3><%#: CType(Container.DataItem, SumyPortal.ServiceReportGroup).ServiceTitle %></h3>
+                    <span class="status-badge">
+                        Скарг: <b><%#: CType(Container.DataItem, SumyPortal.ServiceReportGroup).Reports.Count %></b> ·
+                        <%#: New SumyPortal.Service With {.Status = CType(Container.DataItem, SumyPortal.ServiceReportGroup).ServiceStatus}.StatusLabel %>
+                    </span>
                 </div>
-                <p class="service-category">
-                    Причина: <b><%#: CType(Container.DataItem, SumyPortal.ServiceReport).ReasonLabel %></b> ·
-                    Скаржник: <%#: If(String.IsNullOrEmpty(CType(Container.DataItem, SumyPortal.ServiceReport).ReporterEmail), "анонім", CType(Container.DataItem, SumyPortal.ServiceReport).ReporterEmail) %>
-                </p>
-                <asp:Literal runat="server" Visible='<%#: Not String.IsNullOrEmpty(CType(Container.DataItem, SumyPortal.ServiceReport).Comment) %>'
-                    Text='<%#: CType(Container.DataItem, SumyPortal.ServiceReport).Comment %>' />
+                <asp:Repeater runat="server" DataSource='<%# CType(Container.DataItem, SumyPortal.ServiceReportGroup).Reports %>'>
+                    <ItemTemplate>
+                        <p class="service-category">
+                            <%#: CType(Container.DataItem, SumyPortal.ServiceReport).CreatedAt.ToString("dd.MM.yyyy HH:mm") %> ·
+                            <b><%#: CType(Container.DataItem, SumyPortal.ServiceReport).ReasonLabel %></b> ·
+                            <%#: If(String.IsNullOrEmpty(CType(Container.DataItem, SumyPortal.ServiceReport).ReporterEmail), "анонім", CType(Container.DataItem, SumyPortal.ServiceReport).ReporterEmail) %>
+                            <%#: If(String.IsNullOrEmpty(CType(Container.DataItem, SumyPortal.ServiceReport).Comment), "", " — " & CType(Container.DataItem, SumyPortal.ServiceReport).Comment) %>
+                        </p>
+                    </ItemTemplate>
+                </asp:Repeater>
+
+                <asp:Panel runat="server" CssClass="form-row" Visible='<%# CType(Container.DataItem, SumyPortal.ServiceReportGroup).IsPublished %>'>
+                    <asp:TextBox runat="server" ID="txtTakeDownReason" placeholder="Причина для постачальника (порожньо — причини зі скарг)" />
+                </asp:Panel>
 
                 <div class="service-card-actions">
-                    <a href='<%#: "AdminServiceEdit.aspx?id=" & CType(Container.DataItem, SumyPortal.ServiceReport).ServiceId %>'>Переглянути оголошення</a>
-                    <asp:LinkButton runat="server" CommandName="Reviewed"
-                        CommandArgument='<%#: CType(Container.DataItem, SumyPortal.ServiceReport).ReportId %>'>
-                        ✓ Позначити переглянутою
+                    <a href='<%#: "ServiceDetails.aspx?id=" & CType(Container.DataItem, SumyPortal.ServiceReportGroup).ServiceId %>' target="_blank">Як бачать відвідувачі</a>
+                    <a href='<%#: "AdminServiceEdit.aspx?id=" & CType(Container.DataItem, SumyPortal.ServiceReportGroup).ServiceId %>'>Редагувати</a>
+                    <asp:LinkButton runat="server" CommandName="TakeDown" Visible='<%# CType(Container.DataItem, SumyPortal.ServiceReportGroup).IsPublished %>'
+                        CommandArgument='<%#: CType(Container.DataItem, SumyPortal.ServiceReportGroup).ServiceId %>'
+                        OnClientClick="return confirm('Зняти оголошення з публікації й закрити скарги?');">
+                        ✕ Зняти оголошення
+                    </asp:LinkButton>
+                    <asp:LinkButton runat="server" CommandName="Dismiss"
+                        CommandArgument='<%#: CType(Container.DataItem, SumyPortal.ServiceReportGroup).ServiceId %>'>
+                        ✓ Скарги безпідставні
                     </asp:LinkButton>
                 </div>
             </div>
