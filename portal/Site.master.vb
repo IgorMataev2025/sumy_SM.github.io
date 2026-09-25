@@ -102,9 +102,16 @@ Namespace SumyPortal
                     userRoleBadge.InnerText = If(account.UserType = "Provider",
                         Resources.SiteText.UserRole_Provider, Resources.SiteText.UserRole_Consumer)
 
-                    ' Постачальнику "Головна" (лендинг для нових відвідувачів) не потрібна —
-                    ' Каталог/Стіл замовлень лишаються (2026-09-22).
-                    homeNavLink.Visible = (account.UserType <> "Provider")
+                    ' Постачальнику "Головна" (лендинг для нових відвідувачів) не потрібна
+                    ' (2026-09-22). З 2026-09-25 також без "Стіл замовлень"/"Підтримати проєкт",
+                    ' а меню в порядку: Каталог · Мої оголошення · Обране · Повідомлення ·
+                    ' Профіль · Юридична довідка · Вихід (довідка — окремим посиланням у userNav).
+                    Dim isProvider = (account.UserType = "Provider")
+                    homeNavLink.Visible = Not isProvider
+                    orderBoardNavLink.Visible = Not isProvider
+                    donateNavLink.Visible = Not isProvider
+                    legalNavLink.Visible = Not isProvider
+                    legalNavLinkProvider.Visible = isProvider
                 End If
 
                 ' Лічильник непрочитаних повідомлень (наступна фіча понад MVP, обрано

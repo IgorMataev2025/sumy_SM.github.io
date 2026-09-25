@@ -56,8 +56,8 @@
                 <a href="~/Default.aspx" runat="server" id="homeNavLink"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Home %>" /></a>
                 <a href="~/Catalog.aspx" runat="server" id="catalogNavLink"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Catalog %>" /></a>
                 <a href="~/OrderBoard.aspx" runat="server" id="orderBoardNavLink"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_OrderBoard %>" /></a>
-                <a href="~/LegalGuide.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_LegalGuide %>" /></a>
-                <a href="~/Donate.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Donate %>" /></a>
+                <a href="~/LegalGuide.aspx" runat="server" id="legalNavLink"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_LegalGuide %>" /></a>
+                <a href="~/Donate.aspx" runat="server" id="donateNavLink"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Donate %>" /></a>
                 <asp:PlaceHolder ID="anonNav" runat="server">
                     <a href="~/Login.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Login %>" /></a>
                     <a href="~/Register.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Register %>" /></a>
@@ -72,6 +72,9 @@
                         <span id="navUnreadBadge" runat="server" visible="false" class="unread-badge"></span>
                     </a>
                     <a href="~/Profile.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Profile %>" /></a>
+                    <%-- Постачальнику "Юридична довідка" стоїть тут, перед "Вихід" (порядок меню за
+                         запитом користувача, 2026-09-25); іншим — на звичному місці вгорі (legalNavLink). --%>
+                    <a href="~/LegalGuide.aspx" runat="server" id="legalNavLinkProvider" visible="false"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_LegalGuide %>" /></a>
                     <a href="~/Logout.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Logout %>" /></a>
                 </asp:PlaceHolder>
                 <!-- Перемикач мови (постановка робочої тестової версії, 2026-09-12, розширено
