@@ -102,17 +102,18 @@ Namespace SumyPortal
                     userRoleBadge.InnerText = If(account.UserType = "Provider",
                         Resources.SiteText.UserRole_Provider, Resources.SiteText.UserRole_Consumer)
 
-                    ' Постачальнику "Головна" (лендинг для нових відвідувачів) не потрібна
-                    ' (2026-09-22). З 2026-09-25 також без "Стіл замовлень"/"Підтримати проєкт",
-                    ' а меню в порядку: Каталог · Мої оголошення · Обране · Повідомлення ·
-                    ' Профіль · Юридична довідка · Вихід (довідка — окремим посиланням у userNav).
-                    Dim isProvider = (account.UserType = "Provider")
-                    homeNavLink.Visible = Not isProvider
-                    orderBoardNavLink.Visible = Not isProvider
-                    donateNavLink.Visible = Not isProvider
-                    legalNavLink.Visible = Not isProvider
-                    legalNavLinkProvider.Visible = isProvider
+                    ' Меню залогіненого (2026-09-25, за запитом користувача): без "Головна"
+                    ' (лендинг для нових відвідувачів) і "Стіл замовлень" (дублює каталог).
+                    ' Постачальник: Каталог · Мої оголошення · Обране · Повідомлення · Профіль ·
+                    ' Юридична довідка · Вихід. Споживач: Каталог · Обране · Повідомлення ·
+                    ' Профіль · Юридична довідка · Підтримати проєкт · Вихід (донати — від
+                    ' споживачів, тому йому лишається). Довідка/донат — посиланнями в userNav.
+                    donateNavLinkUser.Visible = (account.UserType <> "Provider")
                 End If
+                homeNavLink.Visible = False
+                orderBoardNavLink.Visible = False
+                legalNavLink.Visible = False
+                donateNavLink.Visible = False
 
                 ' Лічильник непрочитаних повідомлень (наступна фіча понад MVP, обрано
                 ' автономно циклом /loop, 2026-09-13) — один легкий COUNT-запит на

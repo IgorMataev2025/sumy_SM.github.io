@@ -72,9 +72,11 @@
                         <span id="navUnreadBadge" runat="server" visible="false" class="unread-badge"></span>
                     </a>
                     <a href="~/Profile.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Profile %>" /></a>
-                    <%-- Постачальнику "Юридична довідка" стоїть тут, перед "Вихід" (порядок меню за
-                         запитом користувача, 2026-09-25); іншим — на звичному місці вгорі (legalNavLink). --%>
-                    <a href="~/LegalGuide.aspx" runat="server" id="legalNavLinkProvider" visible="false"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_LegalGuide %>" /></a>
+                    <%-- Залогіненим "Юридична довідка" (і споживачу "Підтримати проєкт") стоять тут, перед
+                         "Вихід" (порядок меню за запитом користувача, 2026-09-25); гостю — на звичному
+                         місці вгорі (legalNavLink/donateNavLink). --%>
+                    <a href="~/LegalGuide.aspx" runat="server" id="legalNavLinkUser"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_LegalGuide %>" /></a>
+                    <a href="~/Donate.aspx" runat="server" id="donateNavLinkUser" visible="false"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Donate %>" /></a>
                     <a href="~/Logout.aspx" runat="server"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Nav_Logout %>" /></a>
                 </asp:PlaceHolder>
                 <!-- Перемикач мови (постановка робочої тестової версії, 2026-09-12, розширено
