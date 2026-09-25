@@ -75,7 +75,10 @@
 
             <div class="form-row">
                 <label for="<%= fileSpecification.ClientID %>"><asp:Literal runat="server" Text="<%$ Resources:SiteText, ServiceEdit_Label_Specification %>" /></label>
-                <asp:FileUpload ID="fileSpecification" runat="server" />
+                <asp:FileUpload ID="fileSpecification" runat="server" accept=".xls,.xlsx" />
+                <!-- Скидає ще не збережений вибір файлу (за запитом користувача, 2026-09-25); показується
+                     лише коли файл вибрано. Уже збережений файл прибирає чекбокс у currentSpecPanel. -->
+                <button type="button" id="btnClearSpec" class="btn-secondary" style="padding:0.2rem 0.8rem;font-size:0.9rem;" hidden><asp:Literal runat="server" Text="<%$ Resources:SiteText, ServiceEdit_Specification_Remove %>" /></button>
                 <p class="stub-note"><asp:Literal runat="server" Text="<%$ Resources:SiteText, ServiceEdit_Specification_Hint %>" /></p>
                 <asp:Panel ID="currentSpecPanel" runat="server" Visible="false">
                     <asp:Literal runat="server" Text="<%$ Resources:SiteText, ServiceEdit_Specification_Current %>" /><asp:Literal ID="currentSpecFileName" runat="server" />
@@ -190,6 +193,21 @@
                     lngField.value = e.latlng.lng.toFixed(6);
                     hint.style.display = 'none';
                 });
+            })();
+        </script>
+        <!-- Окремий блок: якщо Leaflet не завантажився й скрипт карти впав, кнопка все одно працює. -->
+        <script>
+            (function () {
+                var specInput = document.getElementById('<%= fileSpecification.ClientID %>');
+                var clearBtn = document.getElementById('btnClearSpec');
+                function sync() { clearBtn.hidden = !specInput.value; }
+                specInput.addEventListener('change', sync);
+                clearBtn.addEventListener('click', function () {
+                    specInput.value = '';
+                    sync();
+                    specInput.focus();
+                });
+                sync();
             })();
         </script>
     </asp:Panel>
