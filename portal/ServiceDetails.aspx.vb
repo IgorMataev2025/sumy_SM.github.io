@@ -152,17 +152,22 @@ Namespace SumyPortal
             LoadSimilar(svc)
             RenderServiceJsonLd(svc)
 
-            ' Форма відгуку — будь-який залогінений, крім самого власника оголошення
-            ' (п.9 уточненої постановки), і лише якщо ще не залишав відгук на нього.
-            If currentUser Is Nothing OrElse currentUser.UserId = svc.ProviderId Then
-                reviewFormPanel.Visible = False
-                alreadyReviewedPanel.Visible = False
-            ElseIf Review.HasReviewed(svc.ServiceId, currentUser.UserId) Then
-                reviewFormPanel.Visible = False
-                alreadyReviewedPanel.Visible = True
-            Else
-                reviewFormPanel.Visible = True
-                alreadyReviewedPanel.Visible = False
+            ' Форма відгуку — з 2026-09-25 лише споживач, який уже звертався до постачальника
+            ' щодо цього оголошення (CanReview), і лише один раз. Раніше — будь-який
+            ' залогінений, крім власника (п.9), що дозволяло відгуки від конкурентів.
+            ' Іншому постачальнику (не власнику) нічого не показуємо; споживачу без
+            ' звернення — підказку, як отримати право на відгук.
+            reviewFormPanel.Visible = False
+            alreadyReviewedPanel.Visible = False
+            reviewNotAllowedPanel.Visible = False
+            If currentUser IsNot Nothing AndAlso currentUser.UserType = "Consumer" Then
+                If Review.HasReviewed(svc.ServiceId, currentUser.UserId) Then
+                    alreadyReviewedPanel.Visible = True
+                ElseIf CanReview(svc, currentUser) Then
+                    reviewFormPanel.Visible = True
+                Else
+                    reviewNotAllowedPanel.Visible = True
+                End If
             End If
         End Sub
 
@@ -314,6 +319,14 @@ Namespace SumyPortal
         ''' Той самий прийом, що btnToggleFavorite_Click, — Response.Redirect на себе
         ''' після збереження замість ведення двох шляхів заповнення полів.
         ''' </summary>
+        ''' <summary>Право на відгук (2026-09-25): споживач (не постачальник), не власник, і вже
+        ''' писав щодо цього оголошення. Та сама перевірка і для показу форми, і на сервері при
+        ''' відправці — прихована форма сама по собі не захищає від підробленого POST.</summary>
+        Private Shared Function CanReview(svc As Service, user As UserAccount) As Boolean
+            Return user.UserType = "Consumer" AndAlso user.UserId <> svc.ProviderId AndAlso
+                DialogMessage.HasConversation(svc.ServiceId, user.UserId)
+        End Function
+
         Protected Sub btnSubmitReview_Click(sender As Object, e As EventArgs)
             If Not Page.IsValid Then Return
 
@@ -324,7 +337,7 @@ Namespace SumyPortal
             If currentUser Is Nothing Then Return
 
             Dim svc = Service.GetApprovedById(serviceId)
-            If svc Is Nothing OrElse currentUser.UserId = svc.ProviderId Then Return
+            If svc Is Nothing OrElse Not CanReview(svc, currentUser) Then Return
 
             Dim rating As Integer
             If Not Integer.TryParse(ddlRating.SelectedValue, rating) Then Return

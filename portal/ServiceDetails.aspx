@@ -214,6 +214,11 @@
                 <asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_AlreadyReviewed %>" />
             </asp:Panel>
 
+            <%-- Споживач, який ще не звертався щодо цього оголошення (2026-09-25) — відгук лише після звернення. --%>
+            <asp:Panel ID="reviewNotAllowedPanel" runat="server" Visible="false" CssClass="stub-note">
+                <asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_ReviewNeedsContact %>" />
+            </asp:Panel>
+
             <asp:Panel ID="reviewFormPanel" runat="server" Visible="false" CssClass="auth-form">
                 <h3><asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_LeaveReviewHeading %>" /></h3>
                 <asp:ValidationSummary ID="reviewValidationSummary" runat="server" CssClass="form-error" DisplayMode="BulletList" />

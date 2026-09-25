@@ -120,6 +120,7 @@
   <data name="Details_SimilarHeading" xml:space="preserve"><value>Similar listings</value></data>
   <data name="Details_NoReviewsPanel" xml:space="preserve"><value>No reviews yet.</value></data>
   <data name="Details_AlreadyReviewed" xml:space="preserve"><value>You have already left a review for this listing.</value></data>
+  <data name="Details_ReviewNeedsContact" xml:space="preserve"><value>Only customers who have contacted the provider about this listing can leave a review — use “Message Provider” above.</value></data>
   <data name="Details_LeaveReviewHeading" xml:space="preserve"><value>Leave a Review</value></data>
   <data name="Details_RatingLabel" xml:space="preserve"><value>Rating</value></data>
   <data name="Details_RatingChoose" xml:space="preserve"><value>Choose a rating</value></data>

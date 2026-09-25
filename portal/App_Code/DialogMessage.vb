@@ -134,6 +134,21 @@ Namespace SumyPortal
             "AND m2.SenderId <> @UserId AND m2.MessageId > COALESCE(" &
             "(SELECT r.LastReadMessageId FROM MessageReadStatus r WHERE r.ServiceId = x.ServiceId AND r.ConsumerId = x.ConsumerId AND r.UserId = @UserId), 0)) AS UnreadCount "
 
+        ''' <summary>Чи писав цей споживач постачальнику щодо цього оголошення — умова права
+        ''' на відгук (2026-09-25: відгук лише від тих, хто реально звертався; раніше — будь-хто
+        ''' залогінений, зокрема конкуренти). Розмову ініціює лише Consumer, тож рядок у Messages
+        ''' з цим ConsumerId сам по собі означає, що звернення було.</summary>
+        Public Shared Function HasConversation(serviceId As Integer, consumerId As Integer) As Boolean
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand(
+                    "SELECT EXISTS(SELECT 1 FROM Messages WHERE ServiceId = @ServiceId AND ConsumerId = @ConsumerId);", conn)
+                    cmd.Parameters.AddWithValue("@ServiceId", serviceId)
+                    cmd.Parameters.AddWithValue("@ConsumerId", consumerId)
+                    Return Convert.ToInt32(cmd.ExecuteScalar()) = 1
+                End Using
+            End Using
+        End Function
+
         ''' <summary>Розмови споживача — по одній на кожне оголошення, з якого він написав.</summary>
         Public Shared Function GetConversationsForConsumer(consumerId As Integer) As List(Of ConversationSummary)
             Return QuerySummaries(
