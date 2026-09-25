@@ -82,6 +82,7 @@ Namespace SumyPortal
                 If IsOwnProfile Then
                     SumyDistricts.Populate(ddlDistrict, Resources.SiteText.District_NotSpecified)
                     BindProfile()
+                    BindNotifications()
                 Else
                     publicNameLiteral.Text = Server.HtmlEncode(
                         If(CurrentUser.IsLegalEntity AndAlso Not String.IsNullOrWhiteSpace(CurrentUser.CompanyName),
@@ -145,6 +146,53 @@ Namespace SumyPortal
             Catch ex As MySqlException
                 ShowError(Resources.SiteText.Profile_Err_SaveFailed)
             End Try
+        End Sub
+
+        ' --- Листи від порталу (2026-09-25, роль Споживач, migration_022) ---
+
+        Private ReadOnly Property ShowNotifications As Boolean
+            Get
+                Return IsOwnProfile AndAlso CurrentUser.UserType = "Consumer"
+            End Get
+        End Property
+
+        Private Sub BindNotifications()
+            notificationsPanel.Visible = ShowNotifications
+            If Not ShowNotifications Then Return
+
+            Dim settings = NotificationSettings.GetByUser(CurrentUser.UserId)
+            chkDigestEnabled.Checked = settings.DigestEnabled
+            chkFavoriteAlerts.Checked = settings.FavoriteAlertsEnabled
+
+            cblDigestCategories.DataSource = ServiceCategory.GetActiveCategories()
+            cblDigestCategories.DataBind()
+            For Each item As ListItem In cblDigestCategories.Items
+                item.Selected = settings.DigestCategoryIds.Contains(Integer.Parse(item.Value))
+            Next
+
+            SumyDistricts.Populate(ddlDigestDistrict, Resources.SiteText.Catalog_AllDistricts)
+            If Not String.IsNullOrEmpty(settings.DigestDistrict) AndAlso ddlDigestDistrict.Items.FindByValue(settings.DigestDistrict) IsNot Nothing Then
+                ddlDigestDistrict.SelectedValue = settings.DigestDistrict
+            End If
+        End Sub
+
+        Protected Sub btnSaveNotifications_Click(sender As Object, e As EventArgs)
+            If Not ShowNotifications Then Return ' той самий захист від підробленого postback, що btnSave_Click
+
+            Dim settings As New NotificationSettings With {
+                .UserId = CurrentUser.UserId,
+                .DigestEnabled = chkDigestEnabled.Checked,
+                .DigestDistrict = If(String.IsNullOrEmpty(ddlDigestDistrict.SelectedValue), Nothing, ddlDigestDistrict.SelectedValue),
+                .FavoriteAlertsEnabled = chkFavoriteAlerts.Checked
+            }
+            For Each item As ListItem In cblDigestCategories.Items
+                If item.Selected Then settings.DigestCategoryIds.Add(Integer.Parse(item.Value))
+            Next
+            NotificationSettings.Save(settings)
+
+            BindNotifications()
+            notificationsInfoLabel.Text = Resources.SiteText.Profile_Notifications_Saved
+            notificationsInfoLabel.Visible = True
         End Sub
 
         Protected Sub btnDeleteAccount_Click(sender As Object, e As EventArgs)

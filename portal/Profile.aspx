@@ -59,6 +59,31 @@
         </div>
     </asp:Panel>
 
+    <%-- Листи від порталу (2026-09-25, роль Споживач, migration_022) — лише споживачу у власному
+         профілі: персональна добірка нових оголошень і сповіщення про зміни в «Обраному». --%>
+    <asp:Panel ID="notificationsPanel" runat="server" Visible="false" CssClass="auth-form">
+        <h2><asp:Literal runat="server" Text="<%$ Resources:SiteText, Profile_Notifications_Heading %>" /></h2>
+        <asp:Label ID="notificationsInfoLabel" runat="server" CssClass="stub-note" Visible="false" />
+        <div class="form-row">
+            <label><asp:CheckBox ID="chkDigestEnabled" runat="server" /> <asp:Literal runat="server" Text="<%$ Resources:SiteText, Profile_Notifications_DigestEnabled %>" /></label>
+        </div>
+        <div class="form-row">
+            <label><asp:Literal runat="server" Text="<%$ Resources:SiteText, Profile_Notifications_Categories %>" /></label>
+            <asp:CheckBoxList ID="cblDigestCategories" runat="server" RepeatLayout="Flow" RepeatDirection="Vertical" DataTextField="Name" DataValueField="CategoryId" />
+        </div>
+        <div class="form-row">
+            <label for="<%= ddlDigestDistrict.ClientID %>"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Profile_Notifications_District %>" /></label>
+            <asp:DropDownList ID="ddlDigestDistrict" runat="server" />
+        </div>
+        <div class="form-row">
+            <label><asp:CheckBox ID="chkFavoriteAlerts" runat="server" /> <asp:Literal runat="server" Text="<%$ Resources:SiteText, Profile_Notifications_FavoriteAlerts %>" /></label>
+        </div>
+        <div class="form-row">
+            <asp:Button ID="btnSaveNotifications" runat="server" Text="<%$ Resources:SiteText, Profile_Notifications_Btn_Save %>"
+                OnClick="btnSaveNotifications_Click" CausesValidation="false" CssClass="btn-secondary" />
+        </div>
+    </asp:Panel>
+
     <asp:Panel ID="dangerZonePanel" runat="server" CssClass="stub-note danger-zone">
         <h2><asp:Literal runat="server" Text="<%$ Resources:SiteText, Profile_DangerZone_Heading %>" /></h2>
         <p>

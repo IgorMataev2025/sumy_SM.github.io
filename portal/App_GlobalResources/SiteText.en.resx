@@ -296,6 +296,13 @@
   <data name="Profile_Gallery_UploadLabel_Suffix" xml:space="preserve"><value>photos, jpg/png/gif, ≤3MB)</value></data>
   <data name="Profile_Gallery_Btn_Upload" xml:space="preserve"><value>Upload</value></data>
   <data name="Profile_Msg_Saved" xml:space="preserve"><value>Data saved.</value></data>
+  <data name="Profile_Notifications_Heading" xml:space="preserve"><value>Emails from the portal</value></data>
+  <data name="Profile_Notifications_DigestEnabled" xml:space="preserve"><value>Send me a digest of new listings</value></data>
+  <data name="Profile_Notifications_Categories" xml:space="preserve"><value>Digest categories (none selected — all)</value></data>
+  <data name="Profile_Notifications_District" xml:space="preserve"><value>Digest district</value></data>
+  <data name="Profile_Notifications_FavoriteAlerts" xml:space="preserve"><value>Notify me about changes in Favorites (price, unpublished)</value></data>
+  <data name="Profile_Notifications_Btn_Save" xml:space="preserve"><value>Save email settings</value></data>
+  <data name="Profile_Notifications_Saved" xml:space="preserve"><value>Email settings saved.</value></data>
   <data name="Profile_Err_SaveFailed" xml:space="preserve"><value>Failed to save — please try again later.</value></data>
   <data name="Profile_Err_DeleteFailed" xml:space="preserve"><value>Failed to delete the account — please try again later.</value></data>
 

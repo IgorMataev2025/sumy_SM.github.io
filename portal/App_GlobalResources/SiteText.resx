@@ -296,6 +296,13 @@
   <data name="Profile_Gallery_UploadLabel_Suffix" xml:space="preserve"><value>шт., jpg/png/gif, ≤3МБ)</value></data>
   <data name="Profile_Gallery_Btn_Upload" xml:space="preserve"><value>Завантажити</value></data>
   <data name="Profile_Msg_Saved" xml:space="preserve"><value>Дані збережено.</value></data>
+  <data name="Profile_Notifications_Heading" xml:space="preserve"><value>Листи від порталу</value></data>
+  <data name="Profile_Notifications_DigestEnabled" xml:space="preserve"><value>Надсилати добірку нових оголошень</value></data>
+  <data name="Profile_Notifications_Categories" xml:space="preserve"><value>Категорії в добірці (жодної не вибрано — усі)</value></data>
+  <data name="Profile_Notifications_District" xml:space="preserve"><value>Район у добірці</value></data>
+  <data name="Profile_Notifications_FavoriteAlerts" xml:space="preserve"><value>Повідомляти про зміни в «Обраному» (ціна, зняття з публікації)</value></data>
+  <data name="Profile_Notifications_Btn_Save" xml:space="preserve"><value>Зберегти налаштування листів</value></data>
+  <data name="Profile_Notifications_Saved" xml:space="preserve"><value>Налаштування листів збережено.</value></data>
   <data name="Profile_Err_SaveFailed" xml:space="preserve"><value>Не вдалося зберегти — спробуйте пізніше.</value></data>
   <data name="Profile_Err_DeleteFailed" xml:space="preserve"><value>Не вдалося видалити акаунт — спробуйте пізніше.</value></data>
 

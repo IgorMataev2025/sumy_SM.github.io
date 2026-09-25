@@ -129,6 +129,13 @@ Namespace SumyPortal
 
             Dim baseUrl = Request.Url.GetLeftPart(UriPartial.Authority)
             DigestSender.SendDueDigests(days, baseUrl)
+
+            ' Листи про зміни в «Обраному» (2026-09-25, migration_022) — та сама щоденна
+            ' перевірка. Try — щоб збій тут не зачепив запит відвідувача, що її запустив.
+            Try
+                FavoriteAlertSender.SendDue(baseUrl)
+            Catch
+            End Try
         End Sub
 
         ''' <summary>Моніторинг залогінених користувачів у реальному часі (2026-09-16) —

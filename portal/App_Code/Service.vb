@@ -774,6 +774,9 @@ Namespace SumyPortal
             Public Property Title As String
             Public Property CategoryName As String
             Public Property ApprovedAt As DateTime
+            ''' <summary>Для персонального дайджесту (2026-09-25, NotificationSettings.Matches).</summary>
+            Public Property CategoryId As Integer
+            Public Property District As String
         End Class
 
         ''' <summary>Усі опубліковані оголошення з датою публікації — для дайджесту на email
@@ -784,7 +787,7 @@ Namespace SumyPortal
             Dim result As New List(Of DigestListing)
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
-                    "SELECT s.ServiceId, s.Title, c.Name AS CategoryName, s.ApprovedAt " &
+                    "SELECT s.ServiceId, s.Title, c.Name AS CategoryName, s.ApprovedAt, s.CategoryId, s.District " &
                     "FROM Services s JOIN Categories c ON c.CategoryId = s.CategoryId " &
                     "WHERE s.Status = 'Approved' ORDER BY s.ApprovedAt DESC;", conn)
                     Using reader = cmd.ExecuteReader()
@@ -793,7 +796,9 @@ Namespace SumyPortal
                                 .ServiceId = reader.GetInt32("ServiceId"),
                                 .Title = reader.GetString("Title"),
                                 .CategoryName = reader.GetString("CategoryName"),
-                                .ApprovedAt = reader.GetDateTime("ApprovedAt")
+                                .ApprovedAt = reader.GetDateTime("ApprovedAt"),
+                                .CategoryId = reader.GetInt32("CategoryId"),
+                                .District = If(reader.IsDBNull(reader.GetOrdinal("District")), Nothing, reader.GetString("District"))
                             })
                         End While
                     End Using

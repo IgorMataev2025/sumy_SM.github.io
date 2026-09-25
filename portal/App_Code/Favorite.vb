@@ -25,8 +25,10 @@ Namespace SumyPortal
         Public Shared Sub Add(userId As Integer, serviceId As Integer)
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
-                    "INSERT IGNORE INTO Favorites (UserId, ServiceId, CreatedAt) " &
-                    "VALUES (@UserId, @ServiceId, UTC_TIMESTAMP());", conn)
+                    "INSERT IGNORE INTO Favorites (UserId, ServiceId, CreatedAt, LastKnownPrice, LastKnownStatus) " &
+                    "SELECT @UserId, s.ServiceId, UTC_TIMESTAMP(), s.Price, s.Status FROM Services s WHERE s.ServiceId = @ServiceId;", conn)
+                    ' Знімок ціни/статусу (2026-09-25, migration_022) — точка відліку для листів
+                    ' про зміни (FavoriteAlertSender).
                     cmd.Parameters.AddWithValue("@UserId", userId)
                     cmd.Parameters.AddWithValue("@ServiceId", serviceId)
                     cmd.ExecuteNonQuery()

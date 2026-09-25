@@ -115,7 +115,7 @@ Namespace SumyPortal
             Using conn = DbHelper.GetConnection()
                 Using cmd As New MySqlCommand(
                     "SELECT " & SelectColumns & "FROM Users " &
-                    "WHERE UserType = 'Consumer' AND IsActive = TRUE AND EmailConfirmed = TRUE " &
+                    "WHERE UserType = 'Consumer' AND IsActive = TRUE AND EmailConfirmed = TRUE AND DigestEnabled = TRUE " &
                     "AND COALESCE(LastDigestSentAt, CreatedAt) < DATE_SUB(UTC_TIMESTAMP(), INTERVAL @Days DAY);", conn)
                     cmd.Parameters.AddWithValue("@Days", days)
                     Using reader = cmd.ExecuteReader()

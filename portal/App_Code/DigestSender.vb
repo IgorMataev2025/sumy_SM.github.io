@@ -28,11 +28,16 @@ Namespace SumyPortal
             If dueUsers.Count = 0 Then Return 0
 
             Dim allApproved = Service.GetAllApprovedForDigest()
+            ' Персональний дайджест (2026-09-25, migration_022): категорії/район, які споживач
+            ' обрав у профілі (порожньо = усі). Вимкнений дайджест відсіяно ще в GetDueForDigest.
+            Dim settings = NotificationSettings.GetForUsers(dueUsers.Select(Function(u) u.UserId).ToList())
             Dim sentCount As Integer = 0
 
             For Each user In dueUsers
                 Dim sinceUtc = If(user.LastDigestSentAt.HasValue, user.LastDigestSentAt.Value, user.CreatedAt)
-                Dim newItems = allApproved.Where(Function(i) i.ApprovedAt > sinceUtc).ToList()
+                Dim prefs As NotificationSettings = Nothing
+                If Not settings.TryGetValue(user.UserId, prefs) Then prefs = New NotificationSettings With {.UserId = user.UserId}
+                Dim newItems = allApproved.Where(Function(i) i.ApprovedAt > sinceUtc AndAlso prefs.Matches(i)).ToList()
 
                 ' Немає нових оголошень з минулого разу — не слати порожній лист і НЕ
                 ' оновлювати LastDigestSentAt: користувач лишається "due", наступна щоденна
