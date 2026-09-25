@@ -1,6 +1,8 @@
 Imports System
 Imports System.Configuration
+Imports System.Collections.Generic
 Imports System.Globalization
+Imports System.Web
 
 Namespace SumyPortal
 
@@ -65,9 +67,53 @@ Namespace SumyPortal
                 BindKeywordSuggestions()
                 PreselectCategoryFromQueryString()
                 PreselectProviderFromQueryString()
-                CurrentPage = 1
+                PreselectFiltersFromQueryString()
                 BindResults()
             End If
+        End Sub
+
+        ''' <summary>Стан каталогу в адресі (2026-09-25): кожна дія (пошук/сортування/
+        ''' сторінка/скидання) робить Response.Redirect на Catalog.aspx?… (PRG), тож
+        ''' "← До каталогу" і кнопка "Назад" браузера повертають той самий список, а не
+        ''' скинутий. Тут — зворотне: з query string у контроли. Невідомий район/сорт
+        ''' просто ігнорується (FindByValue), ціни — як ввів користувач (ParsePrice далі).</summary>
+        Private Sub PreselectFiltersFromQueryString()
+            Dim district = Request.QueryString("district")
+            If Not String.IsNullOrEmpty(district) AndAlso ddlDistrict.Items.FindByValue(district) IsNot Nothing Then
+                ddlDistrict.SelectedValue = district
+            End If
+            txtKeyword.Text = If(Request.QueryString("q"), String.Empty)
+            txtMinPrice.Text = If(Request.QueryString("min"), String.Empty)
+            txtMaxPrice.Text = If(Request.QueryString("max"), String.Empty)
+            Dim sort = Request.QueryString("sort")
+            If Not String.IsNullOrEmpty(sort) AndAlso ddlSort.Items.FindByValue(sort) IsNot Nothing Then
+                ddlSort.SelectedValue = sort
+            End If
+            Dim page As Integer
+            CurrentPage = If(Integer.TryParse(Request.QueryString("page"), page) AndAlso page > 1, page, 1)
+        End Sub
+
+        ''' <summary>Адреса каталогу з поточними фільтрами — лише непорожні параметри, щоб
+        ''' посилання лишались короткими (Catalog.aspx без фільтрів = просто Catalog.aspx).</summary>
+        Private Function BuildCatalogUrl(page As Integer) As String
+            Dim parts As New List(Of String)
+            Dim add = Sub(key As String, value As String)
+                          If Not String.IsNullOrWhiteSpace(value) Then parts.Add(key & "=" & HttpUtility.UrlEncode(value.Trim()))
+                      End Sub
+            If ddlCategory.SelectedValue <> "0" Then add("categoryId", ddlCategory.SelectedValue)
+            add("district", ddlDistrict.SelectedValue)
+            add("q", txtKeyword.Text)
+            add("min", txtMinPrice.Text)
+            add("max", txtMaxPrice.Text)
+            If ddlSort.SelectedIndex > 0 Then add("sort", ddlSort.SelectedValue)
+            If ProviderIdFilter.HasValue Then add("providerId", ProviderIdFilter.Value.ToString())
+            If page > 1 Then add("page", page.ToString())
+            Return "~/Catalog.aspx" & If(parts.Count > 0, "?" & String.Join("&", parts), "")
+        End Function
+
+        Private Sub RedirectToPage(page As Integer)
+            Response.Redirect(BuildCatalogUrl(page), False)
+            Context.ApplicationInstance.CompleteRequest()
         End Sub
 
         ''' <summary>Перехід зі "Стола замовлень" (OrderBoard.aspx "Оголошення →", 2026-09-23) —
@@ -168,38 +214,26 @@ Namespace SumyPortal
 
         Protected Sub btnSearch_Click(sender As Object, e As EventArgs)
             If Not Page.IsValid Then Return
-            CurrentPage = 1
-            BindResults()
+            RedirectToPage(1)
         End Sub
 
         Protected Sub btnReset_Click(sender As Object, e As EventArgs)
-            ddlCategory.SelectedIndex = 0
-            ddlDistrict.SelectedIndex = 0
-            txtKeyword.Text = String.Empty
-            txtMinPrice.Text = String.Empty
-            txtMaxPrice.Text = String.Empty
-            ddlSort.SelectedIndex = 0
-            ProviderIdFilter = Nothing
-            providerFilterPanel.Visible = False
-            CurrentPage = 1
-            BindResults()
+            Response.Redirect("~/Catalog.aspx", False)
+            Context.ApplicationInstance.CompleteRequest()
         End Sub
 
         ''' <summary>Сортування каталогу (п.23) — AutoPostBack на ddlSort застосовує вибір
         ''' одразу, без окремого натискання "Знайти" (рішення користувача — "динамічно").</summary>
         Protected Sub ddlSort_SelectedIndexChanged(sender As Object, e As EventArgs)
-            CurrentPage = 1
-            BindResults()
+            RedirectToPage(1)
         End Sub
 
         Protected Sub lnkPrev_Click(sender As Object, e As EventArgs)
-            If CurrentPage > 1 Then CurrentPage -= 1
-            BindResults()
+            RedirectToPage(Math.Max(1, CurrentPage - 1))
         End Sub
 
         Protected Sub lnkNext_Click(sender As Object, e As EventArgs)
-            CurrentPage += 1
-            BindResults()
+            RedirectToPage(CurrentPage + 1)
         End Sub
 
     End Class

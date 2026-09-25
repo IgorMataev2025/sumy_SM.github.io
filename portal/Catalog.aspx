@@ -136,6 +136,10 @@
     </asp:Panel>
 
     <script>
+        // Адреса з фільтрами (кожна дія каталогу — редірект на Catalog.aspx?…) — для
+        // "← До каталогу" на ServiceDetails.aspx (2026-09-25).
+        try { sessionStorage.setItem('catalogUrl', location.pathname + location.search); } catch (e) { }
+
         (function () {
             var tablePanel = document.getElementById('<%= tableViewPanel.ClientID %>');
 

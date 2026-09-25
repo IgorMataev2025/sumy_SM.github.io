@@ -11,7 +11,16 @@
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 </asp:Content>
 <asp:Content ID="MainContent" ContentPlaceHolderID="MainContent" runat="server">
-    <p><a href="Catalog.aspx"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_BackToCatalog %>" /></a></p>
+    <p><a href="Catalog.aspx" id="backToCatalogLink"><asp:Literal runat="server" Text="<%$ Resources:SiteText, Details_BackToCatalog %>" /></a></p>
+    <%-- Повернення до того самого відфільтрованого списку (2026-09-25): Catalog.aspx кладе свою
+         адресу з фільтрами в sessionStorage; Referrer не годиться — після "В обране" (редірект
+         на себе) він уже вказує на цю ж сторінку. Без sessionStorage — просто Catalog.aspx. --%>
+    <script>
+        try {
+            var catalogUrl = sessionStorage.getItem('catalogUrl');
+            if (catalogUrl) document.getElementById('backToCatalogLink').href = catalogUrl;
+        } catch (e) { }
+    </script>
 
     <!-- JSON-LD Service (розширене SEO/GEO, 2026-09-22) — структуровані дані для Google
          Rich Results і LLM-краулерів; Google офіційно підтримує &lt;script type="application/
