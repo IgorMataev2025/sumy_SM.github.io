@@ -17,6 +17,11 @@ Namespace SumyPortal
         ''' циклом /loop, 2026-09-13) — повідомлення від іншої сторони, новіші за
         ''' MessageReadStatus.LastReadMessageId цього користувача в цій розмові.</summary>
         Public Property UnreadCount As Integer
+
+        ''' <summary>Історія звернень (2026-09-25): коли споживач уперше написав щодо цього
+        ''' оголошення, і хто написав останнім (для статусу "очікує відповіді").</summary>
+        Public Property FirstSentAt As DateTime
+        Public Property LastSenderIsConsumer As Boolean
     End Class
 
     ''' <summary>
@@ -152,9 +157,10 @@ Namespace SumyPortal
         ''' <summary>Розмови споживача — по одній на кожне оголошення, з якого він написав.</summary>
         Public Shared Function GetConversationsForConsumer(consumerId As Integer) As List(Of ConversationSummary)
             Return QuerySummaries(
-                "SELECT x.ServiceId, s.Title AS ServiceTitle, x.ConsumerId, p.FullName AS OtherPartyName, x.Body AS LastBody, x.SentAt AS LastSentAt, " &
+                "SELECT x.ServiceId, s.Title AS ServiceTitle, x.ConsumerId, p.FullName AS OtherPartyName, x.Body AS LastBody, x.SentAt AS LastSentAt, x.FirstSentAt, (x.SenderId = x.ConsumerId) AS LastSenderIsConsumer, " &
                 UnreadCountSubquery &
-                "FROM (SELECT m.ServiceId, m.ConsumerId, m.Body, m.SentAt, " &
+                "FROM (SELECT m.ServiceId, m.ConsumerId, m.SenderId, m.Body, m.SentAt, " &
+                "MIN(m.SentAt) OVER (PARTITION BY m.ServiceId, m.ConsumerId) AS FirstSentAt, " &
                 "ROW_NUMBER() OVER (PARTITION BY m.ServiceId, m.ConsumerId ORDER BY m.SentAt DESC) AS rn " &
                 "FROM Messages m WHERE m.ConsumerId = @UserId) x " &
                 "JOIN Services s ON s.ServiceId = x.ServiceId " &
@@ -165,9 +171,10 @@ Namespace SumyPortal
         ''' <summary>Розмови постачальника — по одній на кожну пару (оголошення, споживач), що йому писали.</summary>
         Public Shared Function GetConversationsForProvider(providerId As Integer) As List(Of ConversationSummary)
             Return QuerySummaries(
-                "SELECT x.ServiceId, s.Title AS ServiceTitle, x.ConsumerId, c.FullName AS OtherPartyName, x.Body AS LastBody, x.SentAt AS LastSentAt, " &
+                "SELECT x.ServiceId, s.Title AS ServiceTitle, x.ConsumerId, c.FullName AS OtherPartyName, x.Body AS LastBody, x.SentAt AS LastSentAt, x.FirstSentAt, (x.SenderId = x.ConsumerId) AS LastSenderIsConsumer, " &
                 UnreadCountSubquery &
-                "FROM (SELECT m.ServiceId, m.ConsumerId, m.Body, m.SentAt, " &
+                "FROM (SELECT m.ServiceId, m.ConsumerId, m.SenderId, m.Body, m.SentAt, " &
+                "MIN(m.SentAt) OVER (PARTITION BY m.ServiceId, m.ConsumerId) AS FirstSentAt, " &
                 "ROW_NUMBER() OVER (PARTITION BY m.ServiceId, m.ConsumerId ORDER BY m.SentAt DESC) AS rn " &
                 "FROM Messages m JOIN Services s2 ON s2.ServiceId = m.ServiceId WHERE s2.ProviderId = @UserId) x " &
                 "JOIN Services s ON s.ServiceId = x.ServiceId " &
@@ -189,7 +196,9 @@ Namespace SumyPortal
                                 .OtherPartyName = reader.GetString("OtherPartyName"),
                                 .LastBody = reader.GetString("LastBody"),
                                 .LastSentAt = reader.GetDateTime("LastSentAt"),
-                                .UnreadCount = reader.GetInt32("UnreadCount")
+                                .UnreadCount = reader.GetInt32("UnreadCount"),
+                                .FirstSentAt = reader.GetDateTime("FirstSentAt"),
+                                .LastSenderIsConsumer = Convert.ToInt32(reader("LastSenderIsConsumer")) = 1
                             })
                         End While
                     End Using

@@ -253,6 +253,11 @@
   <data name="Favorites_Unavailable" xml:space="preserve"><value>Unavailable — no longer published</value></data>
 
   <data name="Messages_Empty" xml:space="preserve"><value>No conversations yet. Message a provider from a listing card in the catalog.</value></data>
+  <data name="Messages_FirstContact" xml:space="preserve"><value>Request of {0:dd.MM.yyyy}</value></data>
+  <data name="Messages_Status_AwaitingProvider" xml:space="preserve"><value>Awaiting provider's reply</value></data>
+  <data name="Messages_Status_ProviderReplied" xml:space="preserve"><value>Provider replied</value></data>
+  <data name="Messages_Status_NeedsYourReply" xml:space="preserve"><value>Needs your reply</value></data>
+  <data name="Messages_Status_YouReplied" xml:space="preserve"><value>You replied</value></data>
 
   <data name="Donate_Heading" xml:space="preserve"><value>Support the Safina Project</value></data>
   <data name="Donate_Intro" xml:space="preserve"><value>The Safina portal is developed as a volunteer project for residents of Sumy and the region. If you found it useful, you can support its development with a voluntary contribution — payment is processed via LiqPay, and the portal never sees or stores your card details.</value></data>

@@ -22,6 +22,11 @@
                 </h3>
                 <p><%#: CType(Container.DataItem, SumyPortal.ConversationSummary).LastBody %></p>
                 <p class="service-category"><%#: CType(Container.DataItem, SumyPortal.ConversationSummary).LastSentAt.ToString("dd.MM.yyyy HH:mm") %></p>
+                <%-- Історія звернень (2026-09-25): дата першого звернення + хто має відповісти. --%>
+                <p class="service-category">
+                    <%#: String.Format(Resources.SiteText.Messages_FirstContact, CType(Container.DataItem, SumyPortal.ConversationSummary).FirstSentAt) %>
+                    · <b><%#: StatusText(CType(Container.DataItem, SumyPortal.ConversationSummary)) %></b>
+                </p>
             </a>
         </ItemTemplate>
     </asp:Repeater>

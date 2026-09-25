@@ -19,7 +19,8 @@ Namespace SumyPortal
             Dim currentUser = UserAccount.FindByEmail(Page.User.Identity.Name)
             If currentUser Is Nothing Then Return
 
-            Dim conversations = If(currentUser.UserType = "Provider",
+            _isProvider = (currentUser.UserType = "Provider")
+            Dim conversations = If(_isProvider,
                 DialogMessage.GetConversationsForProvider(currentUser.UserId),
                 DialogMessage.GetConversationsForConsumer(currentUser.UserId))
 
@@ -27,6 +28,17 @@ Namespace SumyPortal
             rptConversations.DataBind()
             emptyPanel.Visible = (conversations.Count = 0)
         End Sub
+
+        Private _isProvider As Boolean
+
+        ''' <summary>Статус звернення (2026-09-25) — з погляду того, хто дивиться: хто
+        ''' написав останнім, той чекає на відповідь іншої сторони.</summary>
+        Protected Function StatusText(item As ConversationSummary) As String
+            If _isProvider Then
+                Return If(item.LastSenderIsConsumer, Resources.SiteText.Messages_Status_NeedsYourReply, Resources.SiteText.Messages_Status_YouReplied)
+            End If
+            Return If(item.LastSenderIsConsumer, Resources.SiteText.Messages_Status_AwaitingProvider, Resources.SiteText.Messages_Status_ProviderReplied)
+        End Function
 
     End Class
 

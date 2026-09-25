@@ -253,6 +253,11 @@
   <data name="Favorites_Unavailable" xml:space="preserve"><value>Недоступне — знято з публікації</value></data>
 
   <data name="Messages_Empty" xml:space="preserve"><value>Розмов ще немає. Напишіть постачальнику з картки оголошення в каталозі.</value></data>
+  <data name="Messages_FirstContact" xml:space="preserve"><value>Звернення від {0:dd.MM.yyyy}</value></data>
+  <data name="Messages_Status_AwaitingProvider" xml:space="preserve"><value>Очікує відповіді постачальника</value></data>
+  <data name="Messages_Status_ProviderReplied" xml:space="preserve"><value>Постачальник відповів</value></data>
+  <data name="Messages_Status_NeedsYourReply" xml:space="preserve"><value>Потрібна ваша відповідь</value></data>
+  <data name="Messages_Status_YouReplied" xml:space="preserve"><value>Ви відповіли</value></data>
 
   <data name="Donate_Heading" xml:space="preserve"><value>Підтримати проєкт Safina</value></data>
   <data name="Donate_Intro" xml:space="preserve"><value>Портал Safina розвивається як волонтерський проєкт для мешканців Сум та області. Якщо він виявився корисним, ви можете підтримати його розвиток добровільним внеском — оплата проходить через LiqPay, дані картки порталу не бачить і не зберігає.</value></data>
