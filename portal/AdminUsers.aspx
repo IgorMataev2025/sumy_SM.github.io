@@ -9,12 +9,45 @@
         <a href="~/AdminModeration.aspx" runat="server">Модерація</a> ·
         <a href="~/AdminServices.aspx" runat="server">Усі оголошення</a> ·
         <a href="~/AdminReports.aspx" runat="server">Скарги</a> ·
+        <a href="~/AdminReviews.aspx" runat="server">Відгуки</a> ·
         <a href="~/AdminCategories.aspx" runat="server">Категорії</a> ·
+        <a href="~/AdminDonations.aspx" runat="server">Донати</a> ·
         <a href="~/AdminLog.aspx" runat="server">Журнал дій</a> ·
         <a href="~/AdminOnlineUsers.aspx" runat="server">Онлайн</a>
     </p>
 
     <asp:Label ID="infoLabel" runat="server" CssClass="stub-note" Visible="false" />
+    <%-- Пошук і фільтри (2026-09-25, аудит Адміна, п.4) — стан у адресі (AdminPageBase). --%>
+    <asp:Panel runat="server" CssClass="filter-panel" DefaultButton="btnSearch">
+        <div class="filter-row">
+            <div class="form-row">
+                <label for="<%= txtSearch.ClientID %>">Пошук</label>
+                <asp:TextBox ID="txtSearch" runat="server" placeholder="email, ПІБ, компанія, телефон" />
+            </div>
+            <div class="form-row">
+                <label for="<%= ddlRole.ClientID %>">Роль</label>
+                <asp:DropDownList ID="ddlRole" runat="server">
+                    <asp:ListItem Text="Усі" Value="" />
+                    <asp:ListItem Text="Постачальники" Value="Provider" />
+                    <asp:ListItem Text="Споживачі" Value="Consumer" />
+                    <asp:ListItem Text="Адміністратори" Value="Admin" />
+                </asp:DropDownList>
+            </div>
+            <div class="form-row">
+                <label for="<%= ddlStatus.ClientID %>">Статус</label>
+                <asp:DropDownList ID="ddlStatus" runat="server">
+                    <asp:ListItem Text="Усі" Value="" />
+                    <asp:ListItem Text="Активні" Value="active" />
+                    <asp:ListItem Text="Заблоковані" Value="blocked" />
+                </asp:DropDownList>
+            </div>
+            <div class="form-row filter-actions">
+                <asp:Button ID="btnSearch" runat="server" Text="Знайти" OnClick="btnSearch_Click" CssClass="btn-primary" CausesValidation="false" />
+                <a href="AdminUsers.aspx" class="btn-secondary btn-link">Скинути</a>
+            </div>
+        </div>
+    </asp:Panel>
+    <asp:Label ID="pageInfoLabel" runat="server" CssClass="page-info" />
 
     <div class="table-scroll">
         <table class="admin-table">
@@ -24,6 +57,7 @@
                     <th>ПІБ</th>
                     <th>Тип</th>
                     <th>Статус</th>
+                    <th>Оголошень</th>
                     <th>Реєстрація</th>
                     <th></th>
                 </tr>
@@ -39,6 +73,7 @@
                                 <%#: If(CType(Container.DataItem, SumyPortal.UserAccount).IsAdmin, " (адмін)", "") %>
                             </td>
                             <td><%#: If(CType(Container.DataItem, SumyPortal.UserAccount).IsActive, "Активний", "Заблокований") %></td>
+                            <td><%#: If(CType(Container.DataItem, SumyPortal.UserAccount).UserType = "Provider", CType(Container.DataItem, SumyPortal.UserAccount).ServiceCount.ToString(), "—") %></td>
                             <td><%#: CType(Container.DataItem, SumyPortal.UserAccount).CreatedAt.ToString("dd.MM.yyyy") %></td>
                             <td>
                                 <a href='<%#: "AdminUserEdit.aspx?id=" & CType(Container.DataItem, SumyPortal.UserAccount).UserId %>'>Редагувати</a>
@@ -59,5 +94,9 @@
                 </asp:Repeater>
             </tbody>
         </table>
+    </div>
+    <div class="pagination">
+        <asp:HyperLink ID="lnkPrev" runat="server" Text="← Попередня" />
+        <asp:HyperLink ID="lnkNext" runat="server" Text="Наступна →" />
     </div>
 </asp:Content>

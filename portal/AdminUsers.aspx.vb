@@ -1,5 +1,7 @@
 Imports System
+Imports System.Collections.Generic
 Imports System.IO
+Imports System.Web.UI.WebControls
 
 Namespace SumyPortal
 
@@ -8,18 +10,40 @@ Namespace SumyPortal
 
         Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
             If Not IsPostBack Then
+                txtSearch.Text = QueryParam("q")
+                SelectIfExists(ddlRole, QueryParam("role"))
+                SelectIfExists(ddlStatus, QueryParam("status"))
                 BindUsers()
             End If
         End Sub
 
+        Private Shared Sub SelectIfExists(ddl As DropDownList, value As String)
+            If ddl.Items.FindByValue(value) IsNot Nothing Then ddl.SelectedValue = value
+        End Sub
+
+        ''' <summary>Поточні фільтри з адреси (без page) — для пагінатора (2026-09-25, аудит Адміна, п.4).</summary>
+        Private Function FilterParams() As Dictionary(Of String, String)
+            Return New Dictionary(Of String, String) From {
+                {"q", QueryParam("q")}, {"role", QueryParam("role")}, {"status", QueryParam("status")}}
+        End Function
+
         Private Sub BindUsers()
-            rptUsers.DataSource = UserAccount.GetAll()
+            Dim total As Integer
+            Dim users = UserAccount.AdminSearch(QueryParam("q"), QueryParam("role"), QueryParam("status"),
+                                                CurrentPageNumber, AdminPageSize, total)
+            rptUsers.DataSource = users
             rptUsers.DataBind()
+            BindPager(lnkPrev, lnkNext, pageInfoLabel, total, FilterParams())
+        End Sub
+
+        Protected Sub btnSearch_Click(sender As Object, e As EventArgs)
+            RedirectWithParams(New Dictionary(Of String, String) From {
+                {"q", txtSearch.Text}, {"role", ddlRole.SelectedValue}, {"status", ddlStatus.SelectedValue}})
         End Sub
 
         Protected Sub rptUsers_ItemCommand(source As Object, e As RepeaterCommandEventArgs)
             Dim userId = Convert.ToInt32(e.CommandArgument)
-            Dim target = UserAccount.GetAll().Find(Function(u) u.UserId = userId)
+            Dim target = UserAccount.GetById(userId)
             If target Is Nothing Then Return
 
             Select Case e.CommandName

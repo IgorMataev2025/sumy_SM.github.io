@@ -39,6 +39,8 @@
   <data name="PageTitle_AdminCategories" xml:space="preserve"><value>Categories</value></data>
   <data name="PageTitle_AdminDashboard" xml:space="preserve"><value>Admin Panel</value></data>
   <data name="PageTitle_AdminLog" xml:space="preserve"><value>Admin Action Log</value></data>
+  <data name="PageTitle_AdminDonations" xml:space="preserve"><value>Donations</value></data>
+  <data name="PageTitle_AdminReviews" xml:space="preserve"><value>Recent reviews</value></data>
   <data name="PageTitle_AdminModeration" xml:space="preserve"><value>Service Moderation</value></data>
   <data name="PageTitle_AdminOnlineUsers" xml:space="preserve"><value>Online Now</value></data>
   <data name="PageTitle_AdminReports" xml:space="preserve"><value>Service Reports</value></data>

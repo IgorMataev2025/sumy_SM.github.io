@@ -8,8 +8,10 @@
         <a href="~/AdminDashboard.aspx" runat="server">← Адмін-панель</a> ·
         <a href="~/AdminModeration.aspx" runat="server">Модерація</a> ·
         <a href="~/AdminServices.aspx" runat="server">Усі оголошення</a> ·
+        <a href="~/AdminReviews.aspx" runat="server">Відгуки</a> ·
         <a href="~/AdminCategories.aspx" runat="server">Категорії</a> ·
         <a href="~/AdminUsers.aspx" runat="server">Користувачі</a> ·
+        <a href="~/AdminDonations.aspx" runat="server">Донати</a> ·
         <a href="~/AdminLog.aspx" runat="server">Журнал дій</a> ·
         <a href="~/AdminOnlineUsers.aspx" runat="server">Онлайн</a>
     </p>

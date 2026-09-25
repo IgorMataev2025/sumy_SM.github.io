@@ -16,25 +16,26 @@ Namespace SumyPortal
 
         Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
             If Not IsPostBack Then
+                txtSearch.Text = QueryParam("q")
+                If ddlStatusFilter.Items.FindByValue(QueryParam("status")) IsNot Nothing Then ddlStatusFilter.SelectedValue = QueryParam("status")
                 BindServices()
             End If
         End Sub
 
+        ''' <summary>Пошук + статус + сторінки на рівні БД (2026-09-25, аудит Адміна, п.5) —
+        ''' раніше всі оголошення вантажились у пам'ять і фільтрувались лише за статусом.</summary>
         Private Sub BindServices()
-            Dim all = Service.GetAllForAdmin()
-            Dim statusFilter = ddlStatusFilter.SelectedValue
-
-            Dim filtered = If(String.IsNullOrEmpty(statusFilter),
-                all,
-                all.FindAll(Function(s) s.Status = statusFilter))
-
-            rptServices.DataSource = filtered
+            Dim total As Integer
+            Dim items = Service.AdminSearch(QueryParam("q"), QueryParam("status"), CurrentPageNumber, AdminPageSize, total)
+            rptServices.DataSource = items
             rptServices.DataBind()
-            emptyPanel.Visible = (filtered.Count = 0)
+            emptyPanel.Visible = (items.Count = 0)
+            BindPager(lnkPrev, lnkNext, pageInfoLabel, total,
+                      New Dictionary(Of String, String) From {{"q", QueryParam("q")}, {"status", QueryParam("status")}})
         End Sub
 
-        Protected Sub ddlStatusFilter_SelectedIndexChanged(sender As Object, e As EventArgs)
-            BindServices()
+        Protected Sub btnSearch_Click(sender As Object, e As EventArgs)
+            RedirectWithParams(New Dictionary(Of String, String) From {{"q", txtSearch.Text}, {"status", ddlStatusFilter.SelectedValue}})
         End Sub
 
         Protected Sub rptServices_ItemCommand(source As Object, e As RepeaterCommandEventArgs)

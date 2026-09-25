@@ -8,8 +8,10 @@
         <a href="~/AdminDashboard.aspx" runat="server">← Адмін-панель</a> ·
         <a href="~/AdminModeration.aspx" runat="server">Модерація</a> ·
         <a href="~/AdminReports.aspx" runat="server">Скарги</a> ·
+        <a href="~/AdminReviews.aspx" runat="server">Відгуки</a> ·
         <a href="~/AdminCategories.aspx" runat="server">Категорії</a> ·
         <a href="~/AdminUsers.aspx" runat="server">Користувачі</a> ·
+        <a href="~/AdminDonations.aspx" runat="server">Донати</a> ·
         <a href="~/AdminLog.aspx" runat="server">Журнал дій</a> ·
         <a href="~/AdminOnlineUsers.aspx" runat="server">Онлайн</a>
     </p>
@@ -21,21 +23,33 @@
 
     <asp:Label ID="infoLabel" runat="server" CssClass="stub-note" Visible="false" />
 
-    <div class="filter-panel">
-        <div class="form-row">
-            <label for="<%= ddlStatusFilter.ClientID %>">Статус</label>
-            <asp:DropDownList ID="ddlStatusFilter" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlStatusFilter_SelectedIndexChanged">
-                <asp:ListItem Text="Усі статуси" Value="" />
-                <asp:ListItem Text="Чернетка" Value="Draft" />
-                <asp:ListItem Text="На модерації" Value="Pending" />
-                <asp:ListItem Text="Опубліковано" Value="Approved" />
-                <asp:ListItem Text="Відхилено" Value="Rejected" />
-            </asp:DropDownList>
+    <%-- Пошук + статус + сторінки (2026-09-25, аудит Адміна, п.5) — стан у адресі (AdminPageBase). --%>
+    <asp:Panel runat="server" CssClass="filter-panel" DefaultButton="btnSearch">
+        <div class="filter-row">
+            <div class="form-row">
+                <label for="<%= txtSearch.ClientID %>">Пошук</label>
+                <asp:TextBox ID="txtSearch" runat="server" placeholder="назва, опис, постачальник, email" />
+            </div>
+            <div class="form-row">
+                <label for="<%= ddlStatusFilter.ClientID %>">Статус</label>
+                <asp:DropDownList ID="ddlStatusFilter" runat="server">
+                    <asp:ListItem Text="Усі статуси" Value="" />
+                    <asp:ListItem Text="Чернетка" Value="Draft" />
+                    <asp:ListItem Text="На модерації" Value="Pending" />
+                    <asp:ListItem Text="Опубліковано" Value="Approved" />
+                    <asp:ListItem Text="Відхилено" Value="Rejected" />
+                </asp:DropDownList>
+            </div>
+            <div class="form-row filter-actions">
+                <asp:Button ID="btnSearch" runat="server" Text="Знайти" OnClick="btnSearch_Click" CssClass="btn-primary" CausesValidation="false" />
+                <a href="AdminServices.aspx" class="btn-secondary btn-link">Скинути</a>
+            </div>
         </div>
-    </div>
+    </asp:Panel>
+    <asp:Label ID="pageInfoLabel" runat="server" CssClass="page-info" />
 
     <asp:Panel ID="emptyPanel" runat="server" Visible="false" CssClass="stub-note">
-        Оголошень із таким статусом немає.
+        Оголошень за цим фільтром немає.
     </asp:Panel>
 
     <asp:Repeater ID="rptServices" runat="server" OnItemCommand="rptServices_ItemCommand">
@@ -63,4 +77,8 @@
             </div>
         </ItemTemplate>
     </asp:Repeater>
+    <div class="pagination">
+        <asp:HyperLink ID="lnkPrev" runat="server" Text="← Попередня" />
+        <asp:HyperLink ID="lnkNext" runat="server" Text="Наступна →" />
+    </div>
 </asp:Content>

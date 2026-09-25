@@ -1,3 +1,4 @@
+Imports System
 Imports System.Collections.Generic
 Imports MySql.Data.MySqlClient
 
@@ -35,6 +36,61 @@ Namespace SumyPortal
                 End Using
             End Using
         End Sub
+
+        ''' <summary>Журнал з фільтрами й сторінками (2026-09-25, аудит Адміна, п.9): ті самі два
+        ''' джерела, що GetRecent, але через UNION ALL у БД — фільтр за текстом (дія/деталі/адмін)
+        ''' і датами (включно, UTC) застосовується до обох, і сторінки рахуються правильно.</summary>
+        Public Shared Function Search(text As String, fromDate As DateTime?, toDate As DateTime?,
+                                      page As Integer, pageSize As Integer, ByRef total As Integer) As List(Of AdminLogEntry)
+            Const unionSql As String =
+                "(SELECT l.ActionDate, u.Email AS AdminEmail, l.Action AS ActionText, l.TargetDescription AS Details " &
+                "FROM AdminActionLog l JOIN Users u ON u.UserId = l.AdminId " &
+                "UNION ALL " &
+                "SELECT m.ActionDate, u.Email, IF(m.Action = 'Approved', 'Схвалив оголошення', 'Відхилив оголошення'), " &
+                "CONCAT('""', s.Title, '""', IF(m.Comment IS NULL OR m.Comment = '', '', CONCAT(' — причина: ', m.Comment))) " &
+                "FROM ModerationLog m JOIN Users u ON u.UserId = m.AdminId JOIN Services s ON s.ServiceId = m.ServiceId) x "
+            Dim where As New List(Of String) From {"1 = 1"}
+            Dim params As New List(Of MySqlParameter)
+            If Not String.IsNullOrWhiteSpace(text) Then
+                where.Add("(x.ActionText LIKE @Text OR x.Details LIKE @Text OR x.AdminEmail LIKE @Text)")
+                params.Add(New MySqlParameter("@Text", "%" & text.Trim() & "%"))
+            End If
+            If fromDate.HasValue Then
+                where.Add("x.ActionDate >= @From")
+                params.Add(New MySqlParameter("@From", fromDate.Value.Date))
+            End If
+            If toDate.HasValue Then
+                where.Add("x.ActionDate < @To")
+                params.Add(New MySqlParameter("@To", toDate.Value.Date.AddDays(1)))
+            End If
+            Dim whereSql = " WHERE " & String.Join(" AND ", where) & " "
+
+            Dim result As New List(Of AdminLogEntry)
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand("SELECT COUNT(*) FROM " & unionSql & whereSql & ";", conn)
+                    For Each p In params : cmd.Parameters.Add(p.Clone()) : Next
+                    total = Convert.ToInt32(cmd.ExecuteScalar())
+                End Using
+                Using cmd As New MySqlCommand(
+                    "SELECT x.ActionDate, x.AdminEmail, x.ActionText, x.Details FROM " & unionSql & whereSql &
+                    "ORDER BY x.ActionDate DESC LIMIT @Limit OFFSET @Offset;", conn)
+                    For Each p In params : cmd.Parameters.Add(p.Clone()) : Next
+                    cmd.Parameters.AddWithValue("@Limit", pageSize)
+                    cmd.Parameters.AddWithValue("@Offset", (Math.Max(1, page) - 1) * pageSize)
+                    Using reader = cmd.ExecuteReader()
+                        While reader.Read()
+                            result.Add(New AdminLogEntry With {
+                                .ActionDate = reader.GetDateTime("ActionDate"),
+                                .AdminName = reader.GetString("AdminEmail"),
+                                .Action = reader.GetString("ActionText"),
+                                .Details = If(reader.IsDBNull(reader.GetOrdinal("Details")), "", reader.GetString("Details"))
+                            })
+                        End While
+                    End Using
+                End Using
+            End Using
+            Return result
+        End Function
 
         ''' <summary>Об'єднана стрічка AdminActionLog + ModerationLog, найновіші перші, обмежено `limit`.</summary>
         Public Shared Function GetRecent(Optional limit As Integer = 200) As List(Of AdminLogEntry)

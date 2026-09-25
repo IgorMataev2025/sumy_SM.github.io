@@ -38,5 +38,35 @@
             <h3>Онлайн зараз</h3>
             <p><asp:Literal ID="onlineCountLiteral" runat="server" /></p>
         </a>
+        <a class="category-card" href="~/AdminReviews.aspx" runat="server">
+            <h3>Відгуки</h3>
+            <p><asp:Literal ID="reviewsLiteral" runat="server" /></p>
+        </a>
+        <a class="category-card" href="~/AdminDonations.aspx" runat="server">
+            <h3>Донати</h3>
+            <p><asp:Literal ID="donationsLiteral" runat="server" /></p>
+        </a>
+    </div>
+
+    <%-- Динаміка (2026-09-25, аудит Адміна, п.8): за 7 і 30 днів та за весь час. --%>
+    <h2>Статистика</h2>
+    <div class="table-scroll">
+        <table class="admin-table">
+            <thead>
+                <tr><th>Показник</th><th>7 днів</th><th>30 днів</th><th>Усього</th></tr>
+            </thead>
+            <tbody>
+                <asp:Repeater ID="rptStats" runat="server">
+                    <ItemTemplate>
+                        <tr>
+                            <td><%#: CType(Container.DataItem, SumyPortal.AdminStatRow).Label %></td>
+                            <td><%#: CType(Container.DataItem, SumyPortal.AdminStatRow).Last7 %></td>
+                            <td><%#: CType(Container.DataItem, SumyPortal.AdminStatRow).Last30 %></td>
+                            <td><%#: CType(Container.DataItem, SumyPortal.AdminStatRow).Total %></td>
+                        </tr>
+                    </ItemTemplate>
+                </asp:Repeater>
+            </tbody>
+        </table>
     </div>
 </asp:Content>

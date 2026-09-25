@@ -1087,6 +1087,51 @@ Namespace SumyPortal
         ' На відміну від методів вище (GetByProvider/GetById/Update), тут немає перевірки
         ' власника й обмеження за статусом — адмін бачить/редагує/видаляє будь-яке оголошення.
 
+        ''' <summary>Пошук оголошень для адміна (2026-09-25, аудит Адміна, п.5): текст — назва/опис/
+        ''' ім'я чи email постачальника, status — один зі статусів або порожньо; сторінками,
+        ''' найновіші спершу. total — скільки всього під фільтр.</summary>
+        Public Shared Function AdminSearch(text As String, status As String, page As Integer, pageSize As Integer,
+                                           ByRef total As Integer) As List(Of Service)
+            Dim where As New List(Of String) From {"1 = 1"}
+            Dim params As New List(Of MySqlParameter)
+            If Not String.IsNullOrWhiteSpace(text) Then
+                where.Add("(s.Title LIKE @Text OR s.Description LIKE @Text OR u.FullName LIKE @Text OR u.Email LIKE @Text)")
+                params.Add(New MySqlParameter("@Text", "%" & text.Trim() & "%"))
+            End If
+            If Not String.IsNullOrEmpty(status) Then
+                where.Add("s.Status = @Status")
+                params.Add(New MySqlParameter("@Status", status))
+            End If
+            Dim fromWhere = "FROM Services s JOIN Categories c ON c.CategoryId = s.CategoryId " &
+                            "JOIN Users u ON u.UserId = s.ProviderId WHERE " & String.Join(" AND ", where) & " "
+
+            Dim result As New List(Of Service)
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand("SELECT COUNT(*) " & fromWhere & ";", conn)
+                    For Each p In params : cmd.Parameters.Add(p.Clone()) : Next
+                    total = Convert.ToInt32(cmd.ExecuteScalar())
+                End Using
+                Using cmd As New MySqlCommand(
+                    "SELECT s.ServiceId, s.ProviderId, s.CategoryId, c.Name AS CategoryName, s.Title, s.Description, " &
+                    "s.Price, s.District, s.Phone, s.Latitude, s.Longitude, s.Status, s.RejectReason, s.CreatedAt, s.ViewCount, s.IsVerified, s.SpecificationFilePath, " &
+                    "u.FullName AS ProviderName, u.Email AS ProviderEmail " & fromWhere &
+                    "ORDER BY s.CreatedAt DESC LIMIT @Limit OFFSET @Offset;", conn)
+                    For Each p In params : cmd.Parameters.Add(p.Clone()) : Next
+                    cmd.Parameters.AddWithValue("@Limit", pageSize)
+                    cmd.Parameters.AddWithValue("@Offset", (Math.Max(1, page) - 1) * pageSize)
+                    Using reader = cmd.ExecuteReader()
+                        While reader.Read()
+                            Dim svc = Map(reader)
+                            svc.ProviderName = reader.GetString("ProviderName")
+                            svc.ProviderEmail = reader.GetString("ProviderEmail")
+                            result.Add(svc)
+                        End While
+                    End Using
+                End Using
+            End Using
+            Return result
+        End Function
+
         ''' <summary>Усі оголошення незалежно від статусу, з контактами постачальника — для AdminServices.aspx.</summary>
         Public Shared Function GetAllForAdmin() As List(Of Service)
             Dim result As New List(Of Service)

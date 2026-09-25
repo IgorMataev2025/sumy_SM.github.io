@@ -40,6 +40,55 @@ Namespace SumyPortal
         ''' іще жодного разу не заходив після додавання цієї фічі.</summary>
         Public Property LastActivityAt As DateTime?
 
+        ''' <summary>Кількість оголошень — лише для AdminUsers.aspx (AdminSearch), Map не заповнює.</summary>
+        Public Property ServiceCount As Integer
+
+        ''' <summary>Пошук користувачів для адміна (2026-09-25, аудит Адміна, п.4): текст —
+        ''' email/ПІБ/компанія/телефон; role — Provider/Consumer/Admin; status — active/blocked.
+        ''' Сторінками по pageSize, найновіші спершу; total — скільки всього під фільтр.</summary>
+        Public Shared Function AdminSearch(text As String, role As String, status As String,
+                                           page As Integer, pageSize As Integer, ByRef total As Integer) As List(Of UserAccount)
+            Dim where As New List(Of String) From {"1 = 1"}
+            Dim params As New List(Of MySqlParameter)
+            If Not String.IsNullOrWhiteSpace(text) Then
+                where.Add("(u.Email LIKE @Text OR u.FullName LIKE @Text OR u.CompanyName LIKE @Text OR u.Phone LIKE @Text)")
+                params.Add(New MySqlParameter("@Text", "%" & text.Trim() & "%"))
+            End If
+            Select Case role
+                Case "Provider", "Consumer" : where.Add("u.UserType = '" & role & "'")
+                Case "Admin" : where.Add("u.IsAdmin = TRUE")
+            End Select
+            Select Case status
+                Case "active" : where.Add("u.IsActive = TRUE")
+                Case "blocked" : where.Add("u.IsActive = FALSE")
+            End Select
+            Dim whereSql = " WHERE " & String.Join(" AND ", where) & " "
+
+            Dim result As New List(Of UserAccount)
+            Using conn = DbHelper.GetConnection()
+                Using cmd As New MySqlCommand("SELECT COUNT(*) FROM Users u" & whereSql & ";", conn)
+                    For Each p In params : cmd.Parameters.Add(p.Clone()) : Next
+                    total = Convert.ToInt32(cmd.ExecuteScalar())
+                End Using
+                Using cmd As New MySqlCommand(
+                    "SELECT " & SelectColumns &
+                    ", (SELECT COUNT(*) FROM Services s WHERE s.ProviderId = u.UserId) AS ServiceCount " &
+                    "FROM Users u" & whereSql & "ORDER BY u.CreatedAt DESC LIMIT @Limit OFFSET @Offset;", conn)
+                    For Each p In params : cmd.Parameters.Add(p.Clone()) : Next
+                    cmd.Parameters.AddWithValue("@Limit", pageSize)
+                    cmd.Parameters.AddWithValue("@Offset", (Math.Max(1, page) - 1) * pageSize)
+                    Using reader = cmd.ExecuteReader()
+                        While reader.Read()
+                            Dim user = Map(reader)
+                            user.ServiceCount = Convert.ToInt32(reader("ServiceCount"))
+                            result.Add(user)
+                        End While
+                    End Using
+                End Using
+            End Using
+            Return result
+        End Function
+
         Private Const SelectColumns As String =
             "UserId, Email, FullName, Phone, UserType, IsLegalEntity, " &
             "CompanyName, EDRPOU, District, IsActive, IsAdmin, EmailConfirmed, CreatedAt, LastDigestSentAt, LastActivityAt "

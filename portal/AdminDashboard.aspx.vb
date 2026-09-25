@@ -39,6 +39,14 @@ Namespace SumyPortal
                 onlineCountLiteral.Text = If(onlineCount = 0,
                     "Онлайн зараз немає нікого.",
                     onlineCount.ToString() & " користувач(ів) онлайн зараз.")
+
+                ' 2026-09-25 (аудит Адміна, п.6–8): нові розділи й статистика за періоди.
+                Dim stats = AdminData.GetStats()
+                rptStats.DataSource = stats
+                rptStats.DataBind()
+                Dim reviewStat = stats.Find(Function(s) s.Label = "Відгуків")
+                reviewsLiteral.Text = If(reviewStat IsNot Nothing, reviewStat.Last7 & " за 7 днів, " & reviewStat.Total & " усього.", "")
+                donationsLiteral.Text = "Оплачено за 30 днів: " & AdminData.DonationsSum(30).ToString("0.##") & " грн."
             End If
         End Sub
 
