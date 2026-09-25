@@ -1,7 +1,6 @@
 Imports System
 Imports System.Configuration
 Imports System.Globalization
-Imports System.Text
 
 Namespace SumyPortal
 
@@ -148,76 +147,17 @@ Namespace SumyPortal
                 items = Service.SearchApproved(categoryId, district, keyword, minPrice, maxPrice, sortBy, CurrentPage, PageSize, total, ProviderIdFilter)
             End If
 
-            For Each item In items
-                Dim photos = Service.GetPhotos(item.ServiceId)
-                If photos.Count > 0 Then item.ThumbnailUrl = photos(0).FilePath
-            Next
-
-            rptCatalog.DataSource = items
-            rptCatalog.DataBind()
-            emptyPanel.Visible = (items.Count = 0)
-
-            ' Перемикач "Таблиця" (наступна фіча понад MVP, 2026-09-14) — та сама сторінка
-            ' даних (items), що й список карток, лише інший рендер + клієнтське сортування.
+            ' Каталог — лише таблиця (2026-09-25): режими "Список" (картки з мініатюрами) і
+            ' "Карта" (BindMapData/SearchApprovedForMap) прибрано за рішенням користувача.
             rptCatalogTable.DataSource = items
             rptCatalogTable.DataBind()
             tableEmptyPanel.Visible = (items.Count = 0)
 
             Dim totalPages = Math.Max(1, CInt(Math.Ceiling(total / CDbl(PageSize))))
-            pageInfoLiteral.Text = String.Format(Resources.SiteText.Catalog_PageInfo, total, CurrentPage, totalPages)
-            tablePageInfoLiteral.Text = pageInfoLiteral.Text
-            lnkPrev.Enabled = (CurrentPage > 1)
-            lnkNext.Enabled = (CurrentPage < totalPages)
-            lnkPrevTable.Enabled = lnkPrev.Enabled
-            lnkNextTable.Enabled = lnkNext.Enabled
-
-            BindMapData(categoryId, district, keyword, minPrice, maxPrice)
+            tablePageInfoLiteral.Text = String.Format(Resources.SiteText.Catalog_PageInfo, total, CurrentPage, totalPages)
+            lnkPrevTable.Enabled = (CurrentPage > 1)
+            lnkNextTable.Enabled = (CurrentPage < totalPages)
         End Sub
-
-        ''' <summary>Карта каталогу (продовження геолокації, п.13, постановка робочої тестової
-        ''' версії, 2026-09-12) — ті самі фільтри, що й список, але без пагінації (SearchApprovedForMap
-        ''' сама відкидає оголошення без мітки). JSON рендериться в &lt;script type="application/json"&gt;
-        ''' (Catalog.aspx), JS зчитує його лише коли користувач реально перемикається на вкладку "Карта".</summary>
-        Private Sub BindMapData(categoryId As Integer?, district As String, keyword As String,
-                                 minPrice As Decimal?, maxPrice As Decimal?)
-            Dim items = Service.SearchApprovedForMap(categoryId, district, keyword, minPrice, maxPrice, ProviderIdFilter)
-
-            Dim sb As New StringBuilder("[")
-            For i As Integer = 0 To items.Count - 1
-                Dim item = items(i)
-                If i > 0 Then sb.Append(",")
-                sb.Append("{""id"":").Append(item.ServiceId)
-                sb.Append(",""title"":""").Append(JsonEscape(item.Title)).Append("""")
-                sb.Append(",""category"":""").Append(JsonEscape(item.CategoryName)).Append("""")
-                sb.Append(",""price"":").Append(If(item.Price.HasValue, item.Price.Value.ToString("0.##", CultureInfo.InvariantCulture), "null"))
-                sb.Append(",""lat"":").Append(item.Latitude.Value.ToString(CultureInfo.InvariantCulture))
-                sb.Append(",""lng"":").Append(item.Longitude.Value.ToString(CultureInfo.InvariantCulture))
-                sb.Append("}")
-            Next
-            sb.Append("]")
-
-            mapDataLiteral.Text = sb.ToString()
-            mapEmptyPanel.Visible = (items.Count = 0)
-        End Sub
-
-        ''' <summary>Мінімальне власне екранування для JSON-значень, що йдуть у
-        ''' &lt;script type="application/json"&gt; (без сторонніх бібліотек — той самий підхід, що
-        ''' LiqPayHelper.vb для підпису). "&lt;/" екранується окремо від стандартних JSON-екранувань —
-        ''' браузер закриває &lt;script&gt; за буквальним "&lt;/script" незалежно від значення type,
-        ''' якщо назва/категорія випадково міститимуть такий текст.</summary>
-        Private Function JsonEscape(s As String) As String
-            If s Is Nothing Then Return String.Empty
-            Return s.Replace("\", "\\").Replace("""", "\""").Replace(vbCr, "").Replace(vbLf, "\n").Replace("</", "<\/")
-        End Function
-
-        ''' <summary>JSON-рядок (у лапках, з екрануванням) для вставки прямо в JS-код розмітки —
-        ''' той самий прийом, що LatitudeForScript/LongitudeForScript у ServiceDetails.aspx.vb
-        ''' (InvariantCulture/готове значення для JS-літерала, а не сирий Resources-рядок).</summary>
-        Protected ReadOnly Property DetailsLinkTextForScript As String
-            Get
-                Return """" & JsonEscape(Resources.SiteText.Catalog_Map_DetailsLink) & """"
-            End Get
-        End Property
 
         Private Function ParsePrice(text As String) As Decimal?
             If String.IsNullOrWhiteSpace(text) Then Return Nothing
